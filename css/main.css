@@ -1,0 +1,42 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0;}
+html { font-family: 'Helvetica Neue'; color: #333; }
+
+.App {
+}
+
+.WelcomeView {
+  text-align: center;
+}
+
+/* Base grid styles */
+.Grid { display: flex; }
+.Grid-cell { flex: 1; }
+
+/* With gutters */
+.Grid--gutters { margin: -1em 0 0 -1em; }
+.Grid--gutters > .Grid-cell { padding: 1em 0 0 1em; }
+
+/* Alignment per row */
+.Grid--top { align-items: flex-start; }
+.Grid--bottom { align-items: flex-end; }
+.Grid--center { align-items: center; }
+
+/* Alignment per cell */
+.Grid-cell--top { align-self: flex-start; }
+.Grid-cell--bottom { align-self: flex-end; }
+.Grid-cell--center { align-self: center; }
+
+
+
+.CourseLink {
+  background: linear-gradient(#FAFAFA, #F0F0F0);
+  padding: 1.5em;
+  border-radius: 4px;
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border: 1px solid #CCC;
+  display: inline-block;
+}

@@ -1,0 +1,21 @@
+{
+  "name": "uqdraw",
+  "version": "1.0.0",
+  "description": "Platform for asking in-lecture questions and getting free-form responses.",
+  "main": "index.js",
+  "scripts": {
+      "start": "webpack-dev-server --port 9000 --hot --progress --colors --no-info",
+      "build": "webpack --progress --colors"
+  },
+  "author": "nirrek",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^4.7.16",
+    "babel-loader": "^4.2.0",
+    "react": "^0.13.1",
+    "react-hot-loader": "^1.2.3",
+    "react-router": "^0.13.1",
+    "webpack": "^1.7.3",
+    "webpack-dev-server": "^1.7.0"
+  }
+}
