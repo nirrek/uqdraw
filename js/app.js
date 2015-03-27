@@ -3,6 +3,7 @@ import Router from 'react-router';
 import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
 
 import Welcome from './components/Welcome';
+import QuestionManager from './components/QuestionManager';
 
 class App extends React.Component {
   render() {
@@ -14,18 +15,10 @@ class App extends React.Component {
   }
 }
 
-class QuestionManager extends React.Component {
-  render() {
-    return (
-      <div>
-        <h1>Question Manager</h1>
-        <Link to="app">Welcome</Link>
-      </div>
-    );
-  }
-}
-
-// Component hierarch ;) - everything is a component
+// These define the routes for the application. The particular route that
+// matches will lead to the handler component being recursivley rendered
+// and the resultant tree being mounted to where <RouteHandler/> appears in
+// the App component above (line 12 atm).
 let routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="questionManager" handler={QuestionManager}/>
