@@ -45,13 +45,23 @@ class Welcome extends React.Component {
             Select the course the questions are for, or add a new course below.
           </Cell>
         </Grid>
-        <Grid style={{minHeight: '10em'}}>
-          <Cell />
-          <Cell center='true'>
+        <Grid center='true' style={{minHeight: '10em', justifyContent: 'center'}}>
+          <Cell style={{
+            maxWidth: 610,
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+          }}>
             <Link className='CourseLink' to='questionManager'>COMS3200</Link>
             <Link className='CourseLink' to='questionManager'>COMS3200</Link>
+            <Link className='CourseLink' to='questionManager'>COMS3200</Link>
+            <Link className='CourseLink' to='questionManager'>COMS3200</Link>
+            <Link className='CourseLink' to='questionManager'>COMS3200</Link>
+            <Link className='CourseLink' to='questionManager'>COMS3200</Link>
+            <Link className='CourseLink' to='questionManager'>COMS3200</Link>
+
           </Cell>
-          <Cell />
         </Grid>
       </div>
     );
