@@ -140,3 +140,50 @@ header {
 .Grid-cell--top { align-self: flex-start; }
 .Grid-cell--bottom { align-self: flex-end; }
 .Grid-cell--center { align-self: center; }
+
+
+.TitleBar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #5C42AB;
+  color: #fff;
+}
+.TitleBar-link {
+  align-self: flex-start;
+}
+.TitleBar-title {
+  display: flex;
+  align-items: middle;
+}
+.TitleBar-title h1 {
+  font-size: 1.5em;
+  margin: 0;
+}
+/* Card List */
+.CardLists {
+  display: flex;
+  flex-direction: row;
+}
+.CardList {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #eee;
+  margin: 10px;
+  padding: 10px;
+  background: #efefef;
+  border-radius: 3px;
+  width: 270px;
+}
+.Card {
+  background: #fff;
+  border-radius: 3px;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 6px;
+  cursor: pointer;
+  min-height: 20px;
+  color: #4d4d4d;
+  line-height: 18px;
+  font-size: 14px;
+  padding: 6px 8px 4px;
+}
