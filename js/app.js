@@ -2,6 +2,7 @@ import React from 'react';
 import Router from 'react-router';
 import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
 
+import Header from './components/Header.js';
 import Welcome from './components/Welcome';
 import QuestionManager from './components/QuestionManager';
 
@@ -9,6 +10,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
+        <Header />
         <RouteHandler/>
       </div>
     );
