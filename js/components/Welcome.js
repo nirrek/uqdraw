@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router';
 
+import Header from './Header.js';
+
 class Grid extends React.Component {
   render() {
     var style = this.props.style || {};
@@ -35,12 +37,7 @@ class Welcome extends React.Component {
   render() {
     return (
       <div className='Welcome'>
-        <header>
-          <div className='Logo'>
-            <span className="Pencil"></span>
-            <span className="Name">UQDraw</span>
-          </div>
-        </header>
+        <Header />
         <div className='Marquee'>
           <h1 className='Heading'>Welcome, Lecturer.</h1>
           <div className="Subheading">Select the course the questions are for below, or add a new course.</div>
