@@ -1,0 +1,23 @@
+{
+  // I want to use babel-eslint for parsing!
+  "parser": "babel-eslint",
+
+  "env": {
+    // Allow browser globals
+    "browser": true,
+    // Allow node globals
+    "node": true,
+    "es6": true
+  },
+
+  "ecmaFeatures": {
+    // Enables es6 modules and global strict mode
+    "modules": true,
+    "jsx": true
+  },
+
+  // To give you an idea how to override rule options:
+  "rules": {
+    "quotes": [2, "single"]
+  }
+}
