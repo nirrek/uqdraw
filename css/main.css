@@ -141,49 +141,41 @@ header {
 .Grid-cell--bottom { align-self: flex-end; }
 .Grid-cell--center { align-self: center; }
 
-
-.TitleBar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: #5C42AB;
-  color: #fff;
+.scrollbar {
+  -webkit-transform: translate3d(0,0,0);
+  -webkit-overflow-scrolling: touch;
 }
-.TitleBar-link {
-  align-self: flex-start;
+.scrollbar::-webkit-scrollbar {
+  height: 13px;
+  width: 13px;
 }
-.TitleBar-title {
-  display: flex;
-  align-items: middle;
+.scrollbar::-webkit-scrollbar-track-piece {
+  background: rgba(0,0,0,.15);
 }
-.TitleBar-title h1 {
-  font-size: 1.5em;
-  margin: 0;
+.scrollbar::-webkit-scrollbar-button {
+  display: block;
+  height: 5px;
+  width: 5px;
 }
-/* Card List */
-.CardLists {
-  display: flex;
-  flex-direction: row;
+.scrollbar::-webkit-scrollbar-track-piece:vertical:start {
+    border-radius: 5px 5px 0 0
 }
-.CardList {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #eee;
-  margin: 10px;
-  padding: 10px;
-  background: #efefef;
-  border-radius: 3px;
-  width: 270px;
+.scrollbar::-webkit-scrollbar-track-piece:vertical:end {
+    border-radius: 0 0 5px 5px
 }
-.Card {
-  background: #fff;
-  border-radius: 3px;
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 6px;
-  cursor: pointer;
-  min-height: 20px;
-  color: #4d4d4d;
-  line-height: 18px;
-  font-size: 14px;
-  padding: 6px 8px 4px;
+.scrollbar::-webkit-scrollbar-track-piece:horizontal:start {
+    border-radius: 5px 0 0 5px
+}
+.scrollbar::-webkit-scrollbar-track-piece:horizontal:end {
+    border-radius: 0 5px 5px 0
+}
+.scrollbar::-webkit-scrollbar-thumb:horizontal,.scrollbar::-webkit-scrollbar-thumb:vertical {
+    background: rgba(255,255,255,.4);
+    border-radius: 5px;
+    display: block;
+    height: 50px
+}
+.scrollbar::-webkit-scrollbar-button:end:increment,.scrollbar::-webkit-scrollbar-button:start:decrement {
+    background: 0 0;
+    display: none
 }
