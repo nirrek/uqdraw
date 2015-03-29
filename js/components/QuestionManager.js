@@ -87,7 +87,9 @@ class QuestionManager extends React.Component {
       ],
       curYPos: 0,
       curXPos: 0,
+      curScrollPos: 0,
       curDown: false,
+      curOffset: 0,
     };
   }
 
@@ -98,12 +100,29 @@ class QuestionManager extends React.Component {
   mouseMove(e) {
     if(this.state.curDown === true){
       // this.state.node.scrollTo(this.state.node.scrollLeft + (this.state.curXPos - e.pageX), this.state.node.scrollTop + (this.state.curYPos - e.pageY));
-      this.state.node.scrollLeft = this.state.node.scrollLeft + (this.state.curXPos - e.pageX)/40;
+      var node = this.state.node,
+        offset = this.state.curXPos - e.pageX,
+        scrollLeft = node.scrollLeft,
+        maxScroll = node.scrollWidth - node.clientWidth;
+
+      // Stop measuring negative offsets once scroll is 0
+      if (scrollLeft <= 0 && offset < 0) {
+        this.state.curScrollPos = 0;
+        this.state.curXPos = e.pageX;
+      }
+      // Stop measuring positive offsets once max scroll is reached
+      else if (scrollLeft >= maxScroll && offset > 0) {
+        this.state.curScrollPos = maxScroll;
+        this.state.curXPos = e.pageX;
+      }
+      node.scrollLeft = this.state.curScrollPos + offset;
     }
   }
 
   mouseDown(e) {
-    this.state.curDown = true; this.state.curYPos = e.pageY; this.state.curXPos = e.pageX;
+    this.state.curDown = true;
+    this.state.curXPos = e.pageX;
+    this.state.curScrollPos = this.state.node.scrollLeft;
   }
 
   mouseUp(e) {
