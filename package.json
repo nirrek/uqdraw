@@ -19,6 +19,7 @@
     "webpack-dev-server": "^1.7.0"
   },
   "dependencies": {
-    "normalize.css": "^3.0.2"
+    "normalize.css": "^3.0.2",
+    "react-style": "^0.5.1"
   }
 }
