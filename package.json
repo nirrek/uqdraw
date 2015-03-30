@@ -4,8 +4,8 @@
   "description": "Platform for asking in-lecture questions and getting free-form responses.",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --port 9000 --hot --progress --colors --no-info",
-    "build": "webpack --progress --colors"
+    "start": "npm install && webpack-dev-server --port 9000 --hot --progress --colors --no-info",
+    "build": "npm install && webpack --progress --colors"
   },
   "author": "nirrek",
   "license": "ISC",
