@@ -36,7 +36,6 @@ header {
 .Subheading { margin-top: -.25em; }
 
 .SubjectList {
-  min-height: 10em;
   margin: 4em auto 0;
   display: flex;
   justify-content: center;
