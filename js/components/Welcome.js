@@ -3,6 +3,11 @@ import { Link } from 'react-router';
 
 import Header from './Header.js';
 let Firebase = require('firebase');
+let Modal = require('react-modal');
+
+var appElement = document.getElementById('react');
+Modal.setAppElement(appElement);
+Modal.injectCSS();
 
 // Should have some sort of configuration module for this stuff
 const FIREBASE_ROOT = 'https://uqdraw.firebaseio.com';
@@ -54,6 +59,7 @@ let SubjectList = React.createClass({
       courseLists: [],
       showForm: false,
       newCourse: '', // populated by the 'add course' model input
+      modalIsOpen: false,
     };
   },
 
@@ -74,13 +80,13 @@ let SubjectList = React.createClass({
   },
 
   // Click handler for adding a new course button.
-  showForm(event) { this.setState({ showForm: true }); },
+  showForm(event) { this.setState({ modalIsOpen: true }); },
 
   addNewCourse(event) {
     console.log(this.state.newCourse);
     this.ref.push(this.state.newCourse);
     this.setState({
-      showForm: false,
+      modalIsOpen: false,
       newCourse: '',
     });
     event.preventDefault();
@@ -89,6 +95,9 @@ let SubjectList = React.createClass({
   onCourseInputChange(event) {
     this.setState({ newCourse: event.target.value });
   },
+
+  openModal: function() { this.setState({ modalIsOpen: true }); },
+  closeModal: function() { this.setState({ modalIsOpen: false }); },
 
   render: function() {
     // Style for the SubjectList containing cell
@@ -104,15 +113,6 @@ let SubjectList = React.createClass({
       return (<SubjectListItem to='questionManager'>{val}</SubjectListItem>);
     });
 
-    if (this.state.showForm) {
-      var form = (
-        <form>
-          <input type="text" value={this.state.newCourse} onChange={this.onCourseInputChange} />
-          <button type="submit" onClick={this.addNewCourse}>Add Course</button>
-        </form>
-      );
-    }
-
     return (
       <Grid className="SubjectList">
         <Cell style={cellStyle}>
@@ -121,7 +121,13 @@ let SubjectList = React.createClass({
             <i className='Icon--plus'></i>Add New
           </div>
         </Cell>
-        {form}
+        <Modal isOpen={this.state.modalIsOpen} className='Modal--addCourse'>
+          <form>
+            <input type="text" value={this.state.newCourse} onChange={this.onCourseInputChange} />
+            <button type="submit" onClick={this.addNewCourse}>Add Course</button>
+          </form>
+          <button onClick={this.closeModal}>Close</button>
+        </Modal>
       </Grid>
     );
   }
