@@ -139,3 +139,42 @@ header {
 .Grid-cell--top { align-self: flex-start; }
 .Grid-cell--bottom { align-self: flex-end; }
 .Grid-cell--center { align-self: center; }
+
+.scrollbar {
+  -webkit-transform: translate3d(0,0,0);
+  -webkit-overflow-scrolling: touch;
+}
+.scrollbar::-webkit-scrollbar {
+  height: 13px;
+  width: 13px;
+}
+.scrollbar::-webkit-scrollbar-track-piece {
+  background: rgba(0,0,0,.15);
+}
+.scrollbar::-webkit-scrollbar-button {
+  display: block;
+  height: 5px;
+  width: 5px;
+}
+.scrollbar::-webkit-scrollbar-track-piece:vertical:start {
+    border-radius: 5px 5px 0 0
+}
+.scrollbar::-webkit-scrollbar-track-piece:vertical:end {
+    border-radius: 0 0 5px 5px
+}
+.scrollbar::-webkit-scrollbar-track-piece:horizontal:start {
+    border-radius: 5px 0 0 5px
+}
+.scrollbar::-webkit-scrollbar-track-piece:horizontal:end {
+    border-radius: 0 5px 5px 0
+}
+.scrollbar::-webkit-scrollbar-thumb:horizontal,.scrollbar::-webkit-scrollbar-thumb:vertical {
+    background: rgba(255,255,255,.4);
+    border-radius: 5px;
+    display: block;
+    height: 50px
+}
+.scrollbar::-webkit-scrollbar-button:end:increment,.scrollbar::-webkit-scrollbar-button:start:decrement {
+    background: 0 0;
+    display: none
+}
