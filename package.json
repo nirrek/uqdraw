@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "normalize.css": "^3.0.2",
+    "react-modal": "^0.1.0",
     "react-style": "^0.5.1"
   }
 }
