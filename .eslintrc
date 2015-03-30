@@ -18,6 +18,7 @@
 
   // To give you an idea how to override rule options:
   "rules": {
-    "quotes": [2, "single"]
+    "quotes": [2, "single"],
+    "comma-dangle": true,
   }
 }
