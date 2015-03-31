@@ -53,34 +53,32 @@ class SubjectListItem extends React.Component {
 }
 
 // Don't use ES6 class here as Mixin support has been dropped.
-let SubjectList = React.createClass({
-  getInitialState: function() {
-    return {
+class SubjectList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       courseLists: [],
       showForm: false,
       newCourse: '', // populated by the 'add course' model input
       modalIsOpen: false,
     };
-  },
+  }
 
   componentDidMount() {
-    // IDEA /courseLists is an implicit coupling to the api structure
-    // Should this be abstracted out somewhere, rather than having implicit
-    // coupling spread around the system?
     let ref = this.ref = new Firebase(FIREBASE_ROOT + '/courseLists/uqjstee8');
     ref.on('value', (snapshot) => {
       var content = snapshot.val(); // must unwrap the snapshot
       var courseLists = Object.keys(content).map((key) => content[key]);
       this.setState({ courseLists: courseLists });
     });
-  },
+  }
 
   componentWillUnmount() {
     this.ref.off(); // unbind any callbacks
-  },
+  }
 
   // Click handler for adding a new course button.
-  showForm(event) { this.setState({ modalIsOpen: true }); },
+  showForm(event) { this.setState({ modalIsOpen: true }); }
 
   addNewCourse(event) {
     console.log(this.state.newCourse);
@@ -90,16 +88,16 @@ let SubjectList = React.createClass({
       newCourse: '',
     });
     event.preventDefault();
-  },
+  }
 
   onCourseInputChange(event) {
     this.setState({ newCourse: event.target.value });
-  },
+  }
 
-  openModal: function() { this.setState({ modalIsOpen: true }); },
-  closeModal: function() { this.setState({ modalIsOpen: false }); },
+  openModal() { this.setState({ modalIsOpen: true }); }
+  closeModal() { this.setState({ modalIsOpen: false }); }
 
-  render: function() {
+  render() {
     // Style for the SubjectList containing cell
     let cellStyle = {
       maxWidth: 610,
@@ -131,7 +129,7 @@ let SubjectList = React.createClass({
       </Grid>
     );
   }
-});
+};
 
 class Welcome extends React.Component {
   render() {
@@ -143,6 +141,28 @@ class Welcome extends React.Component {
         </div>
         <SubjectList/>
       </div>
+    );
+  }
+}
+
+// A component that allows a lecturer to compose a new question, or to edit
+// and existing one.
+class QuestionComposer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      question: ''
+    };
+  }
+
+  render() {
+    return (
+      <Modal isOpen={this.state.modalIsOpen}>
+        <div>Put question here</div>
+        <textarea value={this.state.question} />
+        <input type='button' value='Upload Image'/>
+        <button>Save</button>
+      </Modal>
     );
   }
 }
