@@ -61,6 +61,7 @@ class SubjectList extends React.Component {
       showForm: false,
       newCourse: '', // populated by the 'add course' model input
       modalIsOpen: false,
+      composerIsOpen: false,
     };
   }
 
@@ -126,10 +127,27 @@ class SubjectList extends React.Component {
           </form>
           <button onClick={this.closeModal}>Close</button>
         </Modal>
+        <div>
+          <button className='Button' onClick={this.openComposer.bind(this)}>Open Composer</button>
+        </div>
+        <QuestionComposer
+          isOpen={this.state.composerIsOpen}
+          save={this.saveComposerComposition.bind(this)}
+          close={this.closeComposer.bind(this)}/>
       </Grid>
     );
   }
-};
+
+  openComposer() {
+    this.setState({ composerIsOpen: true });
+  }
+  saveComposerComposition() {
+    this.setState({ composerIsOpen: false });
+  }
+  closeComposer() {
+    this.setState({ composerIsOpen: false });
+  }
+}
 
 class Welcome extends React.Component {
   render() {
@@ -155,15 +173,44 @@ class QuestionComposer extends React.Component {
     };
   }
 
+  textareaChange(event) {
+    let inputText = event.target.value;
+    let inputHasText = true;
+    if (inputText.length === 0) inputHasText = false;
+    this.setState({
+      question: event.target.value,
+      inputHasText: inputHasText,
+    });
+  }
+
   render() {
+    let labelClass = 'TransparentLabel';
+    if (this.state.inputHasText) labelClass += ' TransparentLabel--hidden';
+
     return (
-      <Modal isOpen={this.state.modalIsOpen}>
-        <div>Put question here</div>
-        <textarea value={this.state.question} />
-        <input type='button' value='Upload Image'/>
-        <button>Save</button>
+      <Modal className='Modal--questionComposer' isOpen={this.props.isOpen}>
+        <a onClick={this.props.close} href="#" className='Modal__cross'>&times;</a>
+        <div className='AdvancedInput'>
+          <div className={labelClass}>Enter Question Here</div>
+          <textarea onChange={this.textareaChange.bind(this)} value={this.state.question} />
+        </div>
+        <a href="#">Insert supporting image &rarr;</a>
+        <div className='Modal__footer'>
+          <Button onClick={this.props.save}>Save Question</Button>
+        </div>
       </Modal>
     );
+  }
+}
+
+// UI Widgets - pull into own module files when determine a way to house em.
+class Button extends React.Component {
+  shouldComponentUpdate() { return false; }
+  render() {
+    return (
+      <button className="Button" onClick={this.props.onClick}>
+        {this.props.children}
+      </button>);
   }
 }
 

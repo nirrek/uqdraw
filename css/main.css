@@ -191,11 +191,36 @@ header {
 
 .ReactModal__Content {
   opacity: 0;
+  border: none;
+  box-shadow: 0 1px 15px rgba(0, 0, 0, 0.3);
 }
 
 .ReactModal__Content--after-open {
   opacity: 1;
   transition: all 300ms ease-out;
+}
+
+.Modal__footer {
+  background: #EDF6FE;
+  border-top: 1px solid #E0E9F1;
+  border-radius: 0 4px 4px 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4em;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Modal__cross {
+  position: absolute;
+  top: -6px;
+  right: 7px;
+  color: #999;
+  font-size: 2em;
+  text-decoration: none;
 }
 
 .Modal--addCourse {
@@ -207,4 +232,87 @@ header {
   margin-left: -100px;
   box-shadow: 0 1px 15px rgba(0, 0, 0, 0.3);
   border: 1px solid #FFF;
+}
+
+.Modal--questionComposer {
+  width: 360px;
+  height: 544px;  /* 480 + 64 (footer height) */
+  left: 50%;
+  margin-left: -180px;
+  top: 50%;
+  margin-top: -240px;
+  padding-top: 2em;
+  text-align: center;
+}
+
+
+/*
+ * Buttons
+ */
+.Button {
+  color: #EDF6FE;
+  background-color: #5C42AB;
+  border-radius: 4px;
+  height: 2.5em;
+  padding: 0 1em;
+  display: inline-block;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(#5C42AB, #523B99);
+  border: 1px solid #523B99;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.Button--secondary {
+  color: #555;
+  border-radius: 4px;
+  background: linear-gradient(#FAFAFA, #F0F0F0);
+  border: 1px solid #CCC;
+  border-bottom-color: #BBB;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
+}
+
+
+/*
+ * Transparent label/input pair
+ * This should be made into a component. Basically you have a label that sits
+ * behind the textarea that disappears when there is content in the input.
+ */
+.AdvancedInput {
+  height: 400px;
+  position: relative;
+  text-align: center;
+  font-size: 22px;
+}
+
+.TransparentLabel {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  z-index: 0;
+  transition: opacity 150ms ease-in-out;
+  color: #999;
+}
+
+.TransparentLabel--hidden {
+  opacity: 0;
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  position: relative;
+  z-index: 1;
+  padding: 0;
+  margin: 0;
+  border: none;
+  text-align: center;
+}
+
+textarea:focus {
+  outline: none;
 }
