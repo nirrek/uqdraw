@@ -1,7 +1,43 @@
 import React from 'react';
 import { Link } from 'react-router';
+// import React
+let Modal = require('react-modal');
+
+var appElement = document.getElementById('react');
+Modal.setAppElement(appElement);
+Modal.injectCSS();
+
+// Should have some sort of configuration module for this stuff
+const FIREBASE_ROOT = 'https://uqdraw.firebaseio.com';
 
 class CardList extends React.Component {
+
+  constructor() {
+    this.state = {
+      newQuestion: '',
+      modalIsOpen: false,
+    }
+  }
+
+  showQuestionForm() {
+    this.setState({modalIsOpen: true});
+    event.preventDefault();
+  }
+
+  hideQuestionForm() {
+    this.setState({modalIsOpen: false});
+    event.preventDefault();
+  }
+
+  onQuestionInputChange(event) {
+    this.setState({newQuestion: event.target.value});
+  }
+
+  addNewQuestion(event) {
+    this.props.onAddQuestion(this.props.questionSetKey, this.state.newQuestion);
+    this.setState({modalIsOpen: false, newQuestion: ''});
+    event.preventDefault();
+  }
 
   render() {
     var styles = {
@@ -14,7 +50,6 @@ class CardList extends React.Component {
         minHeight: '20px',
         color: '#4d4d4d',
         lineHeight: '18px',
-        fontSize: '14px',
         padding: '6px 8px 4px',
       },
       cardList: {
@@ -29,16 +64,35 @@ class CardList extends React.Component {
         flex: '0 0 270px',
         marginRight: '10px',
       },
+      add: {
+        marginTop: '12px',
+        cursor: 'pointer',
+        minHeight: '20px',
+        color: '#999',
+        lineHeight: '18px',
+        padding: '6px 8px 4px',
+      },
     };
 
-    var createCard = function(item) {
-      return <div className="Card" style={styles.card}>{item.title}</div>;
-    };
+    let questions;
+    if (this.props.questionSet.questions) {
+      questions = this.props.questionSet.questions.map((question) => {
+        return <div className="Card" style={styles.card}>{question}</div>;
+      });
+    }
 
     return (
       <div className='CardList' style={styles.cardList}>
         <h2>{this.props.questionSet.title}</h2>
-        {this.props.questionSet.questions.map(createCard)}
+        {questions}
+        <div onClick={this.showQuestionForm.bind(this)} style={styles.add}>Add a new question</div>
+        <Modal isOpen={this.state.modalIsOpen} className='Modal--addCourse'>
+          <form>
+            <input type="text" value={this.state.newQuestion} onChange={this.onQuestionInputChange.bind(this)}/>
+            <button type="submit" onClick={this.addNewQuestion.bind(this)}>Add Question</button>
+            <button type="submit" onClick={this.hideQuestionForm.bind(this)}>Close</button>
+          </form>
+        </Modal>
       </div>
     );
   }
@@ -48,89 +102,102 @@ class QuestionManager extends React.Component {
   constructor(props) {
    super(props);
     this.state = {
-      questionSets: [
-        {
-          title: 'Lecture 1',
-          questions: [
-            {title: 'How tall are you?'},
-            {title: 'How old are you?'}
-          ]
-        },
-        {
-          title: 'Lecture 2',
-          questions: [
-            {title: 'What is your name?'},
-            {title: 'What is your favourite colour?'}
-          ]
-        },
-        {
-          title: 'Lecture 3',
-          questions: [
-            {title: 'Some question?'},
-            {title: 'Another question?'}
-          ]
-        },
-        {
-          title: 'Lecture 4',
-          questions: [
-            {title: 'Wwwop?'},
-            {title: 'Woosh?'}
-          ]
-        },
-        {
-          title: 'Lecture 5',
-          questions: [
-            {title: 'karar?'},
-            {title: 'peshisha?'}
-          ]
-        },
-      ],
       curYPos: 0,
       curXPos: 0,
       curScrollPos: 0,
       curDown: false,
       curOffset: 0,
+      modalIsOpen: false,
+      questionSets: {},
+      newQuestionSetTitle: '',
+      courseId: '-JlUd0xRBkwULfuGFGqo',
     };
   }
 
   componentDidMount() {
+    // Store dom node reference to scrolling div
     this.state.node = React.findDOMNode(this.refs.cardLists);
+
+    let fb = this.fb = new Firebase(`${FIREBASE_ROOT}/questionSets/${this.state.courseId}`);
+    fb.on('value', (snapshot) => {
+      let content = snapshot.val() || {};
+      this.setState({questionSets: content});
+    });
   }
 
-  mouseMove(e) {
-    if(this.state.curDown === true){
-      // this.state.node.scrollTo(this.state.node.scrollLeft + (this.state.curXPos - e.pageX), this.state.node.scrollTop + (this.state.curYPos - e.pageY));
+  componentWillUnmount() {
+    this.fb.off();
+  }
+
+  mouseMove(event) {
+    if (this.state.curDown === true) {
       var node = this.state.node,
-        offset = this.state.curXPos - e.pageX,
-        scrollLeft = node.scrollLeft,
-        maxScroll = node.scrollWidth - node.clientWidth;
+          offset = this.state.curXPos - event.pageX,
+          scrollLeft = node.scrollLeft,
+          maxScroll = node.scrollWidth - node.clientWidth;
 
       // Stop measuring negative offsets once scroll is 0
+      // This avoids buffering up scroll left distance if you keep dragging
+      // past the minimum scroll value
       if (scrollLeft <= 0 && offset < 0) {
         this.state.curScrollPos = 0;
-        this.state.curXPos = e.pageX;
+        this.state.curXPos = event.pageX;
       }
+
       // Stop measuring positive offsets once max scroll is reached
+      // This avoids buffering up scroll right distance if you keep dragging
+      // past the maximum scroll value
       else if (scrollLeft >= maxScroll && offset > 0) {
         this.state.curScrollPos = maxScroll;
-        this.state.curXPos = e.pageX;
+        this.state.curXPos = event.pageX;
       }
+
       node.scrollLeft = this.state.curScrollPos + offset;
     }
   }
 
-  mouseDown(e) {
+  mouseDown(event) {
     this.state.curDown = true;
-    this.state.curXPos = e.pageX;
+    this.state.curXPos = event.pageX;
     this.state.curScrollPos = this.state.node.scrollLeft;
   }
 
-  mouseUp(e) {
+  mouseUp(event) {
     this.state.curDown = false;
   }
 
-  // window.addEventListener('mousedown', function(e){ curDown = true; curYPos = e.pageY; curXPos = e.pageX; });
-  // window.addEventListener('mouseup', function(e){ curDown = false; });
+  showQuestionSetForm(event) {
+    this.setState({modalIsOpen: true});
+    event.preventDefault();
+  }
+
+  hideQuestionSetForm(event) {
+    this.setState({modalIsOpen: false});
+    event.preventDefault();
+  }
+
+  onQuestionSetInputChange(event) {
+    this.setState({newQuestionSetTitle: event.target.value});
+  }
+
+  addNewQuestionSet(event) {
+    // let questionSets = this.state.questionSets;
+    let newQuestionSet = {title: this.state.newQuestionSetTitle, questions: {}};
+    this.fb.push(newQuestionSet);
+    // questionSets.temp = newQuestionSet;
+    this.setState({modalIsOpen: false, newQuestionSetTitle: ''});
+    event.preventDefault();
+  }
+
+  addNewQuestion(questionSetKey, question) {
+    let questionSets = this.state.questionSets;
+    let questionSet = questionSets[questionSetKey];
+    questionSet.questions ?
+      questionSet.questions.push(question) :
+      questionSet.questions = [question];
+    this.setState({questionSets: questionSets, test: 'wee'});
+    this.fb.update(this.state.questionSets);
+  }
 
   render() {
     var styles = {
@@ -182,13 +249,15 @@ class QuestionManager extends React.Component {
         flex: '0 0 270px',
         marginRight: '10px',
         cursor: 'pointer',
-        webkitUserSelect: 'none',
+        WebkitUserSelect: 'none',
+        color: 'rgba(255,255,255,.7)',
       },
     }
 
-    var createCardList = function(questionSet) {
-      return <CardList questionSet={questionSet}></CardList>;
-    };
+    let questionSets = Object.keys(this.state.questionSets).map((key) => {
+      return (
+        <CardList questionSetKey={key} questionSet={this.state.questionSets[key]} onAddQuestion={this.addNewQuestion.bind(this)}></CardList>);
+    });
 
     return (
       <div className='QuestionManager' style={styles.questionManager} onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} onMouseMove={this.mouseMove.bind(this)}>
@@ -200,12 +269,19 @@ class QuestionManager extends React.Component {
         </div>
         <div style={styles.canvas}>
           <div className='CardLists scrollbar' style={styles.cardLists} ref="cardLists">
-            {this.state.questionSets.map(createCardList)}
-            <div style={styles.createList}>
+            {questionSets}
+            <div style={styles.createList} onClick={this.showQuestionSetForm.bind(this)}>
               <span>Add a new lecture...</span>
             </div>
           </div>
         </div>
+        <Modal isOpen={this.state.modalIsOpen} className='Modal--addCourse'>
+          <form>
+            <input type="text" value={this.state.newQuestionSetTitle} onChange={this.onQuestionSetInputChange.bind(this)}/>
+            <button type="submit" onClick={this.addNewQuestionSet.bind(this)}>Add Lecture</button>
+            <button onClick={this.hideQuestionSetForm.bind(this)}>Close</button>
+          </form>
+        </Modal>
       </div>
     );
   }
