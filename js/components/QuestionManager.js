@@ -39,6 +39,10 @@ class CardList extends React.Component {
     event.preventDefault();
   }
 
+  removeQuestion(event) {
+    this.props.onRemoveQuestion(this.props.questionSetKey, event.currentTarget.dataset.id);
+  }
+
   render() {
     var styles = {
       card: {
@@ -76,13 +80,18 @@ class CardList extends React.Component {
 
     let questions;
     if (this.props.questionSet.questions) {
-      questions = this.props.questionSet.questions.map((question) => {
-        return <div className="Card" style={styles.card}>{question}</div>;
+      questions = this.props.questionSet.questions.map((question, id) => {
+        return (
+          <div className="Card" style={styles.card} draggable="true">
+            {question}
+            <button className="Button" onClick={this.removeQuestion.bind(this)} data-id={id}>X</button>
+          </div>
+        );
       });
     }
 
     return (
-      <div className='CardList' style={styles.cardList}>
+      <div className='CardList' style={styles.cardList} draggable="true">
         <h2>{this.props.questionSet.title}</h2>
         {questions}
         <div onClick={this.showQuestionForm.bind(this)} style={styles.add}>Add a new question</div>
@@ -157,9 +166,11 @@ class QuestionManager extends React.Component {
   }
 
   mouseDown(event) {
-    this.state.curDown = true;
-    this.state.curXPos = event.pageX;
-    this.state.curScrollPos = this.state.node.scrollLeft;
+    if (event.target.dataset.scrollable) {
+      this.state.curDown = true;
+      this.state.curXPos = event.pageX;
+      this.state.curScrollPos = this.state.node.scrollLeft;
+    }
   }
 
   mouseUp(event) {
@@ -199,6 +210,13 @@ class QuestionManager extends React.Component {
     this.fb.update(this.state.questionSets);
   }
 
+  removeQuestion(questionSetKey, position) {
+    let questionSets = this.state.questionSets;
+    questionSets[questionSetKey].slice(position, position + 1);
+    this.setState({questionSets: questionSets});
+    console.log(questionSets[questionSetKey]);
+  }
+
   render() {
     var styles = {
       questionManager: {
@@ -214,7 +232,8 @@ class QuestionManager extends React.Component {
         flexDirection: 'column',
         alignItems: 'center',
         // background: '#493589',
-        color: '#fff'
+        color: '#fff',
+        WebkitUserSelect: 'none',
       },
       welcomeLink: {
         alignSelf: 'flex-start'
@@ -256,19 +275,19 @@ class QuestionManager extends React.Component {
 
     let questionSets = Object.keys(this.state.questionSets).map((key) => {
       return (
-        <CardList questionSetKey={key} questionSet={this.state.questionSets[key]} onAddQuestion={this.addNewQuestion.bind(this)}></CardList>);
+        <CardList questionSetKey={key} questionSet={this.state.questionSets[key]} onAddQuestion={this.addNewQuestion.bind(this)} onRemoveQuestion={this.removeQuestion.bind(this)}></CardList>);
     });
 
     return (
-      <div className='QuestionManager' style={styles.questionManager} onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} onMouseMove={this.mouseMove.bind(this)}>
-        <div className='TitleBar' style={styles.titleBar}>
+      <div className='QuestionManager' style={styles.questionManager} onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} onMouseMove={this.mouseMove.bind(this)} data-scrollable="true">
+        <div className='TitleBar' style={styles.titleBar} data-scrollable="true">
           <Link to="app" className="TitleBar-link" style={styles.welcomeLink}>Welcome</Link>
           <div className="TitleBar-title" style={styles.title}>
             <h1>Question Manager - {this.props.title}</h1>
           </div>
         </div>
         <div style={styles.canvas}>
-          <div className='CardLists scrollbar' style={styles.cardLists} ref="cardLists">
+          <div className='CardLists scrollbar' style={styles.cardLists} ref="cardLists" data-scrollable="true">
             {questionSets}
             <div style={styles.createList} onClick={this.showQuestionSetForm.bind(this)}>
               <span>Add a new lecture...</span>
