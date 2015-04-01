@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import Header from './Header.js';
 let Firebase = require('firebase');
 let Modal = require('react-modal');
+require('../../css/components/Button.scss');
 
 var appElement = document.getElementById('react');
 Modal.setAppElement(appElement);

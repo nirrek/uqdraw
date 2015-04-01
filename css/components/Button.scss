@@ -1,0 +1,26 @@
+// Module for encapsulating all button styles
+// This should include the style of links, as they are buttons.
+
+.Button {
+  color: #EDF6FE;
+  background-color: #5C42AB;
+  border-radius: 4px;
+  height: 2.5em;
+  padding: 0 1em;
+  display: inline-block;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(#5C42AB, #523B99);
+  border: 1px solid #523B99;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.Button--secondary {
+  color: #555;
+  border-radius: 4px;
+  background: linear-gradient(#FAFAFA, #F0F0F0);
+  border: 1px solid #CCC;
+  border-bottom-color: #BBB;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
+}
