@@ -23,7 +23,7 @@ class App extends React.Component {
 // the App component above (line 12 atm).
 let routes = (
   <Route name="app" path="/" handler={App}>
-    <Route name="questionManager" handler={QuestionManager}/>
+    <Route name="questionManager" handler={QuestionManager} path="/:courseId"/>
     <DefaultRoute handler={Welcome}/>
   </Route>
 );

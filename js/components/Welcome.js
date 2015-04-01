@@ -46,7 +46,7 @@ class Cell extends React.Component {
 class SubjectListItem extends React.Component {
   render() {
     return (
-      <Link className='ListItem' to={this.props.to}>
+      <Link className='ListItem' to={this.props.to} params={{courseId: this.props.courseId}}>
         {this.props.children}
       </Link>
     );
@@ -110,7 +110,7 @@ class SubjectList extends React.Component {
     };
 
     var items = this.state.courseLists.map((val) => {
-      return (<SubjectListItem to='questionManager'>{val}</SubjectListItem>);
+      return (<SubjectListItem to='questionManager' courseId={val}>{val}</SubjectListItem>);
     });
 
     return (
