@@ -11,7 +11,7 @@ class App extends React.Component {
     return (
       <div className="App">
         <Header />
-        <RouteHandler/>
+        <RouteHandler routeParams={this.props.routeParams}/>
       </div>
     );
   }
@@ -23,11 +23,11 @@ class App extends React.Component {
 // the App component above (line 12 atm).
 let routes = (
   <Route name="app" path="/" handler={App}>
-    <Route name="questionManager" handler={QuestionManager} path="/:courseId"/>
+    <Route name="questionManager" handler={QuestionManager} path="/:courseId/question-manager"/>
     <DefaultRoute handler={Welcome}/>
   </Route>
 );
 
-Router.run(routes, function(Handler) {
-  React.render(<Handler/>, document.querySelector('#react'));
+Router.run(routes, function(Handler, state) {
+  React.render(<Handler routeParams={state.params}/>, document.querySelector('#react'));
 });
