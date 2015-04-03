@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
+import { Button } from './UI';
 let Firebase = require('firebase');
 let Modal = require('react-modal');
 
@@ -103,7 +104,7 @@ class QuestionManager extends React.Component {
     event.preventDefault();
   }
 
-  addNewQuestion(questionSetKey, question) {
+  onAddQuestion(questionSetKey, question) {
     let questionSets = this.state.questionSets;
     let questionSet = questionSets[questionSetKey];
     questionSet.questions ?
@@ -194,7 +195,7 @@ class QuestionManager extends React.Component {
           questionSetKey={key}
           questionSet={this.state.questionSets[key]}
           onRemoveLecture={this.onRemoveLecture.bind(this)}
-          onAddQuestion={this.addNewQuestion.bind(this)}
+          onAddQuestion={this.onAddQuestion.bind(this)}
           onRemoveQuestion={this.onRemoveQuestion.bind(this)}
         />
       );
@@ -232,7 +233,6 @@ class CardList extends React.Component {
 
   constructor() {
     this.state = {
-      newQuestion: '',
       modalIsOpen: false,
     };
   }
@@ -247,13 +247,9 @@ class CardList extends React.Component {
     event.preventDefault();
   }
 
-  onQuestionInputChange(event) {
-    this.setState({newQuestion: event.target.value});
-  }
-
-  addNewQuestion(event) {
-    this.props.onAddQuestion(this.props.questionSetKey, this.state.newQuestion);
-    this.setState({modalIsOpen: false, newQuestion: ''});
+  onAddQuestion(question) {
+    this.props.onAddQuestion(this.props.questionSetKey, question);
+    this.setState({modalIsOpen: false});
     event.preventDefault();
   }
 
@@ -286,6 +282,13 @@ class CardList extends React.Component {
         flex: '0 0 270px',
         marginRight: '10px',
       },
+      titleBar: {
+        display: 'flex',
+        justifyContent: 'space-between',
+      },
+      title: {
+        margin: '0 0 5px 0',
+      },
       add: {
         marginTop: '12px',
         cursor: 'pointer',
@@ -299,6 +302,7 @@ class CardList extends React.Component {
         height: 15,
         flex: '15px 0 0',
         padding: 0,
+        alignSelf: 'flex-start',
       },
     };
 
@@ -318,24 +322,70 @@ class CardList extends React.Component {
 
     return (
       <div className='CardList' style={styles.cardList} draggable="true">
-        <h2>{this.props.questionSet.title}</h2>
-        <button
-          className=""
-          onClick={this.onRemoveLecture.bind(this)}
-          data-id={this.props.questionSetKey}
-          style={styles.closeButton}>
-          X
-        </button>
+        <div style={styles.titleBar}>
+          <h2 style={styles.title}>{this.props.questionSet.title}</h2>
+          <button
+            className=""
+            onClick={this.onRemoveLecture.bind(this)}
+            data-id={this.props.questionSetKey}
+            style={styles.closeButton}>
+            X
+          </button>
+        </div>
         {questions}
         <div onClick={this.showQuestionForm.bind(this)} style={styles.add}>Add a new question</div>
-        <Modal isOpen={this.state.modalIsOpen} className='Modal--addCourse'>
-          <form>
-            <input type="text" value={this.state.newQuestion} onChange={this.onQuestionInputChange.bind(this)}/>
-            <button type="submit" onClick={this.addNewQuestion.bind(this)}>Add Question</button>
-            <button type="submit" onClick={this.hideQuestionForm.bind(this)}>Close</button>
-          </form>
-        </Modal>
+
+        <QuestionComposer
+          isOpen={this.state.modalIsOpen}
+          onClose={this.hideQuestionForm.bind(this)}
+          onSave={this.onAddQuestion.bind(this)}
+        />
       </div>
+    );
+  }
+}
+
+// A component that allows a lecturer to compose a new question, or to edit
+// and existing one.
+class QuestionComposer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      question: ''
+    };
+  }
+
+  onTextareaChange(event) {
+    let inputText = event.target.value;
+    let inputHasText = true;
+    if (inputText.length === 0) { inputHasText = false; }
+    this.setState({
+      question: event.target.value,
+      inputHasText: inputHasText,
+    });
+  }
+
+  onSave() {
+    this.props.onSave(this.state.question);
+    this.setState({question: ''});
+  }
+
+  render() {
+    let labelClass = 'TransparentLabel';
+    if (this.state.inputHasText) {labelClass += ' TransparentLabel--hidden'; }
+
+    return (
+      <Modal className='Modal--questionComposer' isOpen={this.props.isOpen}>
+        <a onClick={this.props.onClose} href="#" className='Modal__cross'>&times;</a>
+        <div className='AdvancedInput'>
+          <div className={labelClass}>Enter Question Here</div>
+          <textarea onChange={this.onTextareaChange.bind(this)} value={this.state.question} />
+        </div>
+        <a href="#">Insert supporting image &rarr;</a>
+        <div className='Modal__footer'>
+          <Button onClick={this.onSave.bind(this)}>Save Question</Button>
+        </div>
+      </Modal>
     );
   }
 }
