@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 
 import Header from './Header.js';
+import { Button } from './UI.js';
 let Firebase = require('firebase');
 let Modal = require('react-modal');
 require('../../css/components/Button.scss');
@@ -201,17 +202,6 @@ class QuestionComposer extends React.Component {
         </div>
       </Modal>
     );
-  }
-}
-
-// UI Widgets - pull into own module files when determine a way to house em.
-class Button extends React.Component {
-  shouldComponentUpdate() { return false; }
-  render() {
-    return (
-      <button className="Button" onClick={this.props.onClick}>
-        {this.props.children}
-      </button>);
   }
 }
 
