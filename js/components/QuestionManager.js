@@ -195,7 +195,7 @@ class QuestionManager extends React.Component {
         <div className='TitleBar' style={styles.titleBar} data-scrollable="true">
           <Link to="app" className="TitleBar-link" style={styles.welcomeLink}>Welcome</Link>
           <div className="TitleBar-title" style={styles.title}>
-            <h1>Question Manager - {this.props.title}</h1>
+            <h1>Question Manager - {this.props.routeParams.courseId}</h1>
           </div>
         </div>
         <div style={styles.canvas}>
