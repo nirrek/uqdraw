@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
-// import React
+let Firebase = require('firebase');
 let Modal = require('react-modal');
 
 var appElement = document.getElementById('react');
@@ -9,103 +9,6 @@ Modal.injectCSS();
 
 // Should have some sort of configuration module for this stuff
 const FIREBASE_ROOT = 'https://uqdraw.firebaseio.com';
-
-class CardList extends React.Component {
-
-  constructor() {
-    this.state = {
-      newQuestion: '',
-      modalIsOpen: false,
-    }
-  }
-
-  showQuestionForm() {
-    this.setState({modalIsOpen: true});
-    event.preventDefault();
-  }
-
-  hideQuestionForm() {
-    this.setState({modalIsOpen: false});
-    event.preventDefault();
-  }
-
-  onQuestionInputChange(event) {
-    this.setState({newQuestion: event.target.value});
-  }
-
-  addNewQuestion(event) {
-    this.props.onAddQuestion(this.props.questionSetKey, this.state.newQuestion);
-    this.setState({modalIsOpen: false, newQuestion: ''});
-    event.preventDefault();
-  }
-
-  removeQuestion(event) {
-    this.props.onRemoveQuestion(this.props.questionSetKey, event.currentTarget.dataset.id);
-  }
-
-  render() {
-    var styles = {
-      card: {
-        background: '#fff',
-        borderRadius: '3px',
-        borderBottom: '1px solid #ccc',
-        marginBottom: '6px',
-        cursor: 'pointer',
-        minHeight: '20px',
-        color: '#4d4d4d',
-        lineHeight: '18px',
-        padding: '6px 8px 4px',
-      },
-      cardList: {
-        display: 'flex',
-        flexDirection: 'column',
-        border: '1px solid #eee',
-        margin: '10px',
-        padding: '10px',
-        background: '#efefef',
-        borderRadius: '3px',
-        width: '270px',
-        flex: '0 0 270px',
-        marginRight: '10px',
-      },
-      add: {
-        marginTop: '12px',
-        cursor: 'pointer',
-        minHeight: '20px',
-        color: '#999',
-        lineHeight: '18px',
-        padding: '6px 8px 4px',
-      },
-    };
-
-    let questions;
-    if (this.props.questionSet.questions) {
-      questions = this.props.questionSet.questions.map((question, id) => {
-        return (
-          <div className="Card" style={styles.card} draggable="true">
-            {question}
-            <button className="Button" onClick={this.removeQuestion.bind(this)} data-id={id}>X</button>
-          </div>
-        );
-      });
-    }
-
-    return (
-      <div className='CardList' style={styles.cardList} draggable="true">
-        <h2>{this.props.questionSet.title}</h2>
-        {questions}
-        <div onClick={this.showQuestionForm.bind(this)} style={styles.add}>Add a new question</div>
-        <Modal isOpen={this.state.modalIsOpen} className='Modal--addCourse'>
-          <form>
-            <input type="text" value={this.state.newQuestion} onChange={this.onQuestionInputChange.bind(this)}/>
-            <button type="submit" onClick={this.addNewQuestion.bind(this)}>Add Question</button>
-            <button type="submit" onClick={this.hideQuestionForm.bind(this)}>Close</button>
-          </form>
-        </Modal>
-      </div>
-    );
-  }
-}
 
 class QuestionManager extends React.Component {
   constructor(props) {
@@ -301,6 +204,132 @@ class QuestionManager extends React.Component {
             <button onClick={this.hideQuestionSetForm.bind(this)}>Close</button>
           </form>
         </Modal>
+      </div>
+    );
+  }
+}
+
+class CardList extends React.Component {
+
+  constructor() {
+    this.state = {
+      newQuestion: '',
+      modalIsOpen: false,
+    };
+  }
+
+  showQuestionForm() {
+    this.setState({modalIsOpen: true});
+    event.preventDefault();
+  }
+
+  hideQuestionForm() {
+    this.setState({modalIsOpen: false});
+    event.preventDefault();
+  }
+
+  onQuestionInputChange(event) {
+    this.setState({newQuestion: event.target.value});
+  }
+
+  addNewQuestion(event) {
+    this.props.onAddQuestion(this.props.questionSetKey, this.state.newQuestion);
+    this.setState({modalIsOpen: false, newQuestion: ''});
+    event.preventDefault();
+  }
+
+  render() {
+    var styles = {
+      card: {
+        background: '#fff',
+        borderRadius: '3px',
+        borderBottom: '1px solid #ccc',
+        marginBottom: '6px',
+        cursor: 'pointer',
+        minHeight: '20px',
+        color: '#4d4d4d',
+        lineHeight: '18px',
+        padding: '6px 8px 4px',
+      },
+      cardList: {
+        display: 'flex',
+        flexDirection: 'column',
+        border: '1px solid #eee',
+        margin: '10px',
+        padding: '10px',
+        background: '#efefef',
+        borderRadius: '3px',
+        width: '270px',
+        flex: '0 0 270px',
+        marginRight: '10px',
+      },
+      add: {
+        marginTop: '12px',
+        cursor: 'pointer',
+        minHeight: '20px',
+        color: '#999',
+        lineHeight: '18px',
+        padding: '6px 8px 4px',
+      },
+    };
+
+    let questions;
+    if (this.props.questionSet.questions) {
+      questions = this.props.questionSet.questions.map((question, id) => {
+        return (
+          <Card question-set-key={this.props.questionSetKey} question-id={id} question={question}/>
+        );
+      });
+    }
+
+    return (
+      <div className='CardList' style={styles.cardList} draggable="true">
+        <h2>{this.props.questionSet.title}</h2>
+        {questions}
+        <div onClick={this.showQuestionForm.bind(this)} style={styles.add}>Add a new question</div>
+        <Modal isOpen={this.state.modalIsOpen} className='Modal--addCourse'>
+          <form>
+            <input type="text" value={this.state.newQuestion} onChange={this.onQuestionInputChange.bind(this)}/>
+            <button type="submit" onClick={this.addNewQuestion.bind(this)}>Add Question</button>
+            <button type="submit" onClick={this.hideQuestionForm.bind(this)}>Close</button>
+          </form>
+        </Modal>
+      </div>
+    );
+  }
+}
+
+class Card extends React.Component {
+  constructor() {
+    this.styles = {
+      card: {
+        background: '#fff',
+        borderRadius: '3px',
+        borderBottom: '1px solid #ccc',
+        marginBottom: '6px',
+        cursor: 'pointer',
+        minHeight: '20px',
+        color: '#4d4d4d',
+        lineHeight: '18px',
+        padding: '6px 8px 4px',
+      },
+    };
+  }
+
+  removeQuestion(event) {
+    this.props.onRemoveQuestion(this.props.questionSetKey, event.currentTarget.dataset.id);
+  }
+
+  render() {
+    return (
+      <div className="Card" style={this.styles.card} draggable="true">
+        {this.props.question}
+        <button
+          className="Button"
+          onClick={this.removeQuestion.bind(this)}
+          data-id={this.props.id}>
+          X
+        </button>
       </div>
     );
   }
