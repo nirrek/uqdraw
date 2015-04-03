@@ -123,6 +123,15 @@ class QuestionManager extends React.Component {
     }
   }
 
+  onRemoveLecture(lectureId) {
+    let lectures = this.state.questionSets;
+    if (lectures[lectureId]) {
+      delete lectures[lectureId];
+      this.setState({questionSets: lectures});
+      this.fb.child(lectureId).remove();
+    }
+  }
+
   render() {
     var styles = {
       questionManager: {
@@ -184,6 +193,7 @@ class QuestionManager extends React.Component {
         <CardList
           questionSetKey={key}
           questionSet={this.state.questionSets[key]}
+          onRemoveLecture={this.onRemoveLecture.bind(this)}
           onAddQuestion={this.addNewQuestion.bind(this)}
           onRemoveQuestion={this.onRemoveQuestion.bind(this)}
         />
@@ -247,6 +257,10 @@ class CardList extends React.Component {
     event.preventDefault();
   }
 
+  onRemoveLecture(event) {
+    this.props.onRemoveLecture(event.currentTarget.dataset.id);
+  }
+
   render() {
     var styles = {
       card: {
@@ -280,6 +294,12 @@ class CardList extends React.Component {
         lineHeight: '18px',
         padding: '6px 8px 4px',
       },
+      closeButton: {
+        width: 15,
+        height: 15,
+        flex: '15px 0 0',
+        padding: 0,
+      },
     };
 
     let questions;
@@ -299,6 +319,13 @@ class CardList extends React.Component {
     return (
       <div className='CardList' style={styles.cardList} draggable="true">
         <h2>{this.props.questionSet.title}</h2>
+        <button
+          className=""
+          onClick={this.onRemoveLecture.bind(this)}
+          data-id={this.props.questionSetKey}
+          style={styles.closeButton}>
+          X
+        </button>
         {questions}
         <div onClick={this.showQuestionForm.bind(this)} style={styles.add}>Add a new question</div>
         <Modal isOpen={this.state.modalIsOpen} className='Modal--addCourse'>
