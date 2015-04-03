@@ -109,15 +109,18 @@ class QuestionManager extends React.Component {
     questionSet.questions ?
       questionSet.questions.push(question) :
       questionSet.questions = [question];
-    this.setState({questionSets: questionSets, test: 'wee'});
+    this.setState({questionSets: questionSets});
     this.fb.update(this.state.questionSets);
   }
 
-  removeQuestion(questionSetKey, position) {
+  onRemoveQuestion(questionSetKey, position) {
     let questionSets = this.state.questionSets;
-    questionSets[questionSetKey].slice(position, position + 1);
-    this.setState({questionSets: questionSets});
-    console.log(questionSets[questionSetKey]);
+    let questionSet = questionSets[questionSetKey];
+    if (questionSet.questions[position] !== undefined) {
+      questionSet.questions.splice(position, 1);
+      this.setState({questionSets: questionSets});
+      this.fb.update(this.state.questionSets);
+    }
   }
 
   render() {
@@ -147,7 +150,7 @@ class QuestionManager extends React.Component {
       },
       canvas: {
         position: 'relative',
-        height: '800px',
+        height: '100%',
       },
       cardLists: {
         display: 'flex',
@@ -174,11 +177,17 @@ class QuestionManager extends React.Component {
         WebkitUserSelect: 'none',
         color: 'rgba(255,255,255,.7)',
       },
-    }
+    };
 
     let questionSets = Object.keys(this.state.questionSets).map((key) => {
       return (
-        <CardList questionSetKey={key} questionSet={this.state.questionSets[key]} onAddQuestion={this.addNewQuestion.bind(this)} onRemoveQuestion={this.removeQuestion.bind(this)}></CardList>);
+        <CardList
+          questionSetKey={key}
+          questionSet={this.state.questionSets[key]}
+          onAddQuestion={this.addNewQuestion.bind(this)}
+          onRemoveQuestion={this.onRemoveQuestion.bind(this)}
+        />
+      );
     });
 
     return (
@@ -277,7 +286,12 @@ class CardList extends React.Component {
     if (this.props.questionSet.questions) {
       questions = this.props.questionSet.questions.map((question, id) => {
         return (
-          <Card question-set-key={this.props.questionSetKey} question-id={id} question={question}/>
+          <Card
+            questionSetKey={this.props.questionSetKey}
+            questionId={id}
+            question={question}
+            onRemoveQuestion={this.props.onRemoveQuestion}
+          />
         );
       });
     }
@@ -303,6 +317,9 @@ class Card extends React.Component {
   constructor() {
     this.styles = {
       card: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexGrow: '1',
         background: '#fff',
         borderRadius: '3px',
         borderBottom: '1px solid #ccc',
@@ -313,10 +330,17 @@ class Card extends React.Component {
         lineHeight: '18px',
         padding: '6px 8px 4px',
       },
+      closeButton: {
+        width: 15,
+        height: 15,
+        flex: '15px 0 0',
+        fontSize: 8,
+        padding: 0,
+      }
     };
   }
 
-  removeQuestion(event) {
+  onRemoveQuestion(event) {
     this.props.onRemoveQuestion(this.props.questionSetKey, event.currentTarget.dataset.id);
   }
 
@@ -325,9 +349,10 @@ class Card extends React.Component {
       <div className="Card" style={this.styles.card} draggable="true">
         {this.props.question}
         <button
-          className="Button"
-          onClick={this.removeQuestion.bind(this)}
-          data-id={this.props.id}>
+          className=""
+          onClick={this.onRemoveQuestion.bind(this)}
+          data-id={this.props.questionId}
+          style={this.styles.closeButton}>
           X
         </button>
       </div>
