@@ -20,9 +20,8 @@ class QuestionManager extends React.Component {
       curScrollPos: 0,
       curDown: false,
       curOffset: 0,
-      modalIsOpen: false,
+      isLectureModalOpen: false,
       questionSets: {},
-      newQuestionSetTitle: '',
       courseId: '-JlUd0xRBkwULfuGFGqo',
     };
   }
@@ -81,27 +80,30 @@ class QuestionManager extends React.Component {
     this.state.curDown = false;
   }
 
-  showQuestionSetForm(event) {
-    this.setState({modalIsOpen: true});
+  showLectureModal(event) {
+    this.setState({isLectureModalOpen: true});
     event.preventDefault();
   }
 
-  hideQuestionSetForm(event) {
-    this.setState({modalIsOpen: false});
+  hideLectureModal(event) {
+    this.setState({isLectureModalOpen: false});
     event.preventDefault();
   }
 
-  onQuestionSetInputChange(event) {
-    this.setState({newQuestionSetTitle: event.target.value});
+  onAddLecture(lecture) {
+    let newLecture = {title: lecture, questions: {}};
+    this.fb.push(newLecture);
+    this.setState({isLectureModalOpen: false});
+    event.preventDefault();
   }
 
-  addNewQuestionSet(event) {
-    // let questionSets = this.state.questionSets;
-    let newQuestionSet = {title: this.state.newQuestionSetTitle, questions: {}};
-    this.fb.push(newQuestionSet);
-    // questionSets.temp = newQuestionSet;
-    this.setState({modalIsOpen: false, newQuestionSetTitle: ''});
-    event.preventDefault();
+  onRemoveLecture(lectureId) {
+    let lectures = this.state.questionSets;
+    if (lectures[lectureId]) {
+      delete lectures[lectureId];
+      this.setState({questionSets: lectures});
+      this.fb.child(lectureId).remove();
+    }
   }
 
   onAddQuestion(questionSetKey, question) {
@@ -121,15 +123,6 @@ class QuestionManager extends React.Component {
       questionSet.questions.splice(position, 1);
       this.setState({questionSets: questionSets});
       this.fb.update(this.state.questionSets);
-    }
-  }
-
-  onRemoveLecture(lectureId) {
-    let lectures = this.state.questionSets;
-    if (lectures[lectureId]) {
-      delete lectures[lectureId];
-      this.setState({questionSets: lectures});
-      this.fb.child(lectureId).remove();
     }
   }
 
@@ -212,18 +205,16 @@ class QuestionManager extends React.Component {
         <div style={styles.canvas}>
           <div className='CardLists scrollbar' style={styles.cardLists} ref="cardLists" data-scrollable="true">
             {questionSets}
-            <div style={styles.createList} onClick={this.showQuestionSetForm.bind(this)}>
+            <div style={styles.createList} onClick={this.showLectureModal.bind(this)}>
               <span>Add a new lecture...</span>
             </div>
           </div>
         </div>
-        <Modal isOpen={this.state.modalIsOpen} className='Modal--addCourse'>
-          <form>
-            <input type="text" value={this.state.newQuestionSetTitle} onChange={this.onQuestionSetInputChange.bind(this)}/>
-            <button type="submit" onClick={this.addNewQuestionSet.bind(this)}>Add Lecture</button>
-            <button onClick={this.hideQuestionSetForm.bind(this)}>Close</button>
-          </form>
-        </Modal>
+        <LectureComposer
+          isOpen={this.state.isLectureModalOpen}
+          onClose={this.hideLectureModal.bind(this)}
+          onSave={this.onAddLecture.bind(this)}
+        />
       </div>
     );
   }
@@ -237,12 +228,12 @@ class CardList extends React.Component {
     };
   }
 
-  showQuestionForm() {
+  showQuestionModal() {
     this.setState({modalIsOpen: true});
     event.preventDefault();
   }
 
-  hideQuestionForm() {
+  hideQuestionModal() {
     this.setState({modalIsOpen: false});
     event.preventDefault();
   }
@@ -303,6 +294,8 @@ class CardList extends React.Component {
         flex: '15px 0 0',
         padding: 0,
         alignSelf: 'flex-start',
+        fontSize: 22,
+        color: '#aaa',
       },
     };
 
@@ -324,23 +317,65 @@ class CardList extends React.Component {
       <div className='CardList' style={styles.cardList} draggable="true">
         <div style={styles.titleBar}>
           <h2 style={styles.title}>{this.props.questionSet.title}</h2>
-          <button
+          <a
             className=""
             onClick={this.onRemoveLecture.bind(this)}
             data-id={this.props.questionSetKey}
             style={styles.closeButton}>
-            X
-          </button>
+            &times;
+          </a>
         </div>
         {questions}
-        <div onClick={this.showQuestionForm.bind(this)} style={styles.add}>Add a new question</div>
+        <div onClick={this.showQuestionModal.bind(this)} style={styles.add}>Add a new question</div>
 
         <QuestionComposer
           isOpen={this.state.modalIsOpen}
-          onClose={this.hideQuestionForm.bind(this)}
+          onClose={this.hideQuestionModal.bind(this)}
           onSave={this.onAddQuestion.bind(this)}
         />
       </div>
+    );
+  }
+}
+
+class LectureComposer extends React.Component {
+  constructor() {
+    this.state = {
+      lecture: '',
+      inputHasText: false,
+    };
+  }
+
+  onInputChange(event) {
+    let inputText = event.target.value;
+    let inputHasText = true;
+    if (inputText.length === 0) {inputHasText = false;}
+    this.setState({
+      lecture: inputText,
+      inputHasText: inputHasText
+    });
+  }
+
+  onSave() {
+    this.props.onSave(this.state.lecture);
+    this.setState({lecture: '', inputHasText: false});
+  }
+
+  render() {
+    let labelClass = 'TransparentLabel';
+    if (this.state.inputHasText) {labelClass += ' TransparentLabel--hidden'; }
+
+    return (
+      <Modal isOpen={this.props.isOpen} className='Modal--lectureComposer'>
+        <a onClick={this.props.onClose} href="#" className='Modal__cross'>&times;</a>
+        <div className='AdvancedInput'>
+          <div className={labelClass}>Enter Lecture Name Here</div>
+          <input type="text" value={this.state.lecture} onChange={this.onInputChange.bind(this)}/>
+        </div>
+        <div className='Modal__footer'>
+          <Button type="submit" onClick={this.onSave.bind(this)}>Add Lecture</Button>
+        </div>
+      </Modal>
     );
   }
 }
@@ -367,7 +402,7 @@ class QuestionComposer extends React.Component {
 
   onSave() {
     this.props.onSave(this.state.question);
-    this.setState({question: ''});
+    this.setState({question: '', inputHasText: false});
   }
 
   render() {
@@ -407,12 +442,19 @@ class Card extends React.Component {
         lineHeight: '18px',
         padding: '6px 8px 4px',
       },
+      content: {
+        flexGrow: 0,
+      },
       closeButton: {
         width: 15,
         height: 15,
         flex: '15px 0 0',
-        fontSize: 8,
         padding: 0,
+        alignSelf: 'flex-start',
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-start',
+        color: '#aaa',
       }
     };
   }
@@ -424,14 +466,14 @@ class Card extends React.Component {
   render() {
     return (
       <div className="Card" style={this.styles.card} draggable="true">
-        {this.props.question}
-        <button
+        <span style={this.styles.content}>{this.props.question}</span>
+        <a
           className=""
           onClick={this.onRemoveQuestion.bind(this)}
           data-id={this.props.questionId}
           style={this.styles.closeButton}>
-          X
-        </button>
+          &times;
+        </a>
       </div>
     );
   }
