@@ -185,6 +185,7 @@ class QuestionManager extends React.Component {
     let lectures = Object.keys(this.state.lectures).map((key) => {
       return (
         <CardList
+          courseId={this.props.routeParams.courseId}
           lectureId={key}
           lecture={this.state.lectures[key]}
           onRemoveLecture={this.onRemoveLecture.bind(this)}
@@ -317,7 +318,7 @@ class CardList extends React.Component {
       <div className='CardList' style={styles.cardList} draggable="true">
         <div style={styles.titleBar}>
           <h2 style={styles.title}>{this.props.lecture.title}</h2>
-          <Link to="presenter" courseId="" lectureId=""/>
+          <Link to="presenter" params={{courseId: this.props.courseId, lectureId: this.props.lectureId}}>P</Link>
           <a
             className=""
             onClick={this.onRemoveLecture.bind(this)}

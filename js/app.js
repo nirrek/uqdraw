@@ -5,6 +5,7 @@ import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
 import Header from './components/Header.js';
 import Welcome from './components/Welcome';
 import QuestionManager from './components/QuestionManager';
+import Presenter from './components/Presenter';
 
 class App extends React.Component {
   render() {
@@ -24,6 +25,7 @@ class App extends React.Component {
 let routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="questionManager" handler={QuestionManager} path="/:courseId/question-manager"/>
+    <Route name="presenter" handler={Presenter} path="/:courseId/:lectureId"/>
     <DefaultRoute handler={Welcome}/>
   </Route>
 );
