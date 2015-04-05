@@ -21,7 +21,7 @@ class QuestionManager extends React.Component {
       curDown: false,
       curOffset: 0,
       isLectureModalOpen: false,
-      questionSets: {},
+      lectures: {},
       courseId: '-JlUd0xRBkwULfuGFGqo',
     };
   }
@@ -30,10 +30,10 @@ class QuestionManager extends React.Component {
     // Store dom node reference to scrolling div
     this.state.node = React.findDOMNode(this.refs.cardLists);
 
-    let fb = this.fb = new Firebase(`${FIREBASE_ROOT}/questionSets/${this.state.courseId}`);
+    let fb = this.fb = new Firebase(`${FIREBASE_ROOT}/lectures/${this.state.courseId}`);
     fb.on('value', (snapshot) => {
       let content = snapshot.val() || {};
-      this.setState({questionSets: content});
+      this.setState({lectures: content});
     });
   }
 
@@ -98,31 +98,31 @@ class QuestionManager extends React.Component {
   }
 
   onRemoveLecture(lectureId) {
-    let lectures = this.state.questionSets;
+    let lectures = this.state.lectures;
     if (lectures[lectureId]) {
       delete lectures[lectureId];
-      this.setState({questionSets: lectures});
+      this.setState({lectures: lectures});
       this.fb.child(lectureId).remove();
     }
   }
 
-  onAddQuestion(questionSetKey, question) {
-    let questionSets = this.state.questionSets;
-    let questionSet = questionSets[questionSetKey];
-    questionSet.questions ?
-      questionSet.questions.push(question) :
-      questionSet.questions = [question];
-    this.setState({questionSets: questionSets});
-    this.fb.update(this.state.questionSets);
+  onAddQuestion(lectureId, question) {
+    let lectures = this.state.lectures;
+    let lecture = lectures[lectureId];
+    lecture.questions ?
+      lecture.questions.push(question) :
+      lecture.questions = [question];
+    this.setState({lectures: lectures});
+    this.fb.update(this.state.lectures);
   }
 
-  onRemoveQuestion(questionSetKey, position) {
-    let questionSets = this.state.questionSets;
-    let questionSet = questionSets[questionSetKey];
-    if (questionSet.questions[position] !== undefined) {
-      questionSet.questions.splice(position, 1);
-      this.setState({questionSets: questionSets});
-      this.fb.update(this.state.questionSets);
+  onRemoveQuestion(lectureId, position) {
+    let lectures = this.state.lectures;
+    let lecture = lectures[lectureId];
+    if (lecture.questions[position] !== undefined) {
+      lecture.questions.splice(position, 1);
+      this.setState({lectures: lectures});
+      this.fb.update(this.state.lectures);
     }
   }
 
@@ -182,11 +182,11 @@ class QuestionManager extends React.Component {
       },
     };
 
-    let questionSets = Object.keys(this.state.questionSets).map((key) => {
+    let lectures = Object.keys(this.state.lectures).map((key) => {
       return (
         <CardList
-          questionSetKey={key}
-          questionSet={this.state.questionSets[key]}
+          lectureId={key}
+          lecture={this.state.lectures[key]}
           onRemoveLecture={this.onRemoveLecture.bind(this)}
           onAddQuestion={this.onAddQuestion.bind(this)}
           onRemoveQuestion={this.onRemoveQuestion.bind(this)}
@@ -204,7 +204,7 @@ class QuestionManager extends React.Component {
         </div>
         <div style={styles.canvas}>
           <div className='CardLists scrollbar' style={styles.cardLists} ref="cardLists" data-scrollable="true">
-            {questionSets}
+            {lectures}
             <div style={styles.createList} onClick={this.showLectureModal.bind(this)}>
               <span>Add a new lecture...</span>
             </div>
@@ -239,7 +239,7 @@ class CardList extends React.Component {
   }
 
   onAddQuestion(question) {
-    this.props.onAddQuestion(this.props.questionSetKey, question);
+    this.props.onAddQuestion(this.props.lectureId, question);
     this.setState({modalIsOpen: false});
     event.preventDefault();
   }
@@ -300,11 +300,11 @@ class CardList extends React.Component {
     };
 
     let questions;
-    if (this.props.questionSet.questions) {
-      questions = this.props.questionSet.questions.map((question, id) => {
+    if (this.props.lecture.questions) {
+      questions = this.props.lecture.questions.map((question, id) => {
         return (
           <Card
-            questionSetKey={this.props.questionSetKey}
+            lectureId={this.props.lectureId}
             questionId={id}
             question={question}
             onRemoveQuestion={this.props.onRemoveQuestion}
@@ -316,11 +316,12 @@ class CardList extends React.Component {
     return (
       <div className='CardList' style={styles.cardList} draggable="true">
         <div style={styles.titleBar}>
-          <h2 style={styles.title}>{this.props.questionSet.title}</h2>
+          <h2 style={styles.title}>{this.props.lecture.title}</h2>
+          <Link to="presenter" courseId="" lectureId=""/>
           <a
             className=""
             onClick={this.onRemoveLecture.bind(this)}
-            data-id={this.props.questionSetKey}
+            data-id={this.props.lectureId}
             style={styles.closeButton}>
             &times;
           </a>
@@ -460,7 +461,7 @@ class Card extends React.Component {
   }
 
   onRemoveQuestion(event) {
-    this.props.onRemoveQuestion(this.props.questionSetKey, event.currentTarget.dataset.id);
+    this.props.onRemoveQuestion(this.props.lectureId, event.currentTarget.dataset.id);
   }
 
   render() {
