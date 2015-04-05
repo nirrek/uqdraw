@@ -3,9 +3,24 @@ let Firebase = require('firebase');
 
 class Presenter extends React.Component {
 
+  constructor() {
+    this.styles = {
+      container: {
+        display: 'flex',
+        flexDirection: 'row',
+      },
+      questionSelector: {
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        flex: '200px, 0, 0',
+      },
+    };
+  }
+
   render() {
     return (
-      <div>
+      <div style={this.styles.container}>
         <div>
           <div>
             <span>b3a www.uqdraw.com/b3a</span>
