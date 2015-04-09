@@ -1,5 +1,6 @@
 import React from 'react';
 let objectAssign = require('object-assign');
+import Touchy from '../touchy.js';
 
 class Drawing extends React.Component {
   componentDidMount() {
