@@ -6,6 +6,7 @@ import Header from './components/Header.js';
 import Welcome from './components/Welcome';
 import QuestionManager from './components/QuestionManager';
 import Presenter from './components/Presenter';
+import Drawing from './components/Drawing.js';
 
 class App extends React.Component {
   render() {
@@ -26,6 +27,7 @@ let routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="questionManager" handler={QuestionManager} path="/:courseId/question-manager"/>
     <Route name="presenter" handler={Presenter} path="/:courseId/:lectureId"/>
+    <Route name="drawing" handler={Drawing} path="/drawing"/>
     <DefaultRoute handler={Welcome}/>
   </Route>
 );
