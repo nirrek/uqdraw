@@ -100,15 +100,15 @@ header {
 }
 
 .Pencil {
-  background-image: url('/images/software_pencil.svg');
-  width: 40px;
-  height: 40px;
+  background-image: url('/images/pen.svg');
+  width: 22px;
+  height: 22px;
   display: inline-block;
   background-size: cover;
   position: absolute;
-  top: 17px;
-  margin-left: -40px;
-  -webkit-filter: drop-shadow(0px 1px 2px rgba(0,0,0,.2));
+  top: 31px;
+  margin-left: -26px;
+  /*-webkit-filter: drop-shadow(0px 1px 2px rgba(0,0,0,.2));*/
 }
 
 
@@ -313,23 +313,4 @@ input {
 
 input:focus {
   outline: none;
-}
-
-
-
-/* Drawing Canvas */
-#displayCanvas {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-}
-#canvas {
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-#canvas:hover {
-  cursor: crosshair;
 }
