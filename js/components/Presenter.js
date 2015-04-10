@@ -1,4 +1,5 @@
 import React from 'react';
+import Header from './Header.js';
 import { Button } from './UI';
 let Firebase = require('firebase');
 let StyleSheet = require('react-style');
@@ -161,39 +162,42 @@ class Presenter extends React.Component {
     }
 
     return (
-      <div style={this.styles.container}>
-        <div style={this.styles.presentationPanelContainer}>
-          <div style={this.styles.presentationPanel}>
-            <div style={objectAssign(this.styles.heading, this.styles.dropShadow)}>
-              <div style={this.styles.presenterCode}>
-                <span style={this.styles.presenterCodeTitle}>CODE</span>
-                <span style={this.styles.presenterCodeCode}>b3a</span>
+      <div>
+        <Header/>
+        <div style={this.styles.container}>
+          <div style={this.styles.presentationPanelContainer}>
+            <div style={this.styles.presentationPanel}>
+              <div style={objectAssign(this.styles.heading, this.styles.dropShadow)}>
+                <div style={this.styles.presenterCode}>
+                  <span style={this.styles.presenterCodeTitle}>CODE</span>
+                  <span style={this.styles.presenterCodeCode}>b3a</span>
+                </div>
+                <div style={this.styles.presenterLink}>
+                  <span>www.uqdraw.com/b3a</span>
+                </div>
               </div>
-              <div style={this.styles.presenterLink}>
-                <span>www.uqdraw.com/b3a</span>
+              <div style={objectAssign(this.styles.questionPanel, this.styles.dropShadow)}>
+                <div style={this.styles.timer}>
+                  {timer}
+                </div>
+                <div style={this.styles.question}>
+                  <Question question={this.state.questions[this.state.activeQuestionKey]}/>
+                </div>
+                <div style={this.styles.buttons}>
+                  {button}
+                </div>
               </div>
-            </div>
-            <div style={objectAssign(this.styles.questionPanel, this.styles.dropShadow)}>
-              <div style={this.styles.timer}>
-                {timer}
+              <div style={objectAssign(this.styles.responses, this.styles.dropShadow)}>
+                <h2 style={this.styles.responseTitle}>Current Responses</h2>
+                <PresenterResponses responses={this.state.responses} onThumbnailClick={this.onThumbnailClick}/>
               </div>
-              <div style={this.styles.question}>
-                <Question question={this.state.questions[this.state.activeQuestionKey]}/>
-              </div>
-              <div style={this.styles.buttons}>
-                {button}
-              </div>
-            </div>
-            <div style={objectAssign(this.styles.responses, this.styles.dropShadow)}>
-              <h2 style={this.styles.responseTitle}>Current Responses</h2>
-              <PresenterResponses responses={this.state.responses} onThumbnailClick={this.onThumbnailClick}/>
             </div>
           </div>
-        </div>
 
-        <div style={this.styles.questionSelectorContainer}>
-          <div style={this.styles.questionSelector}>
-            <QuestionSelector questions={this.state.questions} onActivateQuestion={this.onActivateQuestion.bind(this)}/>
+          <div style={this.styles.questionSelectorContainer}>
+            <div style={this.styles.questionSelector}>
+              <QuestionSelector questions={this.state.questions} onActivateQuestion={this.onActivateQuestion.bind(this)}/>
+            </div>
           </div>
         </div>
       </div>
@@ -218,9 +222,10 @@ class QuestionSelector extends React.Component {
       listItem: {
         display: 'flex',
         justifyContent: 'center',
-        borderBottom: 'solid 1px #ccc',
+        borderBottom: 'solid 1px #ddd',
         padding: '20px 10px',
         cursor: 'pointer',
+        transition: 'all 0.2s',
       }
     };
   }
@@ -232,7 +237,7 @@ class QuestionSelector extends React.Component {
   render() {
     let questions = this.props.questions.map((question, key) => {
       return (
-        <div style={this.styles.listItem} onClick={this.onActivateQuestion.bind(this, key)}>
+        <div className="Question" style={this.styles.listItem} onClick={this.onActivateQuestion.bind(this, key)}>
           <span>Question {key+1}</span>
         </div>)
       ;
