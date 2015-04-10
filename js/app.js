@@ -12,7 +12,6 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <Header />
         <RouteHandler routeParams={this.props.routeParams}/>
       </div>
     );

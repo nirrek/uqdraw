@@ -137,13 +137,16 @@ class SubjectList extends React.Component {
 class Welcome extends React.Component {
   render() {
     return (
-      <div className='Welcome'>
-        <div className='Marquee'>
-          <h1 className='Heading'>Welcome, Lecturer.</h1>
-          <div className="Subheading">Select the course the questions are for below, or add a new course.</div>
-          <Link to="drawing">Drawing</Link>
+      <div className='RouteContainer'>
+        <Header />
+        <div className='Welcome'>
+          <div className='Marquee'>
+            <h1 className='Heading'>Welcome, Lecturer.</h1>
+            <div className="Subheading">Select the course the questions are for below, or add a new course.</div>
+            <Link to="drawing">Drawing</Link>
+          </div>
+          <SubjectList/>
         </div>
-        <SubjectList/>
       </div>
     );
   }
