@@ -55,6 +55,7 @@ class Presenter extends React.Component {
         display: 'flex',
         flexDirection: 'row',
         position: 'absolute',
+        justifyContent: 'center',
         top: 83,
         right: 0,
         bottom: 0,
@@ -62,14 +63,22 @@ class Presenter extends React.Component {
         background: '#FBFAFC',
         color: '#543C9C',
       },
+      presentationPanelContainer: {
+        flexBasis: 1000,
+        flexGrow: 0,
+        flexShrink: 2,
+        display: 'flex',
+        justifyContent: 'center',
+      },
       presentationPanel: {
         display: 'flex',
         flexDirection: 'column',
-        flexGrow: 1,
+        maxWidth: 1000,
       },
       heading: {
         display: 'flex',
         margin: 20,
+        padding: 20,
       },
       dropShadow: {
         border: '1px solid #eee',
@@ -93,29 +102,47 @@ class Presenter extends React.Component {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'flex-end',
-        fontSize: 30,
+        fontSize: 50,
       },
       questionPanel: {
         display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
         flexDirection: 'column',
-        fontSize: 40,
-        padding: 20,
-        textAlign: 'center',
-        lineHeight: '1.3em',
+        justifyContent: 'space-between',
         flexGrow: 1,
+        alignItems: 'center',
+        margin: 20,
+        textAlign: 'center',
+        color: '#fff',
+        background: '#543c9c',
       },
       timer: {
         alignSelf: 'flex-end',
-        color: '#5C42AB',
+        margin: '5px 20px',
       },
-      responses: {
-        flexGrow: 1,
-        borderTop: 'solid 1px #ccc',
+      question: {
+        fontSize: '3em',
       },
       buttons: {
         fontSize: 18,
+        marginBottom: 20,
+      },
+      responses: {
+        flexGrow: 1,
+        margin: 20,
+      },
+      responseTitle: {
+        fontWeight: 200,
+        marginLeft: 20,
+      },
+      questionSelectorContainer: {
+        flexGrow: 0,
+        flexBasis: 300,
+        display: 'flex',
+        justifyContent: 'center',
+      },
+      questionSelector: {
+        marginRight: 20,
+        flexGrow: 1,
       },
     };
 
@@ -135,30 +162,40 @@ class Presenter extends React.Component {
 
     return (
       <div style={this.styles.container}>
-        <div style={this.styles.presentationPanel}>
-          <div style={this.styles.heading}>
-            <div style={this.styles.presenterCode}>
-              <span style={this.styles.presenterCodeTitle}>CODE</span>
-              <span style={this.styles.presenterCodeCode}>b3a</span>
+        <div style={this.styles.presentationPanelContainer}>
+          <div style={this.styles.presentationPanel}>
+            <div style={objectAssign(this.styles.heading, this.styles.dropShadow)}>
+              <div style={this.styles.presenterCode}>
+                <span style={this.styles.presenterCodeTitle}>CODE</span>
+                <span style={this.styles.presenterCodeCode}>b3a</span>
+              </div>
+              <div style={this.styles.presenterLink}>
+                <span>www.uqdraw.com/b3a</span>
+              </div>
             </div>
-            <div style={this.styles.presenterLink}>
-              <span>www.uqdraw.com/b3a</span>
+            <div style={objectAssign(this.styles.questionPanel, this.styles.dropShadow)}>
+              <div style={this.styles.timer}>
+                {timer}
+              </div>
+              <div style={this.styles.question}>
+                <Question question={this.state.questions[this.state.activeQuestionKey]}/>
+              </div>
+              <div style={this.styles.buttons}>
+                {button}
+              </div>
             </div>
-          </div>
-          <div style={this.styles.questionPanel}>
-            <div style={this.styles.timer}>
-              {timer}
+            <div style={objectAssign(this.styles.responses, this.styles.dropShadow)}>
+              <h2 style={this.styles.responseTitle}>Current Responses</h2>
+              <PresenterResponses responses={this.state.responses} onThumbnailClick={this.onThumbnailClick}/>
             </div>
-            <Question question={this.state.questions[this.state.activeQuestionKey]}/>
-            <div style={this.styles.buttons}>
-              {button}
-            </div>
-          </div>
-          <div style={this.styles.responses}>
-            <PresenterResponses responses={this.state.responses} onThumbnailClick={this.onThumbnailClick}/>
           </div>
         </div>
-        <QuestionSelector questions={this.state.questions} onActivateQuestion={this.onActivateQuestion.bind(this)}/>
+
+        <div style={this.styles.questionSelectorContainer}>
+          <div style={this.styles.questionSelector}>
+            <QuestionSelector questions={this.state.questions} onActivateQuestion={this.onActivateQuestion.bind(this)}/>
+          </div>
+        </div>
       </div>
     );
   }
@@ -172,17 +209,17 @@ class QuestionSelector extends React.Component {
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        flex: '200px 0 0',
-        background: '#5C42AB',
-        color: '#DDE0FF',
+        flex: '200px 0 1',
+        fontSize: 20,
+        fontWeight: 200,
       },
       list: {
       },
       listItem: {
         display: 'flex',
         justifyContent: 'center',
-        borderBottom: 'solid 1px #6a46Af',
-        padding: '5px 10px',
+        borderBottom: 'solid 1px #ccc',
+        padding: '20px 10px',
         cursor: 'pointer',
       }
     };
@@ -194,7 +231,11 @@ class QuestionSelector extends React.Component {
 
   render() {
     let questions = this.props.questions.map((question, key) => {
-      return <div style={this.styles.listItem} onClick={this.onActivateQuestion.bind(this, key)}><span>Question {key+1}</span></div>;
+      return (
+        <div style={this.styles.listItem} onClick={this.onActivateQuestion.bind(this, key)}>
+          <span>Question {key+1}</span>
+        </div>)
+      ;
     });
     return (
       <div style={this.styles.questionSelector}>
@@ -211,8 +252,8 @@ class Question extends React.Component {
   constructor() {
     this.styles = {
       unselected: {
-        fontSize: 24,
-        color: '#aaa',
+        fontSize: '0.5em',
+        fontStyle: 'italic',
       },
     };
 
@@ -276,7 +317,6 @@ class PresenterResponses extends React.Component {
     });
     return (
       <div style={this.styles.container}>
-        <h2>Current Responses</h2>
         <div style={this.styles.responses}>{thumbnails}</div>
       </div>
     );
