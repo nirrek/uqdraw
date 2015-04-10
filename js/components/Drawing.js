@@ -3,6 +3,7 @@ let objectAssign = require('object-assign');
 import Touchy from '../touchy.js';
 
 require('../../css/components/Drawing.scss');
+require('../../css/components/Button.scss');
 
 class Drawing extends React.Component {
   constructor(props) {
@@ -10,100 +11,122 @@ class Drawing extends React.Component {
     this.state = {
       isEraserActive: false,
       lineWidth: 'm',
+      isQuestionOpen: true,
+      isFullscreen: false,
     };
     this.ctx = undefined; // drawing canvas context
   }
 
   componentDidMount() {
-    // gets the midpoint between two points
-    function computeMidpoint(point1, point2) {
-      var midpoint = {
-        x: (point1.x + point2.x) / 2,
-        y: (point1.y + point2.y) / 2,
-      };
-      return midpoint;
-    }
+    React.findDOMNode(this).addEventListener('webkitfullscreenchange', () => {
+      // Need to reinit state after fullscreen, chrome is losing state all over
+      // the place. No description of what they are doing.
+      setTimeout(() => {
+        this.initializeCanvases();
+        this.initializeTouchy();
+      }, 1000); // t/o required as event is fired before it is fullscreened.
+    });
 
-    // Event handler for a finger touching the screen
-    var points; // list of all touch points in the current movement
-
-    function fingerTouchedScreen(hand, finger, displayCtx, ctx, canvas) {
-      if (hand.fingers.length > 1) return; // only deal with single finger.
-
-      // Setup event listeners for the finger that caused the event firing.
-      finger.on('start', function(point) {
-        points = [];
-        points.push(point);
-      });
-
-      // Wiping version
-      finger.on('move', function(point) {
-        points.push(point);
-
-        // Wipe the canvas clean on each move event, allows making single path
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-        // Starting two points of the path.
-        var point1 = points[0];
-        var point2 = points[1];
-
-        // Begin the path creation.
-        ctx.beginPath();
-        ctx.moveTo(point1.x, point1.y);
-
-        // Add all points to the bath using quadratic bezier
-        for (var i = 1; i < points.length; i++) {
-          // Make path end be the midpoint, with control point at p1.
-          var mid = computeMidpoint(point1, point2);
-          ctx.quadraticCurveTo(point1.x, point1.y, mid.x, mid.y);
-          point1 = points[i];
-          point2 = points[i+1];
-        }
-
-        // Last point as straight line for now, next move event will smooth it.
-        ctx.lineTo(point1.x, point1.y);
-        ctx.stroke();
-      });
-
-      finger.on('end', function(point) {
-        // Transfer image from drawing to display canvas + clear drawing canvas.
-        displayCtx.drawImage(canvas, 0, 0);
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      });
-    }
-
-    // ------------------------------------------------------------------------
-    // Main Initialization Logic
-    // ------------------------------------------------------------------------
     // Setup the presentation canvas
     let displayCanvas = React.findDOMNode(this.refs.displayCanvas);
     let displayCtx = displayCanvas.getContext('2d');
-    // Must set DOM properties, as CSS styling will distory otherwise.
-    displayCanvas.width = parseInt(getComputedStyle(displayCanvas).width, 10);
-    displayCanvas.height = parseInt(getComputedStyle(displayCanvas).height, 10);
-    window.displayCtx = displayCtx; // expose for debugging
-    window.displayCanvas = displayCanvas;
     this.displayCanvas = displayCanvas; // need access for saving img
+    this.displayCtx = displayCtx;
 
     // Setup the drawing canvas that will actually capture the drawing input
     // before transferring it to the presentation canvas
     var canvas = document.querySelector('#canvas');
     var ctx = canvas.getContext('2d');
-    canvas.width = displayCanvas.width;
-    canvas.height = displayCanvas.height;
+    this.canvas = canvas;
     this.ctx = ctx; // put on the React Component so methods can access it
 
-    // setup canvas
+    this.initializeCanvases();
+    this.initializeTouchy();  // sets up touch event handling for drawing input.
+  }
+
+  initializeCanvases() {
+    // Canvases have to have their widths hard-set to prevent distortion
+    // through scaling.
+    this.setCanvasWidths();
+
     this.setLineWidth('m');
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = '#333333';
+    this.ctx.lineJoin = 'round';
+    this.ctx.lineCap = 'round';
+    this.ctx.strokeStyle = '#333333';
+  }
 
+  computeMidpoint(point1, point2) {
+    var midpoint = {
+      x: (point1.x + point2.x) / 2,
+      y: (point1.y + point2.y) / 2,
+    };
+    return midpoint;
+  }
 
-    // Starts listening:  Touchy(objectToListOn, pickupMouseEventsToo, cb);
-    var toucher = Touchy(canvas, true, function(hand, finger) {
-      fingerTouchedScreen(hand, finger, displayCtx, ctx, canvas);
+  fingerTouchedScreen(hand, finger, displayCtx, ctx, canvas) {
+    var points = this.points;
+    if (hand.fingers.length > 1) return; // only deal with single finger.
+
+    // Setup event listeners for the finger that caused the event firing.
+    finger.on('start', (point) => {
+      points = [];
+      points.push(point);
     });
+
+    // Wiping version
+    finger.on('move', (point) => {
+      points.push(point);
+
+      // Wipe the canvas clean on each move event, allows making single path
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+      // Starting two points of the path.
+      var point1 = points[0];
+      var point2 = points[1];
+
+      // Begin the path creation.
+      ctx.beginPath();
+      ctx.moveTo(point1.x, point1.y);
+
+      // Add all points to the bath using quadratic bezier
+      for (var i = 1; i < points.length; i++) {
+        // Make path end be the midpoint, with control point at p1.
+        var mid = this.computeMidpoint(point1, point2);
+        ctx.quadraticCurveTo(point1.x, point1.y, mid.x, mid.y);
+        point1 = points[i];
+        point2 = points[i+1];
+      }
+
+      // Last point as straight line for now, next move event will smooth it.
+      ctx.lineTo(point1.x, point1.y);
+      ctx.stroke();
+    });
+
+    finger.on('end', (point) => {
+      // Transfer image from drawing to display canvas + clear drawing canvas.
+      displayCtx.drawImage(canvas, 0, 0);
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    });
+  }
+
+  initializeTouchy() {
+    this.points = []; // list of all touch points in the current movement
+
+    var toucher = Touchy(this.canvas, true, (hand, finger) => {
+      this.fingerTouchedScreen(hand, finger, this.displayCtx, this.ctx, this.canvas);
+    });
+  }
+
+  setCanvasWidths() {
+    console.log('current canvas dimensions: ' + this.displayCanvas.width + ' x ' + this.displayCanvas.height);
+
+    // Must set DOM properties, as CSS styling will distory otherwise.
+    this.displayCanvas.width = parseInt(getComputedStyle(this.displayCanvas).width, 10);
+    this.displayCanvas.height = parseInt(getComputedStyle(this.displayCanvas).height, 10);
+    this.canvas.width = this.displayCanvas.width;
+    this.canvas.height = this.displayCanvas.height;
+
+    console.log('new canvas dimensions: ' + this.displayCanvas.width + ' x ' + this.displayCanvas.height);
   }
 
   toggleEraser() {
@@ -141,26 +164,45 @@ class Drawing extends React.Component {
     // submit to the presentation endpoint.
   }
 
+  hideQuestion() {
+    this.setState({ isQuestionOpen: false });
+  }
+
+  fullscreen() {
+    console.log('request fullscreen');
+    React.findDOMNode(this).webkitRequestFullscreen();
+    this.setState({ isFullscreen: true });
+  }
+
   render() {
     var eraserStyle = {};
     if (this.state.isEraserActive)
       eraserStyle = { backgroundImage: 'url(../../images/eraser-active.svg)' };
-
-    console.log('lineWidth = ', this.state.lineWidth);
 
     var activeStyle = {backgroundColor: '#fff'};
     var smallStyle = (this.state.lineWidth === 's') ? activeStyle : {};
     var mediumStyle = (this.state.lineWidth === 'm') ? activeStyle : {};
     var largeStyle = (this.state.lineWidth === 'l') ? activeStyle : {};
 
-    console.log(smallStyle);
-    console.log(mediumStyle);
-    console.log(largeStyle);
+    if (!this.state.isQuestionOpen)
+      var questionStyle = {display: 'none'};
+
+    if (this.state.isFullscreen)
+      var fullscreenStyle = {display: 'none'};
 
     return (
       <div className='Drawing'>
-        <canvas ref='displayCanvas' id='displayCanvas'></canvas>
-        <canvas ref='canvas' id='canvas'></canvas>
+        <div className='QuestionOverlay' style={questionStyle}>
+          <div className="QuestionOverlay-content" >
+            <h3>Draw the 3-way handshake TCP uses to establish a connection</h3>
+            <button className='Button' onClick={this.hideQuestion.bind(this)}>Tap To Start Drawing</button>
+          </div>
+        </div>
+
+        <div onClick={this.fullscreen.bind(this)} className='fullscreen' style={fullscreenStyle}></div>
+        <canvas key='displayCanvas' ref='displayCanvas' id='displayCanvas'></canvas>
+        <canvas key='canvas' ref='canvas' id='canvas'></canvas>
+
         <div className='ActionBar'>
           <div onClick={this.toggleEraser.bind(this)} className='Action Action--eraser'>
             <div style={eraserStyle} className='Action-icon'></div>
