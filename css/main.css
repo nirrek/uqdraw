@@ -314,3 +314,9 @@ input {
 input:focus {
   outline: none;
 }
+
+
+/* Action Bar */
+.Action--eraser > .Action-icon {
+  background-image: url('../../images/eraser.svg');
+}

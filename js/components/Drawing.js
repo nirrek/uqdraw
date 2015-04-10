@@ -2,7 +2,18 @@ import React from 'react';
 let objectAssign = require('object-assign');
 import Touchy from '../touchy.js';
 
+require('../../css/components/Drawing.scss');
+
 class Drawing extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isEraserActive: false,
+      lineWidth: 'm',
+    };
+    this.ctx = undefined; // drawing canvas context
+  }
+
   componentDidMount() {
     // gets the midpoint between two points
     function computeMidpoint(point1, point2) {
@@ -21,7 +32,6 @@ class Drawing extends React.Component {
 
       // Setup event listeners for the finger that caused the event firing.
       finger.on('start', function(point) {
-        console.log('start\n');
         points = [];
         points.push(point);
       });
@@ -59,9 +69,6 @@ class Drawing extends React.Component {
         // Transfer image from drawing to display canvas + clear drawing canvas.
         displayCtx.drawImage(canvas, 0, 0);
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-        console.log('\n');
-        console.log('end\n');
       });
     }
 
@@ -69,13 +76,14 @@ class Drawing extends React.Component {
     // Main Initialization Logic
     // ------------------------------------------------------------------------
     // Setup the presentation canvas
-    var displayCanvas = document.querySelector('#displayCanvas');
-    var displayCtx = displayCanvas.getContext('2d');
+    let displayCanvas = React.findDOMNode(this.refs.displayCanvas);
+    let displayCtx = displayCanvas.getContext('2d');
     // Must set DOM properties, as CSS styling will distory otherwise.
     displayCanvas.width = parseInt(getComputedStyle(displayCanvas).width, 10);
     displayCanvas.height = parseInt(getComputedStyle(displayCanvas).height, 10);
     window.displayCtx = displayCtx; // expose for debugging
     window.displayCanvas = displayCanvas;
+    this.displayCanvas = displayCanvas; // need access for saving img
 
     // Setup the drawing canvas that will actually capture the drawing input
     // before transferring it to the presentation canvas
@@ -83,9 +91,10 @@ class Drawing extends React.Component {
     var ctx = canvas.getContext('2d');
     canvas.width = displayCanvas.width;
     canvas.height = displayCanvas.height;
+    this.ctx = ctx; // put on the React Component so methods can access it
 
     // setup canvas
-    ctx.lineWidth = 5;
+    this.setLineWidth('m');
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
     ctx.strokeStyle = '#333333';
@@ -97,11 +106,76 @@ class Drawing extends React.Component {
     });
   }
 
+  toggleEraser() {
+    console.log('toggleEraser');
+    if (!this.state.isEraserActive) this.ctx.strokeStyle = '#F7FAFE';
+    else                           this.ctx.strokeStyle = '#333333';
+    this.setState({ isEraserActive: !this.state.isEraserActive });
+  }
+
+  // Sets the line width for the canvas and stores the state on the component
+  setLineWidth(size) { // size is 's' | 'm' | 'l'
+    let lineWidth;
+    if (size === 's') lineWidth = 3;
+    if (size === 'm') lineWidth = 5;
+    if (size === 'l') lineWidth = 10;
+    this.ctx.lineWidth = lineWidth;
+
+    console.log('setState of lineWidth to ' + size);
+    this.setState({
+      lineWidth: size
+    });
+  }
+
+  // Cycles the line width to the next size in the list.
+  cycleLineWidth() {
+    if      (this.state.lineWidth === 's') this.setLineWidth('m');
+    else if (this.state.lineWidth === 'm') this.setLineWidth('l');
+    else if (this.state.lineWidth === 'l') this.setLineWidth('s');
+  }
+
+  // Submit the current canvas
+  submitImage() {
+    let dataURL = this.displayCanvas.toDataURL(); // canvas encoded as dataURI
+    console.log(dataURL);
+    // submit to the presentation endpoint.
+  }
+
   render() {
+    var eraserStyle = {};
+    if (this.state.isEraserActive)
+      eraserStyle = { backgroundImage: 'url(../../images/eraser-active.svg)' };
+
+    console.log('lineWidth = ', this.state.lineWidth);
+
+    var activeStyle = {backgroundColor: '#fff'};
+    var smallStyle = (this.state.lineWidth === 's') ? activeStyle : {};
+    var mediumStyle = (this.state.lineWidth === 'm') ? activeStyle : {};
+    var largeStyle = (this.state.lineWidth === 'l') ? activeStyle : {};
+
+    console.log(smallStyle);
+    console.log(mediumStyle);
+    console.log(largeStyle);
+
     return (
       <div className='Drawing'>
-        <canvas id='displayCanvas'></canvas>
-        <canvas id='canvas'></canvas>
+        <canvas ref='displayCanvas' id='displayCanvas'></canvas>
+        <canvas ref='canvas' id='canvas'></canvas>
+        <div className='ActionBar'>
+          <div onClick={this.toggleEraser.bind(this)} className='Action Action--eraser'>
+            <div style={eraserStyle} className='Action-icon'></div>
+          </div>
+          <div className='Action Action--submit'>
+            <div onClick={this.submitImage.bind(this)}>Submit Answer</div>
+          </div>
+          <div onClick={this.cycleLineWidth.bind(this)} className='Action Action--strokeWidth'>
+            <div className='BrushSizeIcon'>
+              <div style={smallStyle} className='BrushSize BrushSize-small'></div>
+              <div style={mediumStyle} className='BrushSize BrushSize-medium'></div>
+              <div style={largeStyle} className='BrushSize BrushSize-large'></div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
