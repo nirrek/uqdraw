@@ -1,4 +1,5 @@
 import React from 'react';
+import Header from './Header.js';
 import { Link } from 'react-router';
 import { Button } from './UI';
 let Firebase = require('firebase');
@@ -131,10 +132,10 @@ class QuestionManager extends React.Component {
       questionManager: {
         background: '#5C42AB',
         position: 'absolute',
-        top: '0',
-        right: '0',
-        bottom: '0',
-        left: '0',
+        top: 83,
+        right: 0,
+        bottom: 0,
+        left: 0,
       },
       titleBar: {
         display: 'flex',
@@ -196,26 +197,29 @@ class QuestionManager extends React.Component {
     });
 
     return (
-      <div className='QuestionManager' style={styles.questionManager} onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} onMouseMove={this.mouseMove.bind(this)} data-scrollable="true">
-        <div className='TitleBar' style={styles.titleBar} data-scrollable="true">
-          <Link to="app" className="TitleBar-link" style={styles.welcomeLink}>Welcome</Link>
-          <div className="TitleBar-title" style={styles.title}>
-            <h1>Question Manager - {this.props.routeParams.courseId}</h1>
-          </div>
-        </div>
-        <div style={styles.canvas}>
-          <div className='CardLists scrollbar' style={styles.cardLists} ref="cardLists" data-scrollable="true">
-            {lectures}
-            <div style={styles.createList} onClick={this.showLectureModal.bind(this)}>
-              <span>Add a new lecture...</span>
+      <div>
+        <Header/>
+        <div className='QuestionManager' style={styles.questionManager} onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} onMouseMove={this.mouseMove.bind(this)} data-scrollable="true">
+          <div className='TitleBar' style={styles.titleBar} data-scrollable="true">
+            <Link to="app" className="TitleBar-link" style={styles.welcomeLink}>Welcome</Link>
+            <div className="TitleBar-title" style={styles.title}>
+              <h1>Question Manager - {this.props.routeParams.courseId}</h1>
             </div>
           </div>
+          <div style={styles.canvas}>
+            <div className='CardLists scrollbar' style={styles.cardLists} ref="cardLists" data-scrollable="true">
+              {lectures}
+              <div style={styles.createList} onClick={this.showLectureModal.bind(this)}>
+                <span>Add a new lecture...</span>
+              </div>
+            </div>
+          </div>
+          <LectureComposer
+            isOpen={this.state.isLectureModalOpen}
+            onClose={this.hideLectureModal.bind(this)}
+            onSave={this.onAddLecture.bind(this)}
+          />
         </div>
-        <LectureComposer
-          isOpen={this.state.isLectureModalOpen}
-          onClose={this.hideLectureModal.bind(this)}
-          onSave={this.onAddLecture.bind(this)}
-        />
       </div>
     );
   }
