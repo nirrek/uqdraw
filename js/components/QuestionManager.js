@@ -12,6 +12,7 @@ Modal.injectCSS();
 
 class QuestionManager extends React.Component {
   constructor(props) {
+    props.onChangeCourse(null, props.routeParams.courseName);
    super(props);
     this.state = {
       curYPos: 0,
@@ -22,29 +23,49 @@ class QuestionManager extends React.Component {
       isLectureModalOpen: false,
       lectures: {},
       questions: {},
-      courseId: '-JlUd0xRBkwULfuGFGqo',
     };
+
+    this.getLectures = this.getLectures.bind(this);
+    this.getquestions = this.getquestions.bind(this);
   }
 
   componentDidMount() {
     // Store dom node reference to scrolling div
     this.state.node = React.findDOMNode(this.refs.cardLists);
 
-    this.lecturesRef = new Firebase(`${config.firebase.base}/lectures/${this.state.courseId}`);
-    this.lecturesRef.on('value', (snapshot) => {
-      let content = snapshot.val() || {};
-      this.setState({lectures: content});
-    });
+    if (this.props.courseId) {
+      this.getLectures(this.props.courseId);
+      this.getquestions(this.props.courseId);
+    }
+  }
 
-    this.questionsRef = new Firebase(`${config.firebase.base}/questions/${this.state.courseId}`);
-    this.questionsRef.on('value', (snapshot) => {
-      let content = snapshot.val() || {};
-      this.setState({questions: content});
-    });
+  componentWillReceiveProps(newProps) {
+    if (!this.props.courseId) {
+      if (newProps.courseId) {
+        this.getLectures(newProps.courseId);
+        this.getquestions(newProps.courseId);
+      }
+    }
   }
 
   componentWillUnmount() {
     this.lecturesRef.off();
+  }
+
+  getLectures(courseId) {
+    this.lecturesRef = new Firebase(`${config.firebase.base}/lectures/${courseId}`);
+    this.lecturesRef.on('value', (snapshot) => {
+      let content = snapshot.val() || {};
+      this.setState({lectures: content});
+    });
+  }
+
+  getquestions(courseId) {
+    this.questionsRef = new Firebase(`${config.firebase.base}/questions/${courseId}`);
+    this.questionsRef.on('value', (snapshot) => {
+      let content = snapshot.val() || {};
+      this.setState({questions: content});
+    });
   }
 
   mouseMove(event) {
@@ -196,7 +217,7 @@ class QuestionManager extends React.Component {
       return (
         <CardList
           key={key}
-          courseId={this.props.routeParams.courseId}
+          courseName={this.props.courseName}
           lectureId={key}
           lecture={this.state.lectures[key]}
           questions={this.state.questions}
@@ -214,7 +235,7 @@ class QuestionManager extends React.Component {
           <div className='TitleBar' style={styles.titleBar} data-scrollable="true">
             <Link to="app" className="TitleBar-link" style={styles.welcomeLink}>Welcome</Link>
             <div className="TitleBar-title" style={styles.title}>
-              <h1>Question Manager - {this.props.routeParams.courseId}</h1>
+              <h1>Question Manager - {this.props.courseName}</h1>
             </div>
           </div>
           <div style={styles.canvas}>
@@ -337,12 +358,11 @@ class CardList extends React.Component {
         );
       });
     }
-
     return (
       <div className='CardList' style={styles.cardList} draggable="true">
         <div style={styles.titleBar}>
           <h2 style={styles.title}>{this.props.lecture.title}</h2>
-          <Link to="presenter" params={{courseId: this.props.courseId, lectureId: this.props.lectureId}}>P</Link>
+          <Link to="presenter" params={{courseName: this.props.courseName, lectureId: this.props.lectureId}}>P</Link>
           <a
             className=""
             onClick={this.onRemoveLecture.bind(this)}
