@@ -6,6 +6,7 @@ import { Button } from './UI.js';
 let Firebase = require('firebase');
 let Modal = require('react-modal');
 require('../../css/components/Button.scss');
+require('../../css/components/WelcomeView.scss');
 
 // React Modal Setup
 var appElement = document.getElementById('react');
@@ -141,9 +142,8 @@ class Welcome extends React.Component {
         <Header />
         <div className='Welcome'>
           <div className='Marquee'>
-            <h1 className='Heading'>Welcome, Lecturer.</h1>
-            <div className="Subheading">Select the course the questions are for below, or add a new course.</div>
-            <Link to="drawing">Drawing</Link>
+            <h1 className='Marquee-Heading'>Welcome, Lecturer.</h1>
+            <div className="Marquee-Subheading">Select the course the questions are for below, or add a new course.</div>
           </div>
           <SubjectList/>
         </div>

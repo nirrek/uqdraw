@@ -1,0 +1,70 @@
+.WelcomeView {
+  text-align: center;
+}
+
+.Marquee {
+  height: 400px;
+  background: #5C42AB;
+  text-align: center;
+  color: #fff;
+  font-size: 1.5em;
+  border-bottom: 1px solid #fff;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.Marquee:before {
+  content: ' ';
+  display: table;
+  clear: both;
+}
+
+.Marquee-Heading { margin: 0; position: relative; }
+.Marquee-Subheading { margin-top: -.25em; }
+
+.SubjectList {
+  margin: 4em auto 0;
+  display: flex;
+  justify-content: center;
+}
+
+.ListItem {
+  background: #fff;
+  border: 1px solid #eee;
+  border-bottom-color: #ddd;
+  box-shadow: 0 1px 1px rgba(0,0,0,.15);
+  padding: .75em 1em;
+  font-weight: bold;
+  color: #444;
+  font-size: 22px;
+  margin-right: 1em;
+  margin-bottom: 1em;
+  border-radius: 4px;
+  transition: all 0.3s ease-out;
+  display: inline-block;
+  text-decoration: none;
+}
+.ListItem:hover { cursor: pointer; box-shadow: 0 2px 3px rgba(0,0,0,.15);}
+
+
+.ListItem--outline {
+  border: 1px dashed #ccc;
+  background: transparent;
+  color: #c0c0c0;
+  box-shadow: none;
+  text-shadow: 0px 1px 0px #fff;
+}
+.ListItem--outline:hover {
+  box-shadow: none;
+}
+
+.Icon--plus {
+  background-image: url('/images/arrows_circle_plus.svg');
+  background-size: cover;
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+  position: relative;
+  top: 5px;
+  left: -5px;
+}
