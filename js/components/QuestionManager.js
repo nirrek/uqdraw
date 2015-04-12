@@ -26,7 +26,7 @@ class QuestionManager extends React.Component {
     };
 
     this.getLectures = this.getLectures.bind(this);
-    this.getquestions = this.getquestions.bind(this);
+    this.getquestions = this.getQuestions.bind(this);
   }
 
   componentDidMount() {
@@ -60,7 +60,7 @@ class QuestionManager extends React.Component {
     });
   }
 
-  getquestions(courseId) {
+  getQuestions(courseId) {
     this.questionsRef = new Firebase(`${config.firebase.base}/questions/${courseId}`);
     this.questionsRef.on('value', (snapshot) => {
       let content = snapshot.val() || {};
