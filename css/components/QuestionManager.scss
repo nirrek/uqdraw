@@ -45,8 +45,28 @@
 }
 
 .PresenterLinkContainer a {
-  color: #F7FAFE;
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   padding: .75em 0;
   display: inline-block;
+  transition: color 200ms linear;
+}
+
+.PresenterLinkContainer a:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+//
+// QUESTION COMPOSER STYLES
+//
+.QuestionInput {
+  height: 410px;
+}
+
+.Modal--questionComposer {
+  margin-top: -272px;
+}
+
+.Modal--lectureComposer {
+  height: 209px;
 }

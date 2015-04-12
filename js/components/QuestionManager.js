@@ -401,13 +401,13 @@ class LectureComposer extends React.Component {
     return (
       <Modal isOpen={this.props.isOpen} className='Modal--lectureComposer'>
         <a onClick={this.props.onClose} href="#" className='Modal__cross'>&times;</a>
-        <div className='AdvancedInput'>
-          <div className={labelClass}>Enter Lecture Name Here</div>
-          <input type="text" value={this.state.lecture} onChange={this.onInputChange.bind(this)}/>
-        </div>
-        <div className='Modal__footer'>
-          <Button type="submit" onClick={this.onSave.bind(this)}>Add Lecture</Button>
-        </div>
+          <div className='Slat'>
+            <input placeholder='Lecture Name' className='Input' type="text" value={this.state.lecture} onChange={this.onInputChange.bind(this)} />
+          </div>
+          <div className='Slat'>
+            <button className='Button Button--secondary' type="submit" onClick={this.onSave.bind(this)}>Add Lecture</button>
+          </div>
+
       </Modal>
     );
   }
@@ -445,9 +445,11 @@ class QuestionComposer extends React.Component {
     return (
       <Modal className='Modal--questionComposer' isOpen={this.props.isOpen}>
         <a onClick={this.props.onClose} href="#" className='Modal__cross'>&times;</a>
-        <div className='AdvancedInput'>
-          <div className={labelClass}>Enter Question Here</div>
-          <textarea onChange={this.onTextareaChange.bind(this)} value={this.state.question} />
+        <div className='QuestionInput'>
+          <div className='AdvancedInput'>
+            <div className={labelClass}>Enter Question Here</div>
+            <textarea onChange={this.onTextareaChange.bind(this)} value={this.state.question} />
+          </div>
         </div>
         <a href="#">Insert supporting image &rarr;</a>
         <div className='Modal__footer'>

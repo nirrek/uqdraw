@@ -21,6 +21,7 @@ html, body {
 header {
   background-color: #523B99;
   text-align: center;
+  flex-shrink: 0;
 }
 
 
