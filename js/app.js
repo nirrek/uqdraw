@@ -2,23 +2,35 @@ import React from 'react';
 import Router from 'react-router';
 import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
 
+import config from './config.js';
 import Header from './components/Header.js';
 import Welcome from './components/Welcome';
 import QuestionManager from './components/QuestionManager';
 import Presenter from './components/Presenter';
 import Drawing from './components/Drawing.js';
+let Firebase = require('firebase');
 
 class App extends React.Component {
   constructor() {
     this.state = {
       userId: 'uqjstee8',
       courseId: undefined,
+      courseName: undefined,
     };
     this.onChangeCourse = this.onChangeCourse.bind(this);
   }
 
-  onChangeCourse(courseId) {
-    this.setState({courseId: courseId});
+  onChangeCourse(courseId, courseName) {
+    if (!courseId && courseName) {
+      let ref = new Firebase(config.firebase.base + '/courseLists/' + this.state.userId);
+      ref.orderByValue().equalTo(courseName).once('value', (snapshot) => {
+        let content = snapshot.val();
+        let firstKey = Object.keys(content)[0];
+        this.setState({courseId: firstKey, courseName: content[firstKey]});
+      });
+    } else {
+      this.setState({courseId: courseId, courseName: courseName});
+    }
   }
 
   render() {
