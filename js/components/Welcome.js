@@ -6,6 +6,8 @@ import { Button } from './UI.js';
 let Firebase = require('firebase');
 let Modal = require('react-modal');
 require('../../css/components/Button.scss');
+require('../../css/components/WelcomeView.scss');
+require('../../css/components/Form.scss');
 
 // React Modal Setup
 var appElement = document.getElementById('react');
@@ -85,7 +87,13 @@ class SubjectList extends React.Component {
   }
 
   // Click handler for adding a new course button.
-  showForm(event) { this.setState({ modalIsOpen: true }); }
+  showForm(event) {
+    this.setState({ modalIsOpen: true }, () => {
+      // hack to focus the input, for some reason the react-modal destroys
+      // any ref attribute inside it, so we cant use that. no time to debug it.
+      document.querySelector('.Input').focus();
+    });
+  }
 
   addNewCourse(event) {
     this.ref.push(this.state.newCourse);
@@ -100,8 +108,13 @@ class SubjectList extends React.Component {
     this.setState({ newCourse: event.target.value });
   }
 
-  openModal() { this.setState({ modalIsOpen: true }); }
-  closeModal() { this.setState({ modalIsOpen: false }); }
+  openModal() {
+    this.setState({ modalIsOpen: true });
+  }
+  closeModal(event) {
+    event.preventDefault();
+    this.setState({ modalIsOpen: false });
+  }
 
   render() {
     // Style for the SubjectList containing cell
@@ -114,23 +127,27 @@ class SubjectList extends React.Component {
     };
 
     var items = Object.keys(this.state.courseLists).map((key) => {
-      return (<SubjectListItem to='questionManager' courseId={key} courseName={this.state.courseLists[key]} onChangeCourse={this.props.onChangeCourse}>{this.state.courseLists[key]}</SubjectListItem>);
+      return (<SubjectListItem key={key} to='questionManager' courseId={key} courseName={this.state.courseLists[key]} onChangeCourse={this.props.onChangeCourse}>{this.state.courseLists[key]}</SubjectListItem>);
     });
 
     return (
       <Grid className="SubjectList">
         <Cell style={cellStyle}>
           {items}
-          <div className="ListItem ListItem--outline" onClick={this.showForm}>
+          <div key='addNew' className="ListItem ListItem--outline" onClick={this.showForm.bind(this)}>
             <i className='Icon--plus'></i>Add New
           </div>
         </Cell>
         <Modal isOpen={this.state.modalIsOpen} className='Modal--addCourse'>
-          <form>
-            <input type="text" value={this.state.newCourse} onChange={this.onCourseInputChange} />
-            <button type="submit" onClick={this.addNewCourse}>Add Course</button>
+          <form ref='Form'>
+            <div className='Slat'>
+              <input placeholder='Course Name' className='Input' type="text" value={this.state.newCourse} onChange={this.onCourseInputChange.bind(this)} />
+            </div>
+            <div className='Slat'>
+              <button className='Button Button--secondary' type="submit" onClick={this.addNewCourse.bind(this)}>Add Course</button>
+            </div>
           </form>
-          <button onClick={this.closeModal}>Close</button>
+          <a href="" className='Modal__cross' onClick={this.closeModal.bind(this)}>&times;</a>
         </Modal>
       </Grid>
     );
@@ -144,9 +161,8 @@ class Welcome extends React.Component {
         <Header />
         <div className='Welcome'>
           <div className='Marquee'>
-            <h1 className='Heading'>Welcome, Lecturer.</h1>
-            <div className="Subheading">Select the course the questions are for below, or add a new course.</div>
-            <Link to="drawing">Drawing</Link>
+            <h1 className='Marquee-Heading'>Welcome, Lecturer.</h1>
+            <div className="Marquee-Subheading">Select the course the questions are for below, or add a new course.</div>
           </div>
           <SubjectList onChangeCourse={this.props.onChangeCourse}/>
         </div>

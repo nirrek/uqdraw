@@ -1,13 +1,13 @@
 import React from 'react';
+import Logo from './Logo.js';
 
 class Header extends React.Component {
+  shouldComponentUpdate() { return false; }
+
   render() {
     return (
       <header>
-        <div className='Logo'>
-          <span className="Pencil"></span>
-          <span className="Name">UQDraw</span>
-        </div>
+        <Logo />
       </header>
     );
   }

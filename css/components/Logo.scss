@@ -1,0 +1,18 @@
+.LogoBar {
+  flex-shrink: 0; // flexbox hack so browsers obey minimum shrink height of el.
+}
+
+.Logo {
+  height: 64px;
+}
+
+.Logo-img {
+  height: 100%;
+  transition: opacity 300ms ease-in-out;
+}
+
+@media(max-width: 360px) {
+  .Logo {
+    height: 50px;
+  }
+}

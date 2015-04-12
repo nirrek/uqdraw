@@ -2,10 +2,18 @@
 html { box-sizing: border-box; }
 *, *:before, *:after { box-sizing: inherit; }
 
+/* Getting the height 100% down the chain */
+html, body, #react, .App {
+  height: 100%;
+}
+
+body { max-height: 100%; overflow: auto; }
+.noScrollOnOverflow { overflow-y: hidden; }
+
 html, body {
   margin: 0;
   font-family: 'Source Sans Pro';
-  font-size: 16;
+  font-size: 16px; /* establish REM baseline */
   line-height: 1.5;
   background-color: #F7FAFE;
 }
@@ -13,113 +21,16 @@ html, body {
 header {
   background-color: #523B99;
   text-align: center;
-}
-
-.Marquee {
-  height: 400px;
-  background: #5C42AB;
-  text-align: center;
-  color: #fff;
-  font-size: 1.5em;
-  border-bottom: 1px solid #fff;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-}
-.Marquee:before {
-  content: ' ';
-  display: table;
-  clear: both;
-}
-
-.Heading { margin: 0; position: relative; }
-.Subheading { margin-top: -.25em; }
-
-.SubjectList {
-  margin: 4em auto 0;
-  display: flex;
-  justify-content: center;
-}
-
-.ListItem {
-  background: #fff;
-  border: 1px solid #eee;
-  border-bottom-color: #ddd;
-  box-shadow: 0 1px 1px rgba(0,0,0,.15);
-  padding: .75em 1em;
-  font-weight: bold;
-  color: #444;
-  font-size: 22px;
-  margin-right: 1em;
-  margin-bottom: 1em;
-  border-radius: 4px;
-  transition: all 0.3s ease-out;
-  display: inline-block;
-  text-decoration: none;
-  flex-shrink
-}
-.ListItem:hover { cursor: pointer; box-shadow: 0 2px 3px rgba(0,0,0,.15);}
-
-
-.ListItem--outline {
-  border: 1px dashed #ccc;
-  background: transparent;
-  color: #c0c0c0;
-  box-shadow: none;
-  text-shadow: 0px 1px 0px #fff;
-}
-.ListItem--outline:hover {
-  box-shadow: none;
-}
-
-.Icon--plus {
-  background-image: url('/images/arrows_circle_plus.svg');
-  background-size: cover;
-  width: 25px;
-  height: 25px;
-  display: inline-block;
-  position: relative;
-  top: 5px;
-  left: -5px;
+  flex-shrink: 0;
 }
 
 
-.Logo {
-  font-size: 25px;
-  font-weight: 800;
-  text-transform: uppercase;
-  background-color: rgba(0,0,0,.1);
-  border-bottom: 1px solid rgba(0,0,0,.05);
-  color: #E1DDED;
-}
-
-.Name {
-  padding: 25px 0 20px;
-  display: inline-block;
-  text-shadow: 0px 1px 2px rgba(0,0,0,.2);
-}
-
-.Pencil {
-  background-image: url('/images/pen.svg');
-  width: 22px;
-  height: 22px;
-  display: inline-block;
-  background-size: cover;
-  position: absolute;
-  top: 31px;
-  margin-left: -26px;
-  /*-webkit-filter: drop-shadow(0px 1px 2px rgba(0,0,0,.2));*/
-}
 
 
 /* From other project aboe here */
 /* -------------------------------------------------------------------------- */
 
 .App {
-}
-
-.WelcomeView {
-  text-align: center;
 }
 
 /* Base grid styles */
@@ -224,16 +135,7 @@ header {
   text-decoration: none;
 }
 
-.Modal--addCourse {
-  width: 200px;
-  height: 150px;
-  top: 50%;
-  left: 50%;
-  margin-top: -75px;
-  margin-left: -100px;
-  box-shadow: 0 1px 15px rgba(0, 0, 0, 0.3);
-  border: 1px solid #FFF;
-}
+
 
 .Modal--lectureComposer {
   width: 360px;
@@ -316,6 +218,14 @@ input:focus {
 }
 
 
+/*
+ * NOTE
+   | All these url references are here as Webpack Sass loader is chucking a shit
+   |  with url references. No time to figure it out at the moment, probably need
+   |  to configure webpack and/or the loader to know how to resolve path names.
+   |  Once done these should be moved to their respective components Sass.
+   V  */
+
 /* Action Bar */
 .Action--eraser > .Action-icon {
   background-image: url('../../images/eraser.svg');
@@ -323,4 +233,19 @@ input:focus {
 
 .fullscreen {
   background-image: url('../../images/arrows_expand.svg');
+}
+
+/*
+ * Media Queries
+ */
+@media(max-width: 360px) {
+  .LogoBar span {
+    padding: 10px 0 !important;
+  }
+
+  .MainContainer {
+    margin-top: 0 !important;
+  }
+
+  h1 { font-size: 1.5em; }
 }

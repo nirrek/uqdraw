@@ -6,6 +6,8 @@ import { Button } from './UI';
 let Firebase = require('firebase');
 let Modal = require('react-modal');
 
+require('../../css/components/QuestionManager.scss');
+
 var appElement = document.getElementById('react');
 Modal.setAppElement(appElement);
 Modal.injectCSS();
@@ -229,21 +231,22 @@ class QuestionManager extends React.Component {
     });
 
     return (
-      <div>
+      <div className='ViewContainer'>
         <Header/>
         <div className='QuestionManager' style={styles.questionManager} onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} onMouseMove={this.mouseMove.bind(this)} data-scrollable="true">
           <div className='TitleBar' style={styles.titleBar} data-scrollable="true">
-            <Link to="app" className="TitleBar-link" style={styles.welcomeLink}>Welcome</Link>
             <div className="TitleBar-title" style={styles.title}>
               <h1>Question Manager - {this.props.courseName}</h1>
             </div>
           </div>
-          <div style={styles.canvas}>
+          <div className='CardListsContainer' style={styles.canvas}>
             <div className='CardLists scrollbar' style={styles.cardLists} ref="cardLists" data-scrollable="true">
               {lectures}
               <div style={styles.createList} onClick={this.showLectureModal.bind(this)}>
                 <span>Add a new lecture...</span>
               </div>
+            {/* side scroll does not respect right margin of rightmost object without this */
+            <div>&nbsp;</div> }
             </div>
           </div>
           <LectureComposer
@@ -252,6 +255,8 @@ class QuestionManager extends React.Component {
             onSave={this.onAddLecture.bind(this)}
           />
         </div>
+        {/* Quick hack so that the scrollbar isnt sitting on bottom */}
+        <div className='QuestionManagerFooter' />
       </div>
     );
   }
@@ -362,7 +367,9 @@ class CardList extends React.Component {
       <div className='CardList' style={styles.cardList} draggable="true">
         <div style={styles.titleBar}>
           <h2 style={styles.title}>{this.props.lecture.title}</h2>
-          <Link to="presenter" params={{courseName: this.props.courseName, lectureId: this.props.lectureId}}>P</Link>
+          <div className='PresenterLinkContainer'>
+            <Link to="presenter" params={{courseName: this.props.courseName, lectureId: this.props.lectureId}}>Launch {this.props.lecture.title} Presentation</Link>
+          </div>
           <a
             className=""
             onClick={this.onRemoveLecture.bind(this)}
@@ -414,13 +421,13 @@ class LectureComposer extends React.Component {
     return (
       <Modal isOpen={this.props.isOpen} className='Modal--lectureComposer'>
         <a onClick={this.props.onClose} href="#" className='Modal__cross'>&times;</a>
-        <div className='AdvancedInput'>
-          <div className={labelClass}>Enter Lecture Name Here</div>
-          <input type="text" value={this.state.lecture} onChange={this.onInputChange.bind(this)}/>
-        </div>
-        <div className='Modal__footer'>
-          <Button type="submit" onClick={this.onSave.bind(this)}>Add Lecture</Button>
-        </div>
+          <div className='Slat'>
+            <input placeholder='Lecture Name' className='Input' type="text" value={this.state.lecture} onChange={this.onInputChange.bind(this)} />
+          </div>
+          <div className='Slat'>
+            <button className='Button Button--secondary' type="submit" onClick={this.onSave.bind(this)}>Add Lecture</button>
+          </div>
+
       </Modal>
     );
   }
@@ -458,9 +465,11 @@ class QuestionComposer extends React.Component {
     return (
       <Modal className='Modal--questionComposer' isOpen={this.props.isOpen}>
         <a onClick={this.props.onClose} href="#" className='Modal__cross'>&times;</a>
-        <div className='AdvancedInput'>
-          <div className={labelClass}>Enter Question Here</div>
-          <textarea onChange={this.onTextareaChange.bind(this)} value={this.state.question} />
+        <div className='QuestionInput'>
+          <div className='AdvancedInput'>
+            <div className={labelClass}>Enter Question Here</div>
+            <textarea onChange={this.onTextareaChange.bind(this)} value={this.state.question} />
+          </div>
         </div>
         <a href="#">Insert supporting image &rarr;</a>
         <div className='Modal__footer'>

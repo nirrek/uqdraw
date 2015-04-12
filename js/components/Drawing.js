@@ -18,6 +18,9 @@ class Drawing extends React.Component {
   }
 
   componentDidMount() {
+    // prevents 'pull-to-refresh' on mobile browsers firing while drawing.
+    document.body.classList.add('noScrollOnOverflow');
+
     React.findDOMNode(this).addEventListener('webkitfullscreenchange', () => {
       // Need to reinit state after fullscreen, chrome is losing state all over
       // the place. No description of what they are doing.
@@ -42,6 +45,11 @@ class Drawing extends React.Component {
 
     this.initializeCanvases();
     this.initializeTouchy();  // sets up touch event handling for drawing input.
+  }
+
+  componentWillUnmount() {
+    // TODO: probably memory leaks from the Touchy event handlers
+    document.body.classList.remove('noScrollOnOverflow');
   }
 
   initializeCanvases() {
