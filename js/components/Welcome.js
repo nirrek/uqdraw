@@ -7,6 +7,7 @@ let Firebase = require('firebase');
 let Modal = require('react-modal');
 require('../../css/components/Button.scss');
 require('../../css/components/WelcomeView.scss');
+require('../../css/components/Form.scss');
 
 // React Modal Setup
 var appElement = document.getElementById('react');
@@ -82,7 +83,13 @@ class SubjectList extends React.Component {
   }
 
   // Click handler for adding a new course button.
-  showForm(event) { this.setState({ modalIsOpen: true }); }
+  showForm(event) {
+    this.setState({ modalIsOpen: true }, () => {
+      // hack to focus the input, for some reason the react-modal destroys
+      // any ref attribute inside it, so we cant use that. no time to debug it.
+      document.querySelector('.Input').focus();
+    });
+  }
 
   addNewCourse(event) {
     console.log(this.state.newCourse);
@@ -98,7 +105,9 @@ class SubjectList extends React.Component {
     this.setState({ newCourse: event.target.value });
   }
 
-  openModal() { this.setState({ modalIsOpen: true }); }
+  openModal() {
+    this.setState({ modalIsOpen: true });
+  }
   closeModal(event) {
     event.preventDefault();
     this.setState({ modalIsOpen: false });
@@ -127,9 +136,13 @@ class SubjectList extends React.Component {
           </div>
         </Cell>
         <Modal isOpen={this.state.modalIsOpen} className='Modal--addCourse'>
-          <form>
-            <input className='Input' type="text" value={this.state.newCourse} onChange={this.onCourseInputChange.bind(this)} />
-            <button type="submit" onClick={this.addNewCourse.bind(this)}>Add Course</button>
+          <form ref='Form'>
+            <div className='Slat'>
+              <input placeholder='Course Name' className='Input' type="text" value={this.state.newCourse} onChange={this.onCourseInputChange.bind(this)} />
+            </div>
+            <div className='Slat'>
+              <button className='Button Button--secondary' type="submit" onClick={this.addNewCourse.bind(this)}>Add Course</button>
+            </div>
           </form>
           <a href="" className='Modal__cross' onClick={this.closeModal.bind(this)}>&times;</a>
         </Modal>
