@@ -119,16 +119,16 @@ class SubjectList extends React.Component {
       <Grid className="SubjectList">
         <Cell style={cellStyle}>
           {items}
-          <div className="ListItem ListItem--outline" onClick={this.showForm}>
+          <div className="ListItem ListItem--outline" onClick={this.showForm.bind(this)}>
             <i className='Icon--plus'></i>Add New
           </div>
         </Cell>
         <Modal isOpen={this.state.modalIsOpen} className='Modal--addCourse'>
           <form>
             <input type="text" value={this.state.newCourse} onChange={this.onCourseInputChange} />
-            <button type="submit" onClick={this.addNewCourse}>Add Course</button>
+            <button type="submit" onClick={this.addNewCourse.bind(this)}>Add Course</button>
           </form>
-          <button onClick={this.closeModal}>Close</button>
+          <button onClick={this.closeModal.bind(this)}>Close</button>
         </Modal>
       </Grid>
     );
