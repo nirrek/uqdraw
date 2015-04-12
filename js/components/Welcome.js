@@ -99,7 +99,10 @@ class SubjectList extends React.Component {
   }
 
   openModal() { this.setState({ modalIsOpen: true }); }
-  closeModal() { this.setState({ modalIsOpen: false }); }
+  closeModal(event) {
+    event.preventDefault();
+    this.setState({ modalIsOpen: false });
+  }
 
   render() {
     // Style for the SubjectList containing cell
@@ -112,23 +115,23 @@ class SubjectList extends React.Component {
     };
 
     var items = this.state.courseLists.map((val) => {
-      return (<SubjectListItem to='questionManager' courseId={val}>{val}</SubjectListItem>);
+      return (<SubjectListItem key={val} to='questionManager' courseId={val}>{val}</SubjectListItem>);
     });
 
     return (
       <Grid className="SubjectList">
         <Cell style={cellStyle}>
           {items}
-          <div className="ListItem ListItem--outline" onClick={this.showForm.bind(this)}>
+          <div key='addNew' className="ListItem ListItem--outline" onClick={this.showForm.bind(this)}>
             <i className='Icon--plus'></i>Add New
           </div>
         </Cell>
         <Modal isOpen={this.state.modalIsOpen} className='Modal--addCourse'>
           <form>
-            <input type="text" value={this.state.newCourse} onChange={this.onCourseInputChange} />
+            <input className='Input' type="text" value={this.state.newCourse} onChange={this.onCourseInputChange.bind(this)} />
             <button type="submit" onClick={this.addNewCourse.bind(this)}>Add Course</button>
           </form>
-          <button onClick={this.closeModal.bind(this)}>Close</button>
+          <a href="" className='Modal__cross' onClick={this.closeModal.bind(this)}>&times;</a>
         </Modal>
       </Grid>
     );
