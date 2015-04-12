@@ -1,0 +1,89 @@
+.Heading {
+  color: #514673;
+}
+
+.MainContainer {
+  margin-top: 2em;
+  // overflow: auto; // turn scrolling back on as disabled on the body
+}
+
+//
+// Code Inputer Module
+//
+.CodeInputter {
+  display: 'flex';
+  justify-content: 'center';
+}
+
+.CodeInput {
+  background-color: #EFF2F6;
+  border-radius: 4px;
+  font-size: 28px;
+  font-weight: 800;
+  border-bottom: 1px solid #fff;
+  box-shadow: inset 0 1px 2px rgba(0,0,0, .1);
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  margin: .5em .25em;
+}
+
+.CodeInput:focus {
+  background-color: #E2E5E9 !important;
+}
+
+.topSection {
+  height: 12em;
+  flex-grow: initial !important;
+  flex-shrink: 0;
+}
+
+.CodeHeading {
+  margin-bottom: 0;
+}
+
+.CodeHeading {
+  color: #4D4661;
+}
+
+.CodeSubheading {
+  color: #9B96AB;
+  margin-top: -.5em;
+}
+
+h2, h3 {
+  color: #4D4661;
+  font-weight: 600;
+}
+
+/**
+ * LOGIN FORM
+ */
+.Input {
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 1rem 1em;
+  max-width: 300px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 1rem;
+}
+
+.Input:focus {
+  background-color: #E2E5E9;
+}
+
+.Input--first {
+  border-radius: 4px 4px 0 0;
+}
+
+.Input--last {
+  border-radius: 0 0 4px 4px;
+  border-bottom: none;
+}
+
+.Slat {
+  padding: 1rem 0;
+}
+
+.Slat--unpadded {
+  padding: 0;
+}

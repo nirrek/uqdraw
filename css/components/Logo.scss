@@ -1,3 +1,7 @@
+.LogoBar {
+  flex-shrink: 0; // flexbox hack so browsers obey minimum shrink height of el.
+}
+
 .Logo {
   height: 64px;
 }

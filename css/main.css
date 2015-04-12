@@ -7,11 +7,13 @@ html, body, #react, .App {
   height: 100%;
 }
 
+body { max-height: 100%; overflow: auto; }
+.noScrollOnOverflow { overflow-y: hidden; }
 
 html, body {
   margin: 0;
   font-family: 'Source Sans Pro';
-  font-size: 16;
+  font-size: 16px; /* establish REM baseline */
   line-height: 1.5;
   background-color: #F7FAFE;
 }
@@ -311,12 +313,6 @@ input:focus {
   background-image: url('../../images/arrows_expand.svg');
 }
 
-
-.CodeInput:focus {
-  background-color: #ddd !important;
-}
-
-
 /*
  * Media Queries
  */
@@ -328,4 +324,6 @@ input:focus {
   .MainContainer {
     margin-top: 0 !important;
   }
+
+  h1 { font-size: 1.5em; }
 }

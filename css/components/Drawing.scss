@@ -1,9 +1,3 @@
-body {
-  // prevents the drag-to-refresh thing from happening int he mobile browser
-  // while you are tryingn to draw on the canvas.
-  overflow-y: hidden;
-}
-
 .QuestionOverlay {
   position: absolute;
   background-color: rgba(0, 0, 0, .5);
