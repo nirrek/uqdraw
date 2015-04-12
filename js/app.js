@@ -9,10 +9,22 @@ import Presenter from './components/Presenter';
 import Drawing from './components/Drawing.js';
 
 class App extends React.Component {
+  constructor() {
+    this.state = {
+      userId: 'uqjstee8',
+      courseId: undefined,
+    };
+    this.onChangeCourse = this.onChangeCourse.bind(this);
+  }
+
+  onChangeCourse(courseId) {
+    this.setState({courseId: courseId});
+  }
+
   render() {
     return (
       <div className="App">
-        <RouteHandler routeParams={this.props.routeParams}/>
+        <RouteHandler {...this.state} onChangeCourse={this.onChangeCourse} routeParams={this.props.routeParams}/>
       </div>
     );
   }
@@ -24,8 +36,8 @@ class App extends React.Component {
 // the App component above (line 12 atm).
 let routes = (
   <Route name="app" path="/" handler={App}>
-    <Route name="questionManager" handler={QuestionManager} path="/:courseId/question-manager"/>
-    <Route name="presenter" handler={Presenter} path="/:courseId/:lectureId"/>
+    <Route name="questionManager" handler={QuestionManager} path="/:courseName/question-manager"/>
+    <Route name="presenter" handler={Presenter} path="/:courseName/:lectureId"/>
     <Route name="drawing" handler={Drawing} path="/drawing"/>
     <DefaultRoute handler={Welcome}/>
   </Route>
