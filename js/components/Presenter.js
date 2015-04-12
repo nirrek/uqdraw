@@ -1,4 +1,5 @@
 import React from 'react';
+import config from '../config.js';
 import Header from './Header.js';
 import { Button } from './UI';
 let Firebase = require('firebase');
@@ -8,11 +9,13 @@ let objectAssign = require('object-assign');
 class Presenter extends React.Component {
 
   constructor(props) {
+    props.onChangeCourse(null, props.routeParams.courseName);
     this.state = {
-      activeLectureKey: props.routeParams.lectureId,
       activeQuestionKey: undefined,
-      questions: ['Draw the TCP handshake', 'Draw a HTTP connection', 'Draw a picture of a large bird with dragon wings'],
-      responses: []
+      responses: [],
+      courseId: undefined,
+      lecture: {},
+      questions: {},
     };
     for (let i = 0; i < 20; i++) {
       this.state.responses.push({thumbnail: 'http://placehold.it/50x50'});
@@ -21,6 +24,45 @@ class Presenter extends React.Component {
     this.start = this.start.bind(this);
     this.stop = this.stop.bind(this);
     this.reset = this.reset.bind(this);
+    this.getLecture = this.getLecture.bind(this);
+    this.getquestions = this.getQuestions.bind(this);
+  }
+
+  componentDidMount() {
+    if (this.props.courseId) {
+      this.getLecture(this.props.courseId);
+      this.getQuestions(this.props.courseId);
+    }
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (!this.props.courseId) {
+      if (newProps.courseId) {
+        this.getLecture(newProps.courseId);
+        this.getquestions(newProps.courseId);
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    this.lectureRef.off();
+    this.questionsRef.off();
+  }
+
+  getLecture(courseId) {
+    this.lectureRef = new Firebase(`${config.firebase.base}/lectures/${courseId}`);
+    this.lectureRef.on('value', (snapshot) => {
+      let lectures = snapshot.val() || {};
+      this.setState({lecture: lectures[this.props.routeParams.lectureId]});
+    });
+  }
+
+  getQuestions(courseId) {
+    this.questionsRef = new Firebase(`${config.firebase.base}/questions/${courseId}`);
+    this.questionsRef.on('value', (snapshot) => {
+      let content = snapshot.val() || {};
+      this.setState({questions: content});
+    });
   }
 
   onActivateQuestion(key) {
@@ -147,6 +189,16 @@ class Presenter extends React.Component {
       },
     };
 
+    let questions = [];
+    if (this.state.lecture.questions) {
+      questions = this.state.lecture.questions.map((key) => {
+        return {
+          key: key,
+          value: this.state.questions[key],
+        };
+      });
+    }
+
     let timer;
     if (typeof this.state.activeQuestionKey !== 'undefined') {
       timer = <Timer interval="1000" increment="1000" ref="timer"/>;
@@ -160,7 +212,6 @@ class Presenter extends React.Component {
     } else {
       button = <Button key="2" onClick={this.start}>Start Taking Responses</Button>;
     }
-
     return (
       <div>
         <Header/>
@@ -181,7 +232,7 @@ class Presenter extends React.Component {
                   {timer}
                 </div>
                 <div style={this.styles.question}>
-                  <Question question={this.state.questions[this.state.activeQuestionKey]}/>
+                  <Question question={questions[this.state.activeQuestionKey]}/>
                 </div>
                 <div style={this.styles.buttons}>
                   {button}
@@ -196,7 +247,7 @@ class Presenter extends React.Component {
 
           <div style={this.styles.questionSelectorContainer}>
             <div style={this.styles.questionSelector}>
-              <QuestionSelector questions={this.state.questions} onActivateQuestion={this.onActivateQuestion.bind(this)}/>
+              <QuestionSelector questions={questions} onActivateQuestion={this.onActivateQuestion.bind(this)} activeQuestionKey={this.state.activeQuestionKey}/>
             </div>
           </div>
         </div>
@@ -228,17 +279,22 @@ class QuestionSelector extends React.Component {
         transition: 'all 0.2s',
       }
     };
+
+    this.state = {
+      styles: this.styles,
+    };
   }
 
-  onActivateQuestion(key) {
-    this.props.onActivateQuestion(key);
+  onActivateQuestion(index) {
+    this.props.onActivateQuestion(index);
   }
 
   render() {
-    let questions = this.props.questions.map((question, key) => {
+    let questions = this.props.questions.map((question, index) => {
+      let activeStyles = (question.key === this.props.activeQuestionKey) ? {background: '#E3DEFA'} : {};
       return (
-        <div className="Question" style={this.styles.listItem} onClick={this.onActivateQuestion.bind(this, key)}>
-          <span>Question {key+1}</span>
+        <div key={question.key} className="Question" style={objectAssign({}, this.styles.listItem, activeStyles)} onClick={this.onActivateQuestion.bind(this, index)}>
+          <span>Question {index+1}</span>
         </div>)
       ;
     });
@@ -264,6 +320,7 @@ class Question extends React.Component {
 
     this.state = {
       takingQuestions: false,
+      styles: this.styles,
     };
   }
 
@@ -279,7 +336,7 @@ class Question extends React.Component {
 
     return (
       <div>
-        <span>{this.props.question}</span>
+        <span>{this.props.question.value}</span>
       </div>
     );
   }
@@ -315,7 +372,7 @@ class PresenterResponses extends React.Component {
     // if (!this.props.responses.count) return (<div/>);
     let thumbnails = this.props.responses.map((submition, key) => {
       return (
-        <a href="" onClick={this.onThumbnailClick.bind(this, key)} style={this.styles.response}>
+        <a key={key} href="" onClick={this.onThumbnailClick.bind(this, key)} style={this.styles.response}>
           <img src={submition.thumbnail}/>
         </a>
       );
@@ -351,7 +408,6 @@ class Timer extends React.Component {
   }
 
   resetTimer() {
-    console.log('reset');
     this.stopTimer();
     this.setState({elapsed: 0});
   }
