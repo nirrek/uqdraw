@@ -1,4 +1,5 @@
 import React from 'react';
+import config from '../config.js';
 import Header from './Header.js';
 import { Link } from 'react-router';
 import { Button } from './UI';
@@ -8,9 +9,6 @@ let Modal = require('react-modal');
 var appElement = document.getElementById('react');
 Modal.setAppElement(appElement);
 Modal.injectCSS();
-
-// Should have some sort of configuration module for this stuff
-const FIREBASE_ROOT = 'https://uqdraw.firebaseio.com';
 
 class QuestionManager extends React.Component {
   constructor(props) {
@@ -23,6 +21,7 @@ class QuestionManager extends React.Component {
       curOffset: 0,
       isLectureModalOpen: false,
       lectures: {},
+      questions: {},
       courseId: '-JlUd0xRBkwULfuGFGqo',
     };
   }
@@ -31,15 +30,21 @@ class QuestionManager extends React.Component {
     // Store dom node reference to scrolling div
     this.state.node = React.findDOMNode(this.refs.cardLists);
 
-    let fb = this.fb = new Firebase(`${FIREBASE_ROOT}/lectures/${this.state.courseId}`);
-    fb.on('value', (snapshot) => {
+    this.lecturesRef = new Firebase(`${config.firebase.base}/lectures/${this.state.courseId}`);
+    this.lecturesRef.on('value', (snapshot) => {
       let content = snapshot.val() || {};
       this.setState({lectures: content});
+    });
+
+    this.questionsRef = new Firebase(`${config.firebase.base}/questions/${this.state.courseId}`);
+    this.questionsRef.on('value', (snapshot) => {
+      let content = snapshot.val() || {};
+      this.setState({questions: content});
     });
   }
 
   componentWillUnmount() {
-    this.fb.off();
+    this.lecturesRef.off();
   }
 
   mouseMove(event) {
@@ -93,7 +98,7 @@ class QuestionManager extends React.Component {
 
   onAddLecture(lecture) {
     let newLecture = {title: lecture, questions: {}};
-    this.fb.push(newLecture);
+    this.lecturesRef.push(newLecture);
     this.setState({isLectureModalOpen: false});
     event.preventDefault();
   }
@@ -103,27 +108,31 @@ class QuestionManager extends React.Component {
     if (lectures[lectureId]) {
       delete lectures[lectureId];
       this.setState({lectures: lectures});
-      this.fb.child(lectureId).remove();
+      this.lecturesRef.child(lectureId).remove();
     }
   }
 
   onAddQuestion(lectureId, question) {
-    let lectures = this.state.lectures;
-    let lecture = lectures[lectureId];
-    lecture.questions ?
-      lecture.questions.push(question) :
-      lecture.questions = [question];
-    this.setState({lectures: lectures});
-    this.fb.update(this.state.lectures);
+    // Add new question to questions bucket
+    let questionRef = this.questionsRef.push(question);
+    // Set current lecture questions to an array if its undefined
+    let lecture = this.state.lectures[lectureId];
+    lecture.questions = lecture.questions || [];
+    lecture.questions.push(questionRef.key());
+    // lecture.questions[questionRef.key()] = Object.keys(lecture.questions).length;
+    this.lecturesRef.child(lectureId).update(lecture);
+    // this.state.lectures
+    // let lectureRef = new Firebase(`${config.firebase.base}/lectures/${this.state.courseId}/${lectureId}/questions`);
+    // lectureRef.push(question);
   }
 
-  onRemoveQuestion(lectureId, position) {
+  onRemoveQuestion(lectureId, questionId) {
     let lectures = this.state.lectures;
     let lecture = lectures[lectureId];
-    if (lecture.questions[position] !== undefined) {
-      lecture.questions.splice(position, 1);
+    if (lecture.questions[questionId] !== undefined) {
+      delete lecture.questions[questionId];
       this.setState({lectures: lectures});
-      this.fb.update(this.state.lectures);
+      this.lecturesRef.update(this.state.lectures);
     }
   }
 
@@ -186,9 +195,11 @@ class QuestionManager extends React.Component {
     let lectures = Object.keys(this.state.lectures).map((key) => {
       return (
         <CardList
+          key={key}
           courseId={this.props.routeParams.courseId}
           lectureId={key}
           lecture={this.state.lectures[key]}
+          questions={this.state.questions}
           onRemoveLecture={this.onRemoveLecture.bind(this)}
           onAddQuestion={this.onAddQuestion.bind(this)}
           onRemoveQuestion={this.onRemoveQuestion.bind(this)}
@@ -305,10 +316,19 @@ class CardList extends React.Component {
     };
 
     let questions;
-    if (this.props.lecture.questions) {
-      questions = this.props.lecture.questions.map((question, id) => {
+    // Make sure both the lecture question refs and matching questions exist
+    if (this.props.lecture.questions && this.props.questions) {
+      questions = this.props.lecture.questions.map((id) => {
+
+        // If the lecture question ref exists but there is no matching question
+        if (!this.props.questions.hasOwnProperty(id)) {
+          return null;
+        }
+
+        let question = this.props.questions[id];
         return (
           <Card
+            key={id}
             lectureId={this.props.lectureId}
             questionId={id}
             question={question}
