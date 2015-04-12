@@ -1,0 +1,52 @@
+// Should make this its own module
+.ViewContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.QuestionManager {
+  position: relative !important;
+  top: 0 !important;
+  flex-grow: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.QuestionManagerFooter {
+  height: 10px;
+  background-color: #5C42AB;
+}
+
+.CardListsContainer {
+  flex-grow: 1;
+  display: flex;
+}
+
+.CardLists {
+  position: static !important;
+  flex-grow: 1;
+}
+
+.CardList {
+  position: relative;
+  border: none !important;
+}
+
+.PresenterLinkContainer {
+  position: absolute;
+  bottom: -61px;
+  left: 0;
+  background-color: rgba(0,0,0,.1);
+  border-radius: 4px;
+  width: 100%;
+  text-align: center;
+}
+
+.PresenterLinkContainer a {
+  color: #F7FAFE;
+  text-decoration: none;
+  padding: .75em 0;
+  display: inline-block;
+}

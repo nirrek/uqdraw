@@ -6,6 +6,8 @@ import { Button } from './UI';
 let Firebase = require('firebase');
 let Modal = require('react-modal');
 
+require('../../css/components/QuestionManager.scss');
+
 var appElement = document.getElementById('react');
 Modal.setAppElement(appElement);
 Modal.injectCSS();
@@ -208,21 +210,22 @@ class QuestionManager extends React.Component {
     });
 
     return (
-      <div>
+      <div className='ViewContainer'>
         <Header/>
         <div className='QuestionManager' style={styles.questionManager} onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} onMouseMove={this.mouseMove.bind(this)} data-scrollable="true">
           <div className='TitleBar' style={styles.titleBar} data-scrollable="true">
-            <Link to="app" className="TitleBar-link" style={styles.welcomeLink}>Welcome</Link>
             <div className="TitleBar-title" style={styles.title}>
               <h1>Question Manager - {this.props.routeParams.courseId}</h1>
             </div>
           </div>
-          <div style={styles.canvas}>
+          <div className='CardListsContainer' style={styles.canvas}>
             <div className='CardLists scrollbar' style={styles.cardLists} ref="cardLists" data-scrollable="true">
               {lectures}
               <div style={styles.createList} onClick={this.showLectureModal.bind(this)}>
                 <span>Add a new lecture...</span>
               </div>
+            {/* side scroll does not respect right margin of rightmost object without this */
+            <div>&nbsp;</div> }
             </div>
           </div>
           <LectureComposer
@@ -231,6 +234,8 @@ class QuestionManager extends React.Component {
             onSave={this.onAddLecture.bind(this)}
           />
         </div>
+        {/* Quick hack so that the scrollbar isnt sitting on bottom */}
+        <div className='QuestionManagerFooter' />
       </div>
     );
   }
@@ -342,7 +347,9 @@ class CardList extends React.Component {
       <div className='CardList' style={styles.cardList} draggable="true">
         <div style={styles.titleBar}>
           <h2 style={styles.title}>{this.props.lecture.title}</h2>
-          <Link to="presenter" params={{courseId: this.props.courseId, lectureId: this.props.lectureId}}>P</Link>
+          <div className='PresenterLinkContainer'>
+            <Link to="presenter" params={{courseId: this.props.courseId, lectureId: this.props.lectureId}}>Launch {this.props.lecture.title} Presentation</Link>
+          </div>
           <a
             className=""
             onClick={this.onRemoveLecture.bind(this)}
