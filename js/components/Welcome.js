@@ -46,9 +46,13 @@ class Cell extends React.Component {
 }
 
 class SubjectListItem extends React.Component {
+  onChangeCourse(courseId) {
+    this.props.onChangeCourse(courseId);
+  }
+
   render() {
     return (
-      <Link className='ListItem' to={this.props.to} params={{courseId: this.props.courseId}}>
+      <Link className='ListItem' to={this.props.to} params={{courseName: this.props.courseName}} onClick={this.onChangeCourse.bind(this, this.props.courseId)}>
         {this.props.children}
       </Link>
     );
@@ -60,7 +64,7 @@ class SubjectList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      courseLists: [],
+      courseLists: {},
       showForm: false,
       newCourse: '', // populated by the 'add course' model input
       modalIsOpen: false,
@@ -71,8 +75,8 @@ class SubjectList extends React.Component {
     let ref = this.ref = new Firebase(FIREBASE_ROOT + '/courseLists/uqjstee8');
     ref.on('value', (snapshot) => {
       var content = snapshot.val(); // must unwrap the snapshot
-      var courseLists = Object.keys(content).map((key) => content[key]);
-      this.setState({ courseLists: courseLists });
+      // var courseLists = Object.keys(content).map((key) => content[key]);
+      this.setState({ courseLists: snapshot.val() });
     });
   }
 
@@ -84,7 +88,6 @@ class SubjectList extends React.Component {
   showForm(event) { this.setState({ modalIsOpen: true }); }
 
   addNewCourse(event) {
-    console.log(this.state.newCourse);
     this.ref.push(this.state.newCourse);
     this.setState({
       modalIsOpen: false,
@@ -110,8 +113,8 @@ class SubjectList extends React.Component {
       flexWrap: 'wrap',
     };
 
-    var items = this.state.courseLists.map((val) => {
-      return (<SubjectListItem to='questionManager' courseId={val}>{val}</SubjectListItem>);
+    var items = Object.keys(this.state.courseLists).map((key) => {
+      return (<SubjectListItem to='questionManager' courseId={key} courseName={this.state.courseLists[key]} onClick={this.props.onChangeCourse}>{this.state.courseLists[key]}</SubjectListItem>);
     });
 
     return (
@@ -145,7 +148,7 @@ class Welcome extends React.Component {
             <div className="Subheading">Select the course the questions are for below, or add a new course.</div>
             <Link to="drawing">Drawing</Link>
           </div>
-          <SubjectList/>
+          <SubjectList onChangeCourse={this.props.onChangeCourse}/>
         </div>
       </div>
     );
