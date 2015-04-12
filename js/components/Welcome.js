@@ -46,13 +46,13 @@ class Cell extends React.Component {
 }
 
 class SubjectListItem extends React.Component {
-  onChangeCourse(courseId) {
-    this.props.onChangeCourse(courseId);
+  onChangeCourse(courseId, courseName) {
+    this.props.onChangeCourse(courseId, courseName);
   }
 
   render() {
     return (
-      <Link className='ListItem' to={this.props.to} params={{courseName: this.props.courseName}} onClick={this.onChangeCourse.bind(this, this.props.courseId)}>
+      <Link className='ListItem' to={this.props.to} params={{courseName: this.props.courseName}} onClick={this.onChangeCourse.bind(this, this.props.courseId, this.props.courseName)}>
         {this.props.children}
       </Link>
     );
@@ -114,7 +114,7 @@ class SubjectList extends React.Component {
     };
 
     var items = Object.keys(this.state.courseLists).map((key) => {
-      return (<SubjectListItem to='questionManager' courseId={key} courseName={this.state.courseLists[key]} onClick={this.props.onChangeCourse}>{this.state.courseLists[key]}</SubjectListItem>);
+      return (<SubjectListItem to='questionManager' courseId={key} courseName={this.state.courseLists[key]} onChangeCourse={this.props.onChangeCourse}>{this.state.courseLists[key]}</SubjectListItem>);
     });
 
     return (
