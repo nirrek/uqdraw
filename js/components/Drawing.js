@@ -1,6 +1,7 @@
 import React from 'react';
 let objectAssign = require('object-assign');
 import Touchy from '../touchy.js';
+import config from '../config.js';
 
 require('../../css/components/Drawing.scss');
 require('../../css/components/Button.scss');
@@ -168,8 +169,12 @@ class Drawing extends React.Component {
   // Submit the current canvas
   submitImage() {
     let dataURL = this.displayCanvas.toDataURL(); // canvas encoded as dataURI
-    console.log(dataURL);
-    // submit to the presentation endpoint.
+
+    // Temporary hardcoding for the presentation.
+    let responsesRef = new Firebase(`${config.firebase.base}/presentations/3fa/responses`);
+    responsesRef.push({
+      submissionDataURI: dataURL
+    });
   }
 
   hideQuestion() {
