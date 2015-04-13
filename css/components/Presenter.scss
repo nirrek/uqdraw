@@ -6,8 +6,7 @@
 
 .PresenterView {
   display: flex;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
 }
 
 .Column--main {
