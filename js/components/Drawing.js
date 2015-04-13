@@ -127,19 +127,14 @@ class Drawing extends React.Component {
   }
 
   setCanvasWidths() {
-    console.log('current canvas dimensions: ' + this.displayCanvas.width + ' x ' + this.displayCanvas.height);
-
     // Must set DOM properties, as CSS styling will distory otherwise.
     this.displayCanvas.width = parseInt(getComputedStyle(this.displayCanvas).width, 10);
     this.displayCanvas.height = parseInt(getComputedStyle(this.displayCanvas).height, 10);
     this.canvas.width = this.displayCanvas.width;
     this.canvas.height = this.displayCanvas.height;
-
-    console.log('new canvas dimensions: ' + this.displayCanvas.width + ' x ' + this.displayCanvas.height);
   }
 
   toggleEraser() {
-    console.log('toggleEraser');
     if (!this.state.isEraserActive) this.ctx.strokeStyle = '#F7FAFE';
     else                           this.ctx.strokeStyle = '#333333';
     this.setState({ isEraserActive: !this.state.isEraserActive });
@@ -153,7 +148,6 @@ class Drawing extends React.Component {
     if (size === 'l') lineWidth = 10;
     this.ctx.lineWidth = lineWidth;
 
-    console.log('setState of lineWidth to ' + size);
     this.setState({
       lineWidth: size
     });
@@ -182,7 +176,6 @@ class Drawing extends React.Component {
   }
 
   fullscreen() {
-    console.log('request fullscreen');
     React.findDOMNode(this).webkitRequestFullscreen();
     this.setState({ isFullscreen: true });
   }
