@@ -17,6 +17,7 @@ $lavendarGray: #68627C;
   flex-shrink: 1;
   box-shadow: -1px 0 10px rgba(0,0,0,.2);
   background-color: $offwhite;
+  position: relative;
 }
 
 .PresenterList {
@@ -47,50 +48,76 @@ $lavendarGray: #68627C;
   min-height: 150px;
   background: #fafafa;
   border-bottom: 1px solid #eee;
-  padding: 1em 2em;
+  padding: 1em 3em;
   display: flex;
   justify-content: space-around;
 }
 
-.KeyValuePair {
+.Step {
   display: flex;
   align-items: center;
   flex-grow: 1;
   font-size: 1.5em;
 }
 
-.Label {
-  background-color: $purple;
-  padding: .5em 1em;
-  border-radius: 4px;
-  color: #fff;
+.Step-number {
+  font-size: 1.5em;
+  border: 2px solid;
+  width: 60px;
+  text-align: center;
+  height: 60px;
+  line-height: 53px;
+  border-radius: 30px;
+  color: #bbb;
+  margin-right: .5em;
 }
 
-.Value {
-  margin-left: .75em;
+.Step-instructions {
   color: #333;
-  font-weight: 600;
+}
+
+.Step-label {
+  color: #999;
+  margin-right: .5em;
+}
+
+.Step-value {
+  font-weight: 800;
 }
 
 .PresentationQuestion {
   padding: 1em 2em;
   text-align: center;
   color: #333;
-  font-size: 2em;
   background-color: #fff;
+  min-height: 400px;
+  position: relative;
 }
 
 .Question {
   margin-top: 0;
   line-height: 1;
-  font-size: 1.6em;
+  font-size: 2.6em;
+}
+
+.Tip {
+  color: #999;
+}
+
+.Timer {
+  position: absolute;
+  bottom: 2em;
+  left: 50%;
+  margin-left: -100px;
+  width: 200px;
+  text-align: center;
 }
 
 .PresentationResponses {
   min-height: 300px;
   background: #fafafa;
   border-top: 1px solid #eee;
-  padding: 1em 2em;
+  padding: 2em;
   text-align: center;
 }
 
