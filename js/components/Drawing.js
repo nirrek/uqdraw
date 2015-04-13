@@ -2,6 +2,7 @@ import React from 'react';
 let objectAssign = require('object-assign');
 import Touchy from '../touchy.js';
 import config from '../config.js';
+let Spinner = require('react-spinkit');
 
 require('../../css/components/Drawing.scss');
 require('../../css/components/Button.scss');
@@ -162,12 +163,15 @@ class Drawing extends React.Component {
 
   // Submit the current canvas
   submitImage() {
+    this.setState({ isSubmitting: true });
     let dataURL = this.displayCanvas.toDataURL(); // canvas encoded as dataURI
 
     // Temporary hardcoding for the presentation.
     let responsesRef = new Firebase(`${config.firebase.base}/presentations/3fa/responses`);
     responsesRef.push({
       submissionDataURI: dataURL
+    }, () => {
+      this.setState({ isSubmitting: false });
     });
   }
 
@@ -196,6 +200,9 @@ class Drawing extends React.Component {
     if (this.state.isFullscreen)
       var fullscreenStyle = {display: 'none'};
 
+    if (this.state.isSubmitting)
+      var loadingIndicator = <Spinner spinnerName='double-bounce' noFadeIn />;
+
     return (
       <div className='Drawing'>
         <div className='QuestionOverlay' style={questionStyle}>
@@ -214,7 +221,8 @@ class Drawing extends React.Component {
             <div style={eraserStyle} className='Action-icon'></div>
           </div>
           <div className='Action Action--submit'>
-            <div onClick={this.submitImage.bind(this)}>Submit Answer</div>
+            <button className='Button--unstyled' onClick={this.submitImage.bind(this)}>Submit Answer</button>
+            {loadingIndicator}
           </div>
           <div onClick={this.cycleLineWidth.bind(this)} className='Action Action--strokeWidth'>
             <div className='BrushSizeIcon'>
