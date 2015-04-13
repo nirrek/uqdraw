@@ -2,6 +2,7 @@ import React from 'react';
 import config from '../config.js';
 import Header from './Header.js';
 import { Button } from './UI';
+
 let Firebase = require('firebase');
 let StyleSheet = require('react-style');
 let objectAssign = require('object-assign');
@@ -19,9 +20,6 @@ class Presenter extends React.Component {
       lecture: {},
       questions: {},
     };
-    for (let i = 0; i < 20; i++) {
-      this.state.responses.push({thumbnail: 'http://placehold.it/50x50'});
-    }
 
     this.start = this.start.bind(this);
     this.stop = this.stop.bind(this);
@@ -35,6 +33,8 @@ class Presenter extends React.Component {
       this.getLecture(this.props.courseId);
       this.getQuestions(this.props.courseId);
     }
+
+    this.observeFirebaseResponses();
   }
 
   componentWillReceiveProps(newProps) {
@@ -49,6 +49,21 @@ class Presenter extends React.Component {
   componentWillUnmount() {
     this.lectureRef.off();
     this.questionsRef.off();
+    this.responsesRef.off();
+  }
+
+  // Setup responses endpoint observer to update responses state as new
+  // responses are submitted. Current endpoint is hardocded temporarily
+  // for Kerrins presentation.
+  observeFirebaseResponses() {
+    this.responsesRef = new Firebase(`${config.firebase.base}/presentations/3fa/responses`);
+    this.responsesRef.on('value', (snapshot) => {
+      let responses = snapshot.val() || {};
+      responses = Object.keys(responses).map((key) => {
+        return responses[key].submissionDataURI;
+      });
+      this.setState({ responses });
+    });
   }
 
   getLecture(courseId) {
@@ -156,7 +171,7 @@ class Presenter extends React.Component {
             </div>
             <div className="KeyValuePair">
               <div className="Label">Enter Code</div>
-              <div className="Value">3FA</div>
+              <div className="Value">3fa</div>
             </div>
           </div>
           <div className="PresentationQuestion">
@@ -298,10 +313,10 @@ class PresenterResponses extends React.Component {
 
     };
     // if (!this.props.responses.count) return (<div/>);
-    let thumbnails = this.props.responses.map((submition, key) => {
+    let thumbnails = this.props.responses.map((dataURI, key) => {
       return (
-        <a key={key} href="" onClick={this.onThumbnailClick.bind(this, key)} /*style={this.styles.response}*/>
-          <img className='Thumbnail' src={submition.thumbnail}/>
+        <a key={key} href="" onClick={this.onThumbnailClick.bind(this, key)}>
+          <img className='Thumbnail' src={dataURI}/>
         </a>
       );
     });
