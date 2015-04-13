@@ -68,6 +68,7 @@ class Presenter extends React.Component {
   }
 
   onActivateQuestion(key) {
+    console.log('Activating key ', key);
     this.setState({activeQuestionKey: key});
     this.reset();
   }
@@ -96,40 +97,6 @@ class Presenter extends React.Component {
   render() {
 
     this.styles = {
-      container: {
-        display: 'flex',
-        flexDirection: 'row',
-        position: 'absolute',
-        justifyContent: 'center',
-        top: 83,
-        right: 0,
-        bottom: 0,
-        left: 0,
-        background: '#FBFAFC',
-        color: '#543C9C',
-      },
-      presentationPanelContainer: {
-        flexBasis: 1000,
-        flexGrow: 0,
-        flexShrink: 2,
-        display: 'flex',
-        justifyContent: 'center',
-      },
-      presentationPanel: {
-        display: 'flex',
-        flexDirection: 'column',
-        maxWidth: 1000,
-      },
-      heading: {
-        display: 'flex',
-        margin: 20,
-        padding: 20,
-      },
-      dropShadow: {
-        border: '1px solid #eee',
-        borderBottomColor: '#ddd',
-        boxShadow: '0 1px 1px rgba(0,0,0,.15)',
-      },
       presenterCode: {
         display: 'flex',
         flexDirection: 'column',
@@ -149,45 +116,9 @@ class Presenter extends React.Component {
         alignItems: 'flex-end',
         fontSize: 50,
       },
-      questionPanel: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        flexGrow: 1,
-        alignItems: 'center',
-        margin: 20,
-        textAlign: 'center',
-        color: '#fff',
-        background: '#543c9c',
-      },
       timer: {
         alignSelf: 'flex-end',
         margin: '5px 20px',
-      },
-      question: {
-        fontSize: '3em',
-      },
-      buttons: {
-        fontSize: 18,
-        marginBottom: 20,
-      },
-      responses: {
-        flexGrow: 1,
-        margin: 20,
-      },
-      responseTitle: {
-        fontWeight: 200,
-        marginLeft: 20,
-      },
-      questionSelectorContainer: {
-        flexGrow: 0,
-        flexBasis: 300,
-        display: 'flex',
-        justifyContent: 'center',
-      },
-      questionSelector: {
-        marginRight: 20,
-        flexGrow: 1,
       },
     };
 
@@ -288,9 +219,13 @@ class QuestionSelector extends React.Component {
 
   render() {
     let questions = this.props.questions.map((question, index) => {
-      let activeStyles = (question.key === this.props.activeQuestionKey) ? {background: '#E3DEFA'} : {};
+      let className = 'PresenterListItem';
+      if (question.key === this.props.activeQuestionKey) {
+        console.log('FOUND MATCH');
+        className += ' PresenterListItem--active';
+      }
       return (
-        <div key={question.key} className="PresenterListItem" style={objectAssign({}, this.styles.listItem, activeStyles)} onClick={this.onActivateQuestion.bind(this, index)}>
+        <div key={question.key} className={className} onClick={this.onActivateQuestion.bind(this, question.key)}>
           <span>Question {index+1}</span>
         </div>)
       ;
