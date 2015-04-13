@@ -109,7 +109,6 @@ class Presenter extends React.Component {
   }
 
   render() {
-
     this.styles = {
       presenterCode: {
         display: 'flex',
@@ -137,12 +136,19 @@ class Presenter extends React.Component {
     };
 
     let questions = [];
+    let activeQuestion;
     if (this.state.lecture.questions) {
       questions = this.state.lecture.questions.map((key) => {
         return {
           key: key,
           value: this.state.questions[key],
         };
+      });
+
+      // Find the currently active question
+      questions.forEach((q) => {
+        if (q.key === this.state.activeQuestionKey)
+          activeQuestion = q;
       });
     }
 
@@ -176,7 +182,7 @@ class Presenter extends React.Component {
           </div>
           <div className="PresentationQuestion">
             <h2 className='SectionHeading'>Question</h2>
-            <Question question={questions[this.state.activeQuestionKey]}/>
+            <Question question={activeQuestion}/>
             {button}
             <div> {/* TODO figure this out */}
               {timer}
@@ -227,8 +233,8 @@ class QuestionSelector extends React.Component {
     };
   }
 
-  onActivateQuestion(index) {
-    this.props.onActivateQuestion(index);
+  onActivateQuestion(key) {
+    this.props.onActivateQuestion(key);
   }
 
   render() {
@@ -252,7 +258,6 @@ class QuestionSelector extends React.Component {
 }
 
 class Question extends React.Component {
-
   constructor() {
     this.styles = {
       unselected: {
@@ -268,7 +273,6 @@ class Question extends React.Component {
   }
 
   render() {
-
     if (!this.props.question) {
       return (
         <h1 className='Question' /*style={this.styles.unselected}*/>
