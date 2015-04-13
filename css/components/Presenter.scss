@@ -1,0 +1,131 @@
+/*
+ * main purple: #5C42AB
+ * darker purp: 523B99
+ * off white: #F7FAFE
+ */
+
+.PresenterView {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.Column--main {
+  width: 80vw;
+}
+
+.Column--supporting {
+  width: 20vw;
+  flex-shrink: 1;
+  box-shadow: -1px 0 10px rgba(0,0,0,.2);
+  background-color: #F7FAFE;
+}
+
+.PresenterList {
+  font-size: 1.5em;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.PresenterListItem {
+  border-bottom: 1px solid rgba(0,0,0,.06);
+  text-align: center;
+  padding: 1em;
+  color: #68627C;
+  text-transform: uppercase;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.PresenterListItem--active {
+  background-color: #5C42AB;
+  color: #fff;
+}
+
+
+.PresentationDetails {
+  min-height: 150px;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+  padding: 1em 2em;
+  display: flex;
+  justify-content: space-around;
+}
+
+.KeyValuePair {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  font-size: 1.5em;
+}
+
+.Label {
+  background-color: #5C42AB;
+  padding: .5em 1em;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.Value {
+  margin-left: .75em;
+  color: #333;
+  font-weight: 600;
+}
+
+.PresentationQuestion {
+  padding: 1em 2em;
+  text-align: center;
+  color: #333;
+  font-size: 2em;
+  background-color: #fff;
+}
+
+.Question {
+  margin-top: 0;
+  line-height: 1;
+}
+
+.PresentationResponses {
+  min-height: 300px;
+  background: #fafafa;
+  border-top: 1px solid #eee;
+  padding: 1em 2em;
+  text-align: center;
+}
+
+.SectionHeading {
+  color: #ccc;
+  padding-bottom: 2px;
+  border-bottom: 3px solid #ddd;
+  display: inline-block;
+  text-align: center;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.ResponseThumbnails {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.Thumbnail {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  background-color: #eee;
+  box-shadow: inset 0 1px 4px rgba(0,0,0, .08);
+  margin: 5px;
+}
+
+button {
+  font-size: 16px;
+  border-radius: 38px;
+  padding: 1em;
+  background-color: transparent;
+  border: 2px solid #ddd;
+  color: #555;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 1em;
+}

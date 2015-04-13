@@ -6,6 +6,8 @@ let Firebase = require('firebase');
 let StyleSheet = require('react-style');
 let objectAssign = require('object-assign');
 
+require('../../css/components/Presenter.scss');
+
 class Presenter extends React.Component {
 
   constructor(props) {
@@ -213,42 +215,39 @@ class Presenter extends React.Component {
       button = <Button key="2" onClick={this.start}>Start Taking Responses</Button>;
     }
     return (
-      <div>
-        <Header/>
-        <div style={this.styles.container}>
-          <div style={this.styles.presentationPanelContainer}>
-            <div style={this.styles.presentationPanel}>
-              <div style={objectAssign(this.styles.heading, this.styles.dropShadow)}>
-                <div style={this.styles.presenterCode}>
-                  <span style={this.styles.presenterCodeTitle}>CODE</span>
-                  <span style={this.styles.presenterCodeCode}>b3a</span>
-                </div>
-                <div style={this.styles.presenterLink}>
-                  <span>www.uqdraw.com/b3a</span>
-                </div>
-              </div>
-              <div style={objectAssign(this.styles.questionPanel, this.styles.dropShadow)}>
-                <div style={this.styles.timer}>
-                  {timer}
-                </div>
-                <div style={this.styles.question}>
-                  <Question question={questions[this.state.activeQuestionKey]}/>
-                </div>
-                <div style={this.styles.buttons}>
-                  {button}
-                </div>
-              </div>
-              <div style={objectAssign(this.styles.responses, this.styles.dropShadow)}>
-                <h2 style={this.styles.responseTitle}>Current Responses</h2>
-                <PresenterResponses responses={this.state.responses} onThumbnailClick={this.onThumbnailClick}/>
-              </div>
+      <div className='PresenterView'>
+        {/* <Header/> */}
+        <div className='Column--main'>
+
+          <div className="PresentationDetails">
+            <div className="KeyValuePair">
+              <div className="Label">Go To</div>
+              <div className="Value">uqdraw.co</div>
+            </div>
+            <div className="KeyValuePair">
+              <div className="Label">Enter Code</div>
+              <div className="Value">3FA</div>
             </div>
           </div>
-
-          <div style={this.styles.questionSelectorContainer}>
-            <div style={this.styles.questionSelector}>
-              <QuestionSelector questions={questions} onActivateQuestion={this.onActivateQuestion.bind(this)} activeQuestionKey={this.state.activeQuestionKey}/>
+          <div className="PresentationQuestion">
+            <h2 className='SectionHeading'>Question</h2>
+            <Question question={questions[this.state.activeQuestionKey]}/>
+            {button}
+            <div> {/* TODO figure this out */}
+              {timer}
             </div>
+          </div>
+          <div className="PresentationResponses">
+            <h2 className='SectionHeading'>Responses</h2>
+            <div className="ResponseThumbnails">
+              <PresenterResponses responses={this.state.responses} onThumbnailClick={this.onThumbnailClick}/>
+            </div>
+          </div>
+        </div>
+
+        <div className='Column--supporting'>
+          <div style={this.styles.questionSelector}>
+            <QuestionSelector questions={questions} onActivateQuestion={this.onActivateQuestion.bind(this)} activeQuestionKey={this.state.activeQuestionKey}/>
           </div>
         </div>
       </div>
@@ -293,16 +292,14 @@ class QuestionSelector extends React.Component {
     let questions = this.props.questions.map((question, index) => {
       let activeStyles = (question.key === this.props.activeQuestionKey) ? {background: '#E3DEFA'} : {};
       return (
-        <div key={question.key} className="Question" style={objectAssign({}, this.styles.listItem, activeStyles)} onClick={this.onActivateQuestion.bind(this, index)}>
+        <div key={question.key} className="PresenterListItem" style={objectAssign({}, this.styles.listItem, activeStyles)} onClick={this.onActivateQuestion.bind(this, index)}>
           <span>Question {index+1}</span>
         </div>)
       ;
     });
     return (
-      <div style={this.styles.questionSelector}>
-        <div style={this.styles.list}>
-          {questions}
-        </div>
+      <div className='PresenterList'>
+        {questions}
       </div>
     );
   }
@@ -328,15 +325,15 @@ class Question extends React.Component {
 
     if (!this.props.question) {
       return (
-        <span style={this.styles.unselected}>
+        <h1 className='Question' /*style={this.styles.unselected}*/>
           Select a question on the right when you are ready to begin.
-        </span>
+        </h1>
       );
     }
 
     return (
       <div>
-        <span>{this.props.question.value}</span>
+        <h1 className='Question'>{this.props.question.value}</h1>
       </div>
     );
   }
@@ -372,8 +369,8 @@ class PresenterResponses extends React.Component {
     // if (!this.props.responses.count) return (<div/>);
     let thumbnails = this.props.responses.map((submition, key) => {
       return (
-        <a key={key} href="" onClick={this.onThumbnailClick.bind(this, key)} style={this.styles.response}>
-          <img src={submition.thumbnail}/>
+        <a key={key} href="" onClick={this.onThumbnailClick.bind(this, key)} /*style={this.styles.response}*/>
+          <img className='Thumbnail' src={submition.thumbnail}/>
         </a>
       );
     });
