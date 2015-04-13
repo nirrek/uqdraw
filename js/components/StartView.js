@@ -73,8 +73,16 @@ class StartView extends React.Component {
   onChangeInput3(event) {
     let inputValue = event.target.value;
     if (inputValue.length > 1)   return; // max 1 char
-    if (inputValue.length === 1) /* submit */;
+    if (inputValue.length === 1) {
+      // validate that all inputs are filled.
+      this.context.router.transitionTo('drawing');
+    }
     this.setState({'codeInput3': inputValue});
+  }
+
+  onLogin(event) {
+    event.preventDefault();
+    this.context.router.transitionTo('welcome');
   }
 
   render() {
@@ -112,7 +120,7 @@ class StartView extends React.Component {
                 <input className='Input Input--last' type="password" placeholder="Password"/>
               </div>
               <div className='Slat'>
-                <button className='Button Button--primary'>Login</button>
+                <button onClick={this.onLogin.bind(this)} className='Button Button--primary'>Login</button>
               </div>
             </form>
           </div>
@@ -121,5 +129,11 @@ class StartView extends React.Component {
     );
   }
 }
+
+// Set Router Context to allow for programatically transitioning to new routes.
+// See: https://github.com/rackt/react-router/blob/master/docs/api/RouterContext.md
+StartView.contextTypes = {
+  router: React.PropTypes.func
+};
 
 export default StartView;
