@@ -2,6 +2,7 @@ import React from 'react';
 import config from '../config.js';
 import Header from './Header.js';
 import { Button } from './UI';
+
 let Firebase = require('firebase');
 let StyleSheet = require('react-style');
 let objectAssign = require('object-assign');
@@ -19,9 +20,6 @@ class Presenter extends React.Component {
       lecture: {},
       questions: {},
     };
-    for (let i = 0; i < 20; i++) {
-      this.state.responses.push({thumbnail: 'http://placehold.it/50x50'});
-    }
 
     this.start = this.start.bind(this);
     this.stop = this.stop.bind(this);
@@ -35,6 +33,8 @@ class Presenter extends React.Component {
       this.getLecture(this.props.courseId);
       this.getQuestions(this.props.courseId);
     }
+
+    this.observeFirebaseResponses();
   }
 
   componentWillReceiveProps(newProps) {
@@ -49,6 +49,21 @@ class Presenter extends React.Component {
   componentWillUnmount() {
     this.lectureRef.off();
     this.questionsRef.off();
+    this.responsesRef.off();
+  }
+
+  // Setup responses endpoint observer to update responses state as new
+  // responses are submitted. Current endpoint is hardocded temporarily
+  // for Kerrins presentation.
+  observeFirebaseResponses() {
+    this.responsesRef = new Firebase(`${config.firebase.base}/presentations/3fa/responses`);
+    this.responsesRef.on('value', (snapshot) => {
+      let responses = snapshot.val() || {};
+      responses = Object.keys(responses).map((key) => {
+        return responses[key].submissionDataURI;
+      });
+      this.setState({ responses });
+    });
   }
 
   getLecture(courseId) {
@@ -94,42 +109,7 @@ class Presenter extends React.Component {
   }
 
   render() {
-
     this.styles = {
-      container: {
-        display: 'flex',
-        flexDirection: 'row',
-        position: 'absolute',
-        justifyContent: 'center',
-        top: 83,
-        right: 0,
-        bottom: 0,
-        left: 0,
-        background: '#FBFAFC',
-        color: '#543C9C',
-      },
-      presentationPanelContainer: {
-        flexBasis: 1000,
-        flexGrow: 0,
-        flexShrink: 2,
-        display: 'flex',
-        justifyContent: 'center',
-      },
-      presentationPanel: {
-        display: 'flex',
-        flexDirection: 'column',
-        maxWidth: 1000,
-      },
-      heading: {
-        display: 'flex',
-        margin: 20,
-        padding: 20,
-      },
-      dropShadow: {
-        border: '1px solid #eee',
-        borderBottomColor: '#ddd',
-        boxShadow: '0 1px 1px rgba(0,0,0,.15)',
-      },
       presenterCode: {
         display: 'flex',
         flexDirection: 'column',
@@ -149,55 +129,26 @@ class Presenter extends React.Component {
         alignItems: 'flex-end',
         fontSize: 50,
       },
-      questionPanel: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        flexGrow: 1,
-        alignItems: 'center',
-        margin: 20,
-        textAlign: 'center',
-        color: '#fff',
-        background: '#543c9c',
-      },
       timer: {
         alignSelf: 'flex-end',
         margin: '5px 20px',
       },
-      question: {
-        fontSize: '3em',
-      },
-      buttons: {
-        fontSize: 18,
-        marginBottom: 20,
-      },
-      responses: {
-        flexGrow: 1,
-        margin: 20,
-      },
-      responseTitle: {
-        fontWeight: 200,
-        marginLeft: 20,
-      },
-      questionSelectorContainer: {
-        flexGrow: 0,
-        flexBasis: 300,
-        display: 'flex',
-        justifyContent: 'center',
-      },
-      questionSelector: {
-        marginRight: 20,
-        flexGrow: 1,
-      },
     };
 
     let questions = [];
+    let activeQuestion;
     if (this.state.lecture.questions) {
       questions = this.state.lecture.questions.map((key) => {
         return {
           key: key,
           value: this.state.questions[key],
         };
+      });
+
+      // Find the currently active question
+      questions.forEach((q) => {
+        if (q.key === this.state.activeQuestionKey)
+          activeQuestion = q;
       });
     }
 
@@ -226,12 +177,12 @@ class Presenter extends React.Component {
             </div>
             <div className="KeyValuePair">
               <div className="Label">Enter Code</div>
-              <div className="Value">3FA</div>
+              <div className="Value">3fa</div>
             </div>
           </div>
           <div className="PresentationQuestion">
             <h2 className='SectionHeading'>Question</h2>
-            <Question question={questions[this.state.activeQuestionKey]}/>
+            <Question question={activeQuestion}/>
             {button}
             <div> {/* TODO figure this out */}
               {timer}
@@ -282,15 +233,18 @@ class QuestionSelector extends React.Component {
     };
   }
 
-  onActivateQuestion(index) {
-    this.props.onActivateQuestion(index);
+  onActivateQuestion(key) {
+    this.props.onActivateQuestion(key);
   }
 
   render() {
     let questions = this.props.questions.map((question, index) => {
-      let activeStyles = (question.key === this.props.activeQuestionKey) ? {background: '#E3DEFA'} : {};
+      let className = 'PresenterListItem';
+      if (question.key === this.props.activeQuestionKey) {
+        className += ' PresenterListItem--active';
+      }
       return (
-        <div key={question.key} className="PresenterListItem" style={objectAssign({}, this.styles.listItem, activeStyles)} onClick={this.onActivateQuestion.bind(this, index)}>
+        <div key={question.key} className={className} onClick={this.onActivateQuestion.bind(this, question.key)}>
           <span>Question {index+1}</span>
         </div>)
       ;
@@ -304,7 +258,6 @@ class QuestionSelector extends React.Component {
 }
 
 class Question extends React.Component {
-
   constructor() {
     this.styles = {
       unselected: {
@@ -320,7 +273,6 @@ class Question extends React.Component {
   }
 
   render() {
-
     if (!this.props.question) {
       return (
         <h1 className='Question' /*style={this.styles.unselected}*/>
@@ -365,10 +317,10 @@ class PresenterResponses extends React.Component {
 
     };
     // if (!this.props.responses.count) return (<div/>);
-    let thumbnails = this.props.responses.map((submition, key) => {
+    let thumbnails = this.props.responses.map((dataURI, key) => {
       return (
-        <a key={key} href="" onClick={this.onThumbnailClick.bind(this, key)} /*style={this.styles.response}*/>
-          <img className='Thumbnail' src={submition.thumbnail}/>
+        <a key={key} href="" onClick={this.onThumbnailClick.bind(this, key)}>
+          <img className='Thumbnail' src={dataURI}/>
         </a>
       );
     });

@@ -1,6 +1,8 @@
 import React from 'react';
 let objectAssign = require('object-assign');
 import Touchy from '../touchy.js';
+import config from '../config.js';
+let Spinner = require('react-spinkit');
 
 require('../../css/components/Drawing.scss');
 require('../../css/components/Button.scss');
@@ -126,19 +128,14 @@ class Drawing extends React.Component {
   }
 
   setCanvasWidths() {
-    console.log('current canvas dimensions: ' + this.displayCanvas.width + ' x ' + this.displayCanvas.height);
-
     // Must set DOM properties, as CSS styling will distory otherwise.
     this.displayCanvas.width = parseInt(getComputedStyle(this.displayCanvas).width, 10);
     this.displayCanvas.height = parseInt(getComputedStyle(this.displayCanvas).height, 10);
     this.canvas.width = this.displayCanvas.width;
     this.canvas.height = this.displayCanvas.height;
-
-    console.log('new canvas dimensions: ' + this.displayCanvas.width + ' x ' + this.displayCanvas.height);
   }
 
   toggleEraser() {
-    console.log('toggleEraser');
     if (!this.state.isEraserActive) this.ctx.strokeStyle = '#F7FAFE';
     else                           this.ctx.strokeStyle = '#333333';
     this.setState({ isEraserActive: !this.state.isEraserActive });
@@ -152,7 +149,6 @@ class Drawing extends React.Component {
     if (size === 'l') lineWidth = 10;
     this.ctx.lineWidth = lineWidth;
 
-    console.log('setState of lineWidth to ' + size);
     this.setState({
       lineWidth: size
     });
@@ -167,9 +163,16 @@ class Drawing extends React.Component {
 
   // Submit the current canvas
   submitImage() {
+    this.setState({ isSubmitting: true });
     let dataURL = this.displayCanvas.toDataURL(); // canvas encoded as dataURI
-    console.log(dataURL);
-    // submit to the presentation endpoint.
+
+    // Temporary hardcoding for the presentation.
+    let responsesRef = new Firebase(`${config.firebase.base}/presentations/3fa/responses`);
+    responsesRef.push({
+      submissionDataURI: dataURL
+    }, () => {
+      this.setState({ isSubmitting: false });
+    });
   }
 
   hideQuestion() {
@@ -177,7 +180,6 @@ class Drawing extends React.Component {
   }
 
   fullscreen() {
-    console.log('request fullscreen');
     React.findDOMNode(this).webkitRequestFullscreen();
     this.setState({ isFullscreen: true });
   }
@@ -198,6 +200,9 @@ class Drawing extends React.Component {
     if (this.state.isFullscreen)
       var fullscreenStyle = {display: 'none'};
 
+    if (this.state.isSubmitting)
+      var loadingIndicator = <Spinner spinnerName='double-bounce' noFadeIn />;
+
     return (
       <div className='Drawing'>
         <div className='QuestionOverlay' style={questionStyle}>
@@ -216,7 +221,8 @@ class Drawing extends React.Component {
             <div style={eraserStyle} className='Action-icon'></div>
           </div>
           <div className='Action Action--submit'>
-            <div onClick={this.submitImage.bind(this)}>Submit Answer</div>
+            <button className='Button--unstyled' onClick={this.submitImage.bind(this)}>Submit Answer</button>
+            {loadingIndicator}
           </div>
           <div onClick={this.cycleLineWidth.bind(this)} className='Action Action--strokeWidth'>
             <div className='BrushSizeIcon'>

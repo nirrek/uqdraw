@@ -30,9 +30,14 @@ $lavendarGray: #68627C;
   text-transform: uppercase;
   font-size: 20px;
   font-weight: 600;
+  transition: background-color 200ms ease-out;
+}
+.PresenterListItem:hover {
+  background-color: rgba(0,0,0,.03);
+  cursor: pointer;
 }
 
-.PresenterListItem--active {
+.PresenterListItem--active, .PresenterListItem--active:hover {
   background-color: $purple;
   color: #fff;
 }
@@ -114,7 +119,7 @@ $lavendarGray: #68627C;
   margin: 5px;
 }
 
-button {
+.PresenterButton {
   font-size: 16px;
   border-radius: 38px;
   padding: 1em;
