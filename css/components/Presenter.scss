@@ -1,8 +1,7 @@
-/*
- * main purple: #5C42AB
- * darker purp: 523B99
- * off white: #F7FAFE
- */
+$purple: #5C42AB;
+$purple--dark: #523B99;
+$offwhite: #F7FAFE;
+$lavendarGray: #68627C;
 
 .PresenterView {
   display: flex;
@@ -17,7 +16,7 @@
   width: 20vw;
   flex-shrink: 1;
   box-shadow: -1px 0 10px rgba(0,0,0,.2);
-  background-color: #F7FAFE;
+  background-color: $offwhite;
 }
 
 .PresenterList {
@@ -30,14 +29,14 @@
   border-bottom: 1px solid rgba(0,0,0,.06);
   text-align: center;
   padding: 1em;
-  color: #68627C;
+  color: $lavendarGray;
   text-transform: uppercase;
   font-size: 20px;
   font-weight: 600;
 }
 
 .PresenterListItem--active {
-  background-color: #5C42AB;
+  background-color: $purple;
   color: #fff;
 }
 
@@ -59,7 +58,7 @@
 }
 
 .Label {
-  background-color: #5C42AB;
+  background-color: $purple;
   padding: .5em 1em;
   border-radius: 4px;
   color: #fff;
