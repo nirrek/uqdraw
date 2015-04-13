@@ -68,7 +68,6 @@ class Presenter extends React.Component {
   }
 
   onActivateQuestion(key) {
-    console.log('Activating key ', key);
     this.setState({activeQuestionKey: key});
     this.reset();
   }
@@ -221,7 +220,6 @@ class QuestionSelector extends React.Component {
     let questions = this.props.questions.map((question, index) => {
       let className = 'PresenterListItem';
       if (question.key === this.props.activeQuestionKey) {
-        console.log('FOUND MATCH');
         className += ' PresenterListItem--active';
       }
       return (
