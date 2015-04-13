@@ -20,9 +20,6 @@ $lavendarGray: #68627C;
 }
 
 .PresenterList {
-  font-size: 1.5em;
-  height: 100%;
-  overflow-y: scroll;
 }
 
 .PresenterListItem {
@@ -81,6 +78,7 @@ $lavendarGray: #68627C;
 .Question {
   margin-top: 0;
   line-height: 1;
+  font-size: 1.6em;
 }
 
 .PresentationResponses {

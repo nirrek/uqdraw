@@ -246,9 +246,7 @@ class Presenter extends React.Component {
         </div>
 
         <div className='Column--supporting'>
-          <div style={this.styles.questionSelector}>
-            <QuestionSelector questions={questions} onActivateQuestion={this.onActivateQuestion.bind(this)} activeQuestionKey={this.state.activeQuestionKey}/>
-          </div>
+          <QuestionSelector questions={questions} onActivateQuestion={this.onActivateQuestion.bind(this)} activeQuestionKey={this.state.activeQuestionKey}/>
         </div>
       </div>
     );
