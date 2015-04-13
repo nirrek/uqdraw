@@ -138,24 +138,24 @@ class QuestionManager extends React.Component {
   onAddQuestion(lectureId, question) {
     // Add new question to questions bucket
     let questionRef = this.questionsRef.push(question);
-    // Set current lecture questions to an array if its undefined
     let lecture = this.state.lectures[lectureId];
+    // Set current lecture questions to an array if its undefined
     lecture.questions = lecture.questions || [];
     lecture.questions.push(questionRef.key());
-    // lecture.questions[questionRef.key()] = Object.keys(lecture.questions).length;
     this.lecturesRef.child(lectureId).update(lecture);
-    // this.state.lectures
-    // let lectureRef = new Firebase(`${config.firebase.base}/lectures/${this.state.courseId}/${lectureId}/questions`);
-    // lectureRef.push(question);
   }
 
   onRemoveQuestion(lectureId, questionId) {
     let lectures = this.state.lectures;
     let lecture = lectures[lectureId];
-    if (lecture.questions[questionId] !== undefined) {
-      delete lecture.questions[questionId];
-      this.setState({lectures: lectures});
+    let questions = this.state.questions;
+    let position = lecture.questions.indexOf(questionId);
+    if (position > -1) {
+      lecture.questions.splice(position, 1);
+      delete questions[questionId];
+      this.setState({lectures: lectures, questions: questions});
       this.lecturesRef.update(this.state.lectures);
+      this.questionsRef.child(questionId).remove();
     }
   }
 
