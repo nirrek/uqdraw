@@ -1,0 +1,21 @@
+@import 'Colors';
+
+table {
+  background-color: rgba(0,0,0,0.03);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+th {
+  background-color: $purple;
+  color: #fff;
+}
+
+th, td {
+  padding: 1em;
+}
+
+td button, td a {
+  color: $purple;
+  text-decoration: none;
+}
