@@ -236,7 +236,7 @@ class QuestionManager extends React.Component {
         <Header>
           <div className='Stack'>
             <img className='Stack-icon' src='/images/basic_picture_multiple.svg' />
-            <Link to='welcome' className='Stack-label'>Archives</Link>
+            <Link to='archive' className='Stack-label'>Archives</Link>
           </div>
         </Header>
         <div className='QuestionManager' style={styles.questionManager} onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} onMouseMove={this.mouseMove.bind(this)} data-scrollable="true">
