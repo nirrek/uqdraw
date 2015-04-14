@@ -6,6 +6,7 @@ import { Button } from './UI';
 let Firebase = require('firebase');
 let Modal = require('react-modal');
 
+require('../../css/components/Colors.scss');
 require('../../css/components/QuestionManager.scss');
 
 var appElement = document.getElementById('react');
@@ -232,7 +233,12 @@ class QuestionManager extends React.Component {
 
     return (
       <div className='ViewContainer'>
-        <Header/>
+        <Header>
+          <div className='Stack'>
+            <img className='Stack-icon' src='/images/basic_picture_multiple.svg' />
+            <Link to='welcome' className='Stack-label'>Archives</Link>
+          </div>
+        </Header>
         <div className='QuestionManager' style={styles.questionManager} onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} onMouseMove={this.mouseMove.bind(this)} data-scrollable="true">
           <div className='TitleBar' style={styles.titleBar} data-scrollable="true">
             <div className="TitleBar-title" style={styles.title}>
