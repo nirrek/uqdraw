@@ -9,6 +9,8 @@ import QuestionManager from './components/QuestionManager';
 import Presenter from './components/Presenter';
 import Drawing from './components/Drawing.js';
 import StartView from './components/StartView.js';
+import Archive from './components/Archive.js';
+import Responses from './components/Responses.js';
 let Firebase = require('firebase');
 
 class App extends React.Component {
@@ -53,6 +55,8 @@ let routes = (
     <Route name="presenter" handler={Presenter} path="/:courseName/:lectureId"/>
     <Route name="drawing" handler={Drawing} path="/drawing"/>
     <Route name="welcome" handler={Welcome} path="/welcome" />
+    <Route name="archive" handler={Archive} path="/archive" />
+    <Route name="responses" handler={Responses} path="/responses" />
     <DefaultRoute handler={StartView}/>
   </Route>
 );

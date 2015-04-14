@@ -8,6 +8,7 @@ class Header extends React.Component {
     return (
       <header>
         <Logo />
+        {this.props.children}
       </header>
     );
   }
