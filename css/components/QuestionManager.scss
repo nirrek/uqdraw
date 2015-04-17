@@ -6,12 +6,20 @@
 }
 
 .QuestionManager {
-  position: relative !important;
-  top: 0 !important;
+  background: #5C42AB;
+  position: relative;
   flex-grow: 1;
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.QustionManager-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  -webkit-user-select: none;
 }
 
 .QuestionManagerFooter {
@@ -25,13 +33,78 @@
 }
 
 .CardLists {
-  position: static !important;
+  position: static;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  overflow-x: auto;
   flex-grow: 1;
 }
 
 .CardList {
   position: relative;
-  border: none !important;
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  padding: 10px;
+  background: #efefef;
+  border-radius: 3px;
+  width: 270px;
+  flex: 0 0 270px;
+  margin-right: 10px;
+}
+
+.CardList--add {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  padding: 10px;
+  background: rgba(0,0,0,.12);
+  border-radius: 3px;
+  width: 270px;
+  flex: 0 0 270px;
+  margin-right: 10px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  color: rgba(255,255,255,.7);
+}
+
+.CardList-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.CardList-header h2 {
+  margin: 0 0 5px 0;
+}
+
+.CardList-header .Button--close {
+  font-size: 22px;
+  margin-right: 6px;
+}
+
+.Card {
+  display: flex;
+  justify-content: space-between;
+  flex-grow: 1;
+  background: #fff;
+  border-radius: 3px;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 6px;
+  cursor: pointer;
+  min-height: 20px;
+  color: #4d4d4d;
+  line-height: 18px;
+  padding: 6px 8px 4px;
+}
+
+.Card--add {
+  margin-top: 12px;
+  cursor: pointer;
+  min-height: 20px;
+  color: #999;
+  line-height: 18px;
+  padding: 6px 8px 4px;
 }
 
 .PresenterLinkContainer {
@@ -69,4 +142,17 @@
 
 .Modal--lectureComposer {
   height: 209px;
+}
+
+
+
+/**
+ * Split Out!
+ */
+.Button--close {
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: 0;
+  color: #aaa;
+  cursor: pointer;
 }

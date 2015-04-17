@@ -160,60 +160,6 @@ class QuestionManager extends React.Component {
   }
 
   render() {
-    var styles = {
-      questionManager: {
-        background: '#5C42AB',
-        position: 'absolute',
-        top: 83,
-        right: 0,
-        bottom: 0,
-        left: 0,
-      },
-      titleBar: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        // background: '#493589',
-        color: '#fff',
-        WebkitUserSelect: 'none',
-      },
-      welcomeLink: {
-        alignSelf: 'flex-start'
-      },
-      title: {
-        display: 'flex',
-        alignItems: 'middle'
-      },
-      canvas: {
-        position: 'relative',
-        height: '100%',
-      },
-      cardLists: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        overflowX: 'auto',
-        position: 'absolute',
-        top: '0',
-        right: '0',
-        bottom: '0',
-        left: '0',
-      },
-      createList: {
-        display: 'flex',
-        flexDirection: 'column',
-        margin: '10px',
-        padding: '10px',
-        background: 'rgba(0,0,0,.12)',
-        borderRadius: '3px',
-        width: '270px',
-        flex: '0 0 270px',
-        marginRight: '10px',
-        cursor: 'pointer',
-        WebkitUserSelect: 'none',
-        color: 'rgba(255,255,255,.7)',
-      },
-    };
 
     let lectures = Object.keys(this.state.lectures).map((key) => {
       return (
@@ -233,16 +179,16 @@ class QuestionManager extends React.Component {
     return (
       <div className='ViewContainer'>
         <Header/>
-        <div className='QuestionManager' style={styles.questionManager} onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} onMouseMove={this.mouseMove.bind(this)} data-scrollable="true">
-          <div className='TitleBar' style={styles.titleBar} data-scrollable="true">
-            <div className="TitleBar-title" style={styles.title}>
+        <div className='QuestionManager' onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} onMouseMove={this.mouseMove.bind(this)} data-scrollable="true">
+          <div className='QustionManager-header' data-scrollable="true">
+            <div className="TitleBar-title">
               <h1>Question Manager - {this.props.courseName}</h1>
             </div>
           </div>
-          <div className='CardListsContainer' style={styles.canvas}>
-            <div className='CardLists scrollbar' style={styles.cardLists} ref="cardLists" data-scrollable="true">
+          <div className='CardListsContainer'>
+            <div className='CardLists scrollbar' ref="cardLists" data-scrollable="true">
               {lectures}
-              <div style={styles.createList} onClick={this.showLectureModal.bind(this)}>
+              <div className="CardList--add" onClick={this.showLectureModal.bind(this)}>
                 <span>Add a new lecture...</span>
               </div>
             {/* side scroll does not respect right margin of rightmost object without this */
@@ -291,56 +237,6 @@ class CardList extends React.Component {
   }
 
   render() {
-    var styles = {
-      card: {
-        background: '#fff',
-        borderRadius: '3px',
-        borderBottom: '1px solid #ccc',
-        marginBottom: '6px',
-        cursor: 'pointer',
-        minHeight: '20px',
-        color: '#4d4d4d',
-        lineHeight: '18px',
-        padding: '6px 8px 4px',
-      },
-      cardList: {
-        display: 'flex',
-        flexDirection: 'column',
-        border: '1px solid #eee',
-        margin: '10px',
-        padding: '10px',
-        background: '#efefef',
-        borderRadius: '3px',
-        width: '270px',
-        flex: '0 0 270px',
-        marginRight: '10px',
-      },
-      titleBar: {
-        display: 'flex',
-        justifyContent: 'space-between',
-      },
-      title: {
-        margin: '0 0 5px 0',
-      },
-      add: {
-        marginTop: '12px',
-        cursor: 'pointer',
-        minHeight: '20px',
-        color: '#999',
-        lineHeight: '18px',
-        padding: '6px 8px 4px',
-      },
-      closeButton: {
-        width: 15,
-        height: 15,
-        flex: '15px 0 0',
-        padding: 0,
-        alignSelf: 'flex-start',
-        fontSize: 22,
-        color: '#aaa',
-      },
-    };
-
     let questions;
     // Make sure both the lecture question refs and matching questions exist
     if (this.props.lecture.questions && this.props.questions) {
@@ -364,22 +260,23 @@ class CardList extends React.Component {
       });
     }
     return (
-      <div className='CardList' style={styles.cardList} draggable="true">
-        <div style={styles.titleBar}>
-          <h2 style={styles.title}>{this.props.lecture.title}</h2>
+      <div className='CardList' draggable="true">
+        <div className='CardList-header'>
+          <h2>{this.props.lecture.title}</h2>
           <div className='PresenterLinkContainer'>
             <Link to="presenter" params={{courseName: this.props.courseName, lectureId: this.props.lectureId}}>Launch {this.props.lecture.title} Presentation</Link>
           </div>
           <a
-            className=""
+            className="Button--close"
             onClick={this.onRemoveLecture.bind(this)}
-            data-id={this.props.lectureId}
-            style={styles.closeButton}>
+            data-id={this.props.lectureId}>
             &times;
           </a>
         </div>
         {questions}
-        <div onClick={this.showQuestionModal.bind(this)} style={styles.add}>Add a new question</div>
+        <div className='Card--add' onClick={this.showQuestionModal.bind(this)}>
+          Add a new question
+        </div>
 
         <QuestionComposer
           isOpen={this.state.modalIsOpen}
@@ -481,38 +378,6 @@ class QuestionComposer extends React.Component {
 }
 
 class Card extends React.Component {
-  constructor() {
-    this.styles = {
-      card: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        flexGrow: '1',
-        background: '#fff',
-        borderRadius: '3px',
-        borderBottom: '1px solid #ccc',
-        marginBottom: '6px',
-        cursor: 'pointer',
-        minHeight: '20px',
-        color: '#4d4d4d',
-        lineHeight: '18px',
-        padding: '6px 8px 4px',
-      },
-      content: {
-        flexGrow: 0,
-      },
-      closeButton: {
-        width: 15,
-        height: 15,
-        flex: '15px 0 0',
-        padding: 0,
-        alignSelf: 'flex-start',
-        display: 'flex',
-        justifyContent: 'flex-end',
-        alignItems: 'flex-start',
-        color: '#aaa',
-      }
-    };
-  }
 
   onRemoveQuestion(event) {
     this.props.onRemoveQuestion(this.props.lectureId, event.currentTarget.dataset.id);
@@ -520,13 +385,12 @@ class Card extends React.Component {
 
   render() {
     return (
-      <div className="Card" style={this.styles.card} draggable="true">
-        <span style={this.styles.content}>{this.props.question}</span>
+      <div className="Card" draggable="true">
+        <span>{this.props.question}</span>
         <a
-          className=""
+          className="Button--close"
           onClick={this.onRemoveQuestion.bind(this)}
-          data-id={this.props.questionId}
-          style={this.styles.closeButton}>
+          data-id={this.props.questionId}>
           &times;
         </a>
       </div>
