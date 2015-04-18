@@ -152,40 +152,40 @@ class Presenter extends React.Component {
       });
     }
 
-    let timer;
     if (typeof this.state.activeQuestionKey !== 'undefined') {
-      timer = <Timer interval="1000" increment="1000" ref="timer"/>;
-    } else {
-      timer = null;
+      var timer = <Timer interval="1000" increment="1000" ref="timer"/>;
+      if (this.state.takingQuestions) {
+        var button = <Button key="1" onClick={this.stop}>Stop Taking Responses</Button>;
+      } else {
+        var button = <Button key="2" onClick={this.start}>Start Taking Responses</Button>;
+      }
     }
 
-    let button;
-    if (this.state.takingQuestions) {
-      button = <Button key="1" onClick={this.stop}>Stop Taking Responses</Button>;
-    } else {
-      button = <Button key="2" onClick={this.start}>Start Taking Responses</Button>;
-    }
     return (
       <div className='PresenterView'>
         {/* <Header/> */}
         <div className='Column--main'>
 
           <div className="PresentationDetails">
-            <div className="KeyValuePair">
-              <div className="Label">Go To</div>
-              <div className="Value">uqdraw.co</div>
+            <div className="Step">
+              <div className='Step-number'>1</div>
+              <div className='Step-instructions'>
+                <span className='Step-label'>Go to</span><span className='Step-value'>uqdraw.co</span>
+              </div>
             </div>
-            <div className="KeyValuePair">
-              <div className="Label">Enter Code</div>
-              <div className="Value">3fa</div>
+            <div className="Step">
+              <div className='Step-number'>2</div>
+              <div className='Step-instructions'>
+                <span className='Step-label'>Enter code</span><span className='Step-value'>3fa</span>
+              </div>
             </div>
           </div>
           <div className="PresentationQuestion">
             <h2 className='SectionHeading'>Question</h2>
             <Question question={activeQuestion}/>
-            {button}
-            <div> {/* TODO figure this out */}
+            <div className='Timer'>
               {timer}
+              {button}
             </div>
           </div>
           <div className="PresentationResponses">
@@ -275,9 +275,9 @@ class Question extends React.Component {
   render() {
     if (!this.props.question) {
       return (
-        <h1 className='Question' /*style={this.styles.unselected}*/>
+        <h2 className='Tip' /*style={this.styles.unselected}*/>
           Select a question on the right when you are ready to begin.
-        </h1>
+        </h2>
       );
     }
 
