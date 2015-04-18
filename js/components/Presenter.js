@@ -12,6 +12,7 @@ require('../../css/components/Presenter.scss');
 class Presenter extends React.Component {
 
   constructor(props) {
+    super(props);
     props.onChangeCourse(null, props.routeParams.courseName);
     this.state = {
       activeQuestionKey: undefined,
@@ -206,7 +207,8 @@ class Presenter extends React.Component {
 
 class QuestionSelector extends React.Component {
 
-  constructor() {
+  constructor(props) {
+    super(props);
     this.styles = {
       questionSelector: {
         display: 'flex',
@@ -258,7 +260,8 @@ class QuestionSelector extends React.Component {
 }
 
 class Question extends React.Component {
-  constructor() {
+  constructor(props) {
+    super(props);
     this.styles = {
       unselected: {
         fontSize: '0.5em',
@@ -333,7 +336,8 @@ class PresenterResponses extends React.Component {
 }
 
 class Timer extends React.Component {
-  constructor() {
+  constructor(props) {
+    super(props);
     this.state = {
       elapsed: 0,
     };

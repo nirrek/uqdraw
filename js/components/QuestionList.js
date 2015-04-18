@@ -6,7 +6,8 @@ require('../../css/components/QuestionManager.scss');
 
 class QuestionList extends React.Component {
 
-  constructor() {
+  constructor(props) {
+    super(props);
     this.state = {
       modalIsOpen: false,
     };

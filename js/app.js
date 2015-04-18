@@ -15,6 +15,7 @@ let Firebase = require('firebase');
 
 class App extends React.Component {
   constructor() {
+    super();
     this.state = {
       userId: 'uqjstee8',
       courseId: undefined,

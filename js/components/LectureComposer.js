@@ -6,6 +6,7 @@ require('../../css/components/QuestionManager.scss');
 
 class LectureComposer extends React.Component {
   constructor() {
+    super(props);
     this.state = {
       lecture: '',
       inputHasText: false,
