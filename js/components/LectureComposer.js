@@ -5,7 +5,7 @@ let Modal = require('react-modal');
 require('../../css/components/QuestionManager.scss');
 
 class LectureComposer extends React.Component {
-  constructor() {
+  constructor(props) {
     super(props);
     this.state = {
       lecture: '',
