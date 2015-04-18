@@ -1,8 +1,9 @@
 import React from 'react';
-import config from '../config.js';
-import Header from './Header.js';
-import { Link } from 'react-router';
-import { Button } from './UI';
+import config from '../config';
+import Header from './Header';
+import QuestionList from './QuestionList';
+import LectureComposer from './LectureComposer';
+
 let Firebase = require('firebase');
 let Modal = require('react-modal');
 
@@ -105,7 +106,7 @@ class QuestionManager extends React.Component {
     }
   }
 
-  mouseUp(event) {
+  mouseUp() {
     this.state.curDown = false;
   }
 
@@ -163,7 +164,7 @@ class QuestionManager extends React.Component {
 
     let lectures = Object.keys(this.state.lectures).map((key) => {
       return (
-        <CardList
+        <QuestionList
           key={key}
           courseName={this.props.courseName}
           lectureId={key}
@@ -203,196 +204,6 @@ class QuestionManager extends React.Component {
         </div>
         {/* Quick hack so that the scrollbar isnt sitting on bottom */}
         <div className='QuestionManagerFooter' />
-      </div>
-    );
-  }
-}
-
-class CardList extends React.Component {
-
-  constructor() {
-    this.state = {
-      modalIsOpen: false,
-    };
-  }
-
-  showQuestionModal() {
-    this.setState({modalIsOpen: true});
-    event.preventDefault();
-  }
-
-  hideQuestionModal() {
-    this.setState({modalIsOpen: false});
-    event.preventDefault();
-  }
-
-  onAddQuestion(question) {
-    this.props.onAddQuestion(this.props.lectureId, question);
-    this.setState({modalIsOpen: false});
-    event.preventDefault();
-  }
-
-  onRemoveLecture(event) {
-    this.props.onRemoveLecture(event.currentTarget.dataset.id);
-  }
-
-  render() {
-    let questions;
-    // Make sure both the lecture question refs and matching questions exist
-    if (this.props.lecture.questions && this.props.questions) {
-      questions = this.props.lecture.questions.map((id) => {
-
-        // If the lecture question ref exists but there is no matching question
-        if (!this.props.questions.hasOwnProperty(id)) {
-          return null;
-        }
-
-        let question = this.props.questions[id];
-        return (
-          <Card
-            key={id}
-            lectureId={this.props.lectureId}
-            questionId={id}
-            question={question}
-            onRemoveQuestion={this.props.onRemoveQuestion}
-          />
-        );
-      });
-    }
-    return (
-      <div className='CardList' draggable="true">
-        <div className='CardList-header'>
-          <h2>{this.props.lecture.title}</h2>
-          <div className='PresenterLinkContainer'>
-            <Link to="presenter" params={{courseName: this.props.courseName, lectureId: this.props.lectureId}}>Launch {this.props.lecture.title} Presentation</Link>
-          </div>
-          <a
-            className="Button--close"
-            onClick={this.onRemoveLecture.bind(this)}
-            data-id={this.props.lectureId}>
-            &times;
-          </a>
-        </div>
-        {questions}
-        <div className='Card--add' onClick={this.showQuestionModal.bind(this)}>
-          Add a new question
-        </div>
-
-        <QuestionComposer
-          isOpen={this.state.modalIsOpen}
-          onClose={this.hideQuestionModal.bind(this)}
-          onSave={this.onAddQuestion.bind(this)}
-        />
-      </div>
-    );
-  }
-}
-
-class LectureComposer extends React.Component {
-  constructor() {
-    this.state = {
-      lecture: '',
-      inputHasText: false,
-    };
-  }
-
-  onInputChange(event) {
-    let inputText = event.target.value;
-    let inputHasText = true;
-    if (inputText.length === 0) {inputHasText = false;}
-    this.setState({
-      lecture: inputText,
-      inputHasText: inputHasText
-    });
-  }
-
-  onSave() {
-    this.props.onSave(this.state.lecture);
-    this.setState({lecture: '', inputHasText: false});
-  }
-
-  render() {
-    let labelClass = 'TransparentLabel';
-    if (this.state.inputHasText) {labelClass += ' TransparentLabel--hidden'; }
-
-    return (
-      <Modal isOpen={this.props.isOpen} className='Modal--lectureComposer'>
-        <a onClick={this.props.onClose} href="#" className='Modal__cross'>&times;</a>
-          <div className='Slat'>
-            <input placeholder='Lecture Name' className='Input' type="text" value={this.state.lecture} onChange={this.onInputChange.bind(this)} />
-          </div>
-          <div className='Slat'>
-            <button className='Button Button--secondary' type="submit" onClick={this.onSave.bind(this)}>Add Lecture</button>
-          </div>
-
-      </Modal>
-    );
-  }
-}
-
-// A component that allows a lecturer to compose a new question, or to edit
-// and existing one.
-class QuestionComposer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      question: ''
-    };
-  }
-
-  onTextareaChange(event) {
-    let inputText = event.target.value;
-    let inputHasText = true;
-    if (inputText.length === 0) { inputHasText = false; }
-    this.setState({
-      question: event.target.value,
-      inputHasText: inputHasText,
-    });
-  }
-
-  onSave() {
-    this.props.onSave(this.state.question);
-    this.setState({question: '', inputHasText: false});
-  }
-
-  render() {
-    let labelClass = 'TransparentLabel';
-    if (this.state.inputHasText) {labelClass += ' TransparentLabel--hidden'; }
-
-    return (
-      <Modal className='Modal--questionComposer' isOpen={this.props.isOpen}>
-        <a onClick={this.props.onClose} href="#" className='Modal__cross'>&times;</a>
-        <div className='QuestionInput'>
-          <div className='AdvancedInput'>
-            <div className={labelClass}>Enter Question Here</div>
-            <textarea onChange={this.onTextareaChange.bind(this)} value={this.state.question} />
-          </div>
-        </div>
-        <a href="#">Insert supporting image &rarr;</a>
-        <div className='Modal__footer'>
-          <Button onClick={this.onSave.bind(this)}>Save Question</Button>
-        </div>
-      </Modal>
-    );
-  }
-}
-
-class Card extends React.Component {
-
-  onRemoveQuestion(event) {
-    this.props.onRemoveQuestion(this.props.lectureId, event.currentTarget.dataset.id);
-  }
-
-  render() {
-    return (
-      <div className="Card" draggable="true">
-        <span>{this.props.question}</span>
-        <a
-          className="Button--close"
-          onClick={this.onRemoveQuestion.bind(this)}
-          data-id={this.props.questionId}>
-          &times;
-        </a>
       </div>
     );
   }
