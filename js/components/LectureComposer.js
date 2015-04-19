@@ -29,12 +29,13 @@ class LectureComposer extends React.Component {
   }
 
   render() {
+    let {isOpen, onClose};
     let labelClass = 'TransparentLabel';
     if (this.state.inputHasText) {labelClass += ' TransparentLabel--hidden'; }
 
     return (
-      <Modal isOpen={this.props.isOpen} className='Modal--lectureComposer'>
-        <a onClick={this.props.onClose} href="#" className='Modal__cross'>&times;</a>
+      <Modal isOpen={isOpen} className='Modal--lectureComposer'>
+        <a onClick={onClose} href="#" className='Modal__cross'>&times;</a>
           <div className='Slat'>
             <input placeholder='Lecture Name' className='Input' type="text" value={this.state.lecture} onChange={this.onInputChange.bind(this)} />
           </div>
@@ -46,5 +47,11 @@ class LectureComposer extends React.Component {
     );
   }
 }
+
+LectureComposer.propTypes = {
+    onSave: React.PropTypes.func,
+    isOpen: React.PropTypes.func,
+    onClose: React.PropTypes.func,
+};
 
 export default LectureComposer;

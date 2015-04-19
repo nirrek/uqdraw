@@ -8,18 +8,24 @@ class Question extends React.Component {
   }
 
   render() {
+    let {question, questionId} = this.props;
     return (
       <div className="Card" draggable="true">
-        <span>{this.props.question}</span>
+        <span>{question}</span>
         <a
           className="Button--close"
           onClick={this.onRemoveQuestion.bind(this)}
-          data-id={this.props.questionId}>
+          data-id={questionId}>
           &times;
         </a>
       </div>
     );
   }
 }
+
+Question.propTypes = {
+  question: React.PropTypes.string,
+  questionId: React.PropTypes.string,
+};
 
 export default Question;

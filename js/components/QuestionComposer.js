@@ -30,12 +30,13 @@ class QuestionComposer extends React.Component {
   }
 
   render() {
+    let {isOpen, onClose} = this.props;
     let labelClass = 'TransparentLabel';
     if (this.state.inputHasText) {labelClass += ' TransparentLabel--hidden'; }
 
     return (
-      <Modal className='Modal--questionComposer' isOpen={this.props.isOpen}>
-        <a onClick={this.props.onClose} href="#" className='Modal__cross'>&times;</a>
+      <Modal className='Modal--questionComposer' isOpen={isOpen}>
+        <a onClick={onClose} href="#" className='Modal__cross'>&times;</a>
         <div className='QuestionInput'>
           <div className='AdvancedInput'>
             <div className={labelClass}>Enter Question Here</div>
@@ -50,5 +51,11 @@ class QuestionComposer extends React.Component {
     );
   }
 }
+
+QuestionComposer.propTypes = {
+    isOpen: React.PropTypes.bool,
+    onClose: React.PropTypes.func,
+    onSave: React.PropTypes.func,
+};
 
 export default QuestionComposer;
