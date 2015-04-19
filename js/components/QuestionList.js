@@ -23,8 +23,8 @@ class QuestionList extends React.Component {
     event.preventDefault();
   }
 
-  onAddQuestion(question) {
-    this.props.onAddQuestion(this.props.lectureId, question);
+  onAddQuestion(lectureId, question) {
+    this.props.onAddQuestion(lectureId, question);
     this.setState({modalIsOpen: false});
     event.preventDefault();
   }
@@ -34,7 +34,7 @@ class QuestionList extends React.Component {
   }
 
   render() {
-    let {courseName, lectureId, lecture, questions, ...props} = this.props;
+    let {courseName, lectureId, lecture, questions, ...delegateProps} = this.props;
     let questionComponents;
     // Make sure both the lecture question refs and matching questions exist
     if (lecture.questions && questions) {
@@ -52,7 +52,7 @@ class QuestionList extends React.Component {
             lectureId={lectureId}
             questionId={id}
             question={question}
-            {...props}
+            {...delegateProps}
           />
         );
       });
@@ -78,7 +78,7 @@ class QuestionList extends React.Component {
         <QuestionComposer
           isOpen={this.state.modalIsOpen}
           onClose={this.hideQuestionModal.bind(this)}
-          onSave={this.onAddQuestion.bind(this)}
+          onSave={this.onAddQuestion.bind(this, lectureId)}
         />
       </div>
     );
