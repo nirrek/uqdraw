@@ -29,29 +29,30 @@ class QuestionList extends React.Component {
     event.preventDefault();
   }
 
-  onRemoveLecture(event) {
-    this.props.onRemoveLecture(event.currentTarget.dataset.id);
+  onRemoveLecture(key) {
+    this.props.onRemoveLecture(key);
   }
 
   render() {
-    let questions;
+    let {courseName, lectureId, lecture, questions, ...props} = this.props;
+    let questionComponents;
     // Make sure both the lecture question refs and matching questions exist
-    if (this.props.lecture.questions && this.props.questions) {
-      questions = this.props.lecture.questions.map((id) => {
+    if (lecture.questions && questions) {
+      questionComponents = lecture.questions.map((id) => {
 
         // If the lecture question ref exists but there is no matching question
-        if (!this.props.questions.hasOwnProperty(id)) {
+        if (!questions.hasOwnProperty(id)) {
           return null;
         }
 
-        let question = this.props.questions[id];
+        let question = questions[id];
         return (
           <Question
             key={id}
-            lectureId={this.props.lectureId}
+            lectureId={lectureId}
             questionId={id}
             question={question}
-            onRemoveQuestion={this.props.onRemoveQuestion}
+            {...props}
           />
         );
       });
@@ -59,18 +60,17 @@ class QuestionList extends React.Component {
     return (
       <div className='CardList' draggable="true">
         <div className='CardList-header'>
-          <h2>{this.props.lecture.title}</h2>
+          <h2>{lecture.title}</h2>
           <div className='PresenterLinkContainer'>
-            <Link to="presenter" params={{courseName: this.props.courseName, lectureId: this.props.lectureId}}>Launch {this.props.lecture.title} Presentation</Link>
+            <Link to="presenter" params={{courseName: courseName, lectureId: lectureId}}>Launch {lecture.title} Presentation</Link>
           </div>
           <a
             className="Button--close"
-            onClick={this.onRemoveLecture.bind(this)}
-            data-id={this.props.lectureId}>
+            onClick={this.onRemoveLecture.bind(this, lectureId)}>
             &times;
           </a>
         </div>
-        {questions}
+        {questionComponents}
         <div className='Card--add' onClick={this.showQuestionModal.bind(this)}>
           Add a new question
         </div>
@@ -84,5 +84,14 @@ class QuestionList extends React.Component {
     );
   }
 }
+
+QuestionList.propTypes = {
+  courseName: React.PropTypes.string,
+  lectureId: React.PropTypes.string,
+  lecture: React.PropTypes.object,
+  questions: React.PropTypes.object,
+  onAddQuestion: React.PropTypes.func,
+  onRemoveLecture: React.PropTypes.func,
+};
 
 export default QuestionList;
