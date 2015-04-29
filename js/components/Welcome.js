@@ -1,4 +1,5 @@
 import React from 'react';
+import config from '../config';
 import { Link } from 'react-router';
 
 import Header from './Header.js';
@@ -15,7 +16,7 @@ Modal.setAppElement(appElement);
 Modal.injectCSS();
 
 // Should have some sort of configuration module for this stuff
-const FIREBASE_ROOT = 'https://uqdraw.firebaseio.com';
+const FIREBASE_ROOT = config.firebase.base;
 
 class Grid extends React.Component {
   render() {
@@ -74,7 +75,8 @@ class SubjectList extends React.Component {
   }
 
   componentDidMount() {
-    let ref = this.ref = new Firebase(FIREBASE_ROOT + '/courseLists/uqjstee8');
+    let firebaseEndpoint = config.firebase.base + '/courseLists/uqjstee8';
+    let ref = this.ref = new Firebase(firebaseEndpoint);
     ref.on('value', (snapshot) => {
       var content = snapshot.val(); // must unwrap the snapshot
       // var courseLists = Object.keys(content).map((key) => content[key]);
