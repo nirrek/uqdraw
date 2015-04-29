@@ -29,7 +29,7 @@ class LectureComposer extends React.Component {
   }
 
   render() {
-    let {isOpen, onClose};
+    let {isOpen, onClose} = this.props;
     let labelClass = 'TransparentLabel';
     if (this.state.inputHasText) {labelClass += ' TransparentLabel--hidden'; }
 
