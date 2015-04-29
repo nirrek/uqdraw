@@ -28,7 +28,7 @@ class Responses extends React.Component {
 
   render() {
     let style = {
-      maxWidth: 760,
+      maxWidth: 800,
       display: 'flex',
       alignItems: 'flex-start',
       margin: '0 auto',
@@ -37,6 +37,7 @@ class Responses extends React.Component {
 
     let thumbStyle = {
       marginRight: '1em',
+      marginBottom: '1em',
       backgroundColor: 'rgba(0, 0, 0, 0.03)',
       borderRadius: 4,
     };
@@ -44,6 +45,7 @@ class Responses extends React.Component {
     let thumbContainerStyle = {
       display: 'flex',
       alignItems: 'flex-start',
+      flexWrap: 'wrap',
     };
 
     let thumbnails = this.state.responses.map((uri) => {
