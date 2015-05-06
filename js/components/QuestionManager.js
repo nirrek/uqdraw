@@ -69,6 +69,8 @@ class QuestionManager extends React.Component {
 
   initData(courseKey) {
     if (courseKey) {
+      this.setState({lectures: LectureStore.getAll(courseKey)});
+      this.setState({questions: QuestionStore.getAll(courseKey)});
       API.subscribe('lectures', this.componentKey, courseKey);
       API.subscribe('questions', this.componentKey, courseKey);
     }
