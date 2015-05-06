@@ -26,6 +26,8 @@
   },
   "dependencies": {
     "firebase": "^2.2.3",
+    "flux": "^2.0.3",
+    "keymirror": "^0.1.1",
     "normalize.css": "^3.0.2",
     "object-assign": "^2.0.0",
     "react-modal": "^0.1.0",
