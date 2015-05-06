@@ -174,20 +174,23 @@ class QuestionManager extends React.Component {
   }
 
   render() {
-    let lectures = Object.keys(this.state.lectures).map((key) => {
-      return (
-        <QuestionList
-          key={key}
-          courseName={this.props.courseName}
-          lectureId={key}
-          lecture={this.state.lectures[key]}
-          questions={this.state.questions}
-          onRemoveLecture={this.onRemoveLecture.bind(this)}
-          onAddQuestion={this.onAddQuestion.bind(this)}
-          onRemoveQuestion={this.onRemoveQuestion.bind(this)}
-        />
-      );
-    });
+    let lectures;
+    if (this.state.lectures) {
+      lectures = Object.keys(this.state.lectures).map((key) => {
+        return (
+          <QuestionList
+            key={key}
+            courseName={this.props.courseName}
+            lectureId={key}
+            lecture={this.state.lectures[key]}
+            questions={this.state.questions}
+            onRemoveLecture={this.onRemoveLecture.bind(this)}
+            onAddQuestion={this.onAddQuestion.bind(this)}
+            onRemoveQuestion={this.onRemoveQuestion.bind(this)}
+          />
+        );
+      });
+    }
 
     return (
       <div className='ViewContainer'>
