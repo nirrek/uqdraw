@@ -5,6 +5,13 @@ import { Link } from 'react-router';
 import QuestionList from './QuestionList';
 import LectureComposer from './LectureComposer';
 
+import QuestionActions from '../actions/QuestionActions.js';
+import QuestionStore from '../stores/QuestionStore.js';
+import LectureActions from '../actions/LectureActions.js';
+import LectureStore from '../stores/LectureStore.js';
+import API from '../utils/API.js';
+import ComponentKey from '../utils/ComponentKey.js';
+
 let Firebase = require('firebase');
 let Modal = require('react-modal');
 
@@ -17,8 +24,9 @@ Modal.injectCSS();
 
 class QuestionManager extends React.Component {
   constructor(props) {
+    super(props);
     props.onChangeCourse(null, props.routeParams.courseName);
-   super(props);
+    this.componentKey = ComponentKey.generate();
     this.state = {
       curYPos: 0,
       curXPos: 0,
@@ -30,47 +38,48 @@ class QuestionManager extends React.Component {
       questions: {},
     };
 
-    this.getLectures = this.getLectures.bind(this);
-    this.getquestions = this.getQuestions.bind(this);
+    this.initData = this.initData.bind(this);
+    this.onLectureChange = this.onLectureChange.bind(this);
+    this.onQuestionChange = this.onQuestionChange.bind(this);
   }
 
   componentDidMount() {
+    // Listen for store changes
+    LectureStore.addChangeListener(this.onLectureChange);
+    QuestionStore.addChangeListener(this.onQuestionChange);
+
     // Store dom node reference to scrolling div
     this.state.node = React.findDOMNode(this.refs.cardLists);
 
-    if (this.props.courseId) {
-      this.getLectures(this.props.courseId);
-      this.getquestions(this.props.courseId);
-    }
+    // Initialise store data
+    this.initData(this.props.courseId);
   }
 
   componentWillReceiveProps(newProps) {
-    if (!this.props.courseId) {
-      if (newProps.courseId) {
-        this.getLectures(newProps.courseId);
-        this.getquestions(newProps.courseId);
-      }
-    }
+    // Initialise store data
+    this.initData(newProps.courseId);
   }
 
   componentWillUnmount() {
-    this.lecturesRef.off();
+    LectureStore.removeChangeListener(this.onLectureChange);
+    QuestionStore.removeChangeListener(this.onQuestionChange);
+    API.unsubscribe('lectures', this.componentKey, this.props.courseId);
+    API.unsubscribe('questions', this.componentKey, this.props.courseId);
   }
 
-  getLectures(courseId) {
-    this.lecturesRef = new Firebase(`${config.firebase.base}/lectures/${courseId}`);
-    this.lecturesRef.on('value', (snapshot) => {
-      let content = snapshot.val() || {};
-      this.setState({lectures: content});
-    });
+  initData(courseKey) {
+    if (courseKey) {
+      API.subscribe('lectures', this.componentKey, courseKey);
+      API.subscribe('questions', this.componentKey, courseKey);
+    }
   }
 
-  getQuestions(courseId) {
-    this.questionsRef = new Firebase(`${config.firebase.base}/questions/${courseId}`);
-    this.questionsRef.on('value', (snapshot) => {
-      let content = snapshot.val() || {};
-      this.setState({questions: content});
-    });
+  onLectureChange() {
+    this.setState({lectures: LectureStore.getAll(this.props.courseId)});
+  }
+
+  onQuestionChange() {
+    this.setState({questions: QuestionStore.getAll(this.props.courseId)});
   }
 
   mouseMove(event) {
@@ -124,7 +133,7 @@ class QuestionManager extends React.Component {
 
   onAddLecture(lecture) {
     let newLecture = {title: lecture, questions: {}};
-    this.lecturesRef.push(newLecture);
+    API.addToLectures(this.props.courseId, newLecture);
     this.setState({isLectureModalOpen: false});
     event.preventDefault();
   }
@@ -134,18 +143,19 @@ class QuestionManager extends React.Component {
     if (lectures[lectureId]) {
       delete lectures[lectureId];
       this.setState({lectures: lectures});
-      this.lecturesRef.child(lectureId).remove();
+      API.removeLecture(this.props.courseId, lectureId);
     }
   }
 
   onAddQuestion(lectureId, question) {
     // Add new question to questions bucket
-    let questionRef = this.questionsRef.push(question);
+    let questionRef = API.addToQuestions(this.props.courseId, question);
+
+    // Lecture needs to store a reference to the question we just added
     let lecture = this.state.lectures[lectureId];
-    // Set current lecture questions to an array if its undefined
     lecture.questions = lecture.questions || [];
     lecture.questions.push(questionRef.key());
-    this.lecturesRef.child(lectureId).update(lecture);
+    API.updateLecture(this.props.courseId, lectureId, lecture);
   }
 
   onRemoveQuestion(lectureId, questionId) {
@@ -157,13 +167,11 @@ class QuestionManager extends React.Component {
       lecture.questions.splice(position, 1);
       delete questions[questionId];
       this.setState({lectures: lectures, questions: questions});
-      this.lecturesRef.update(this.state.lectures);
-      this.questionsRef.child(questionId).remove();
+      API.removeQuestion(this.props.courseId, lectures, questionId);
     }
   }
 
   render() {
-
     let lectures = Object.keys(this.state.lectures).map((key) => {
       return (
         <QuestionList
