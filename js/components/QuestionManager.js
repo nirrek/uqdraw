@@ -133,20 +133,14 @@ class QuestionManager extends React.Component {
     event.preventDefault();
   }
 
-  onAddLecture(lecture) {
-    let newLecture = {title: lecture, questions: {}};
-    API.addToLectures(this.props.courseId, newLecture);
+  onAddLecture(title) {
+    LectureActions.create(this.props.courseId, title);
     this.setState({isLectureModalOpen: false});
     event.preventDefault();
   }
 
   onRemoveLecture(lectureId) {
-    let lectures = this.state.lectures;
-    if (lectures[lectureId]) {
-      delete lectures[lectureId];
-      this.setState({lectures: lectures});
-      API.removeLecture(this.props.courseId, lectureId);
-    }
+    LectureActions.delete(this.props.courseId, lectureId);
   }
 
   onAddQuestion(lectureId, question) {

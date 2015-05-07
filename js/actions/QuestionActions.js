@@ -13,7 +13,9 @@ let QuestionActions = {
         });
     },
 
-    create: (text) => {
+    create: (courseKey, lectureId, lecture, question) => {
+        let questionRef = API.addToQuestions(courseKey, question);
+        API.updateLecture(courseKey, lectureId, lecture);
         Dispatcher.dispatch({
             type: ActionTypes.QUESTION_CREATE,
             text: text,
@@ -26,6 +28,6 @@ let QuestionActions = {
             key: key,
         });
     },
-}
+};
 
 export default QuestionActions;

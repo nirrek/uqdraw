@@ -1,8 +1,9 @@
-import Dispatcher from '../dispatcher/Dispatcher.js';
-import LectureConstants from '../constants/LectureConstants.js';
+import Dispatcher from '../dispatcher/Dispatcher';
+import LectureConstants from '../constants/LectureConstants';
 let ActionTypes = LectureConstants.ActionTypes;
+import API from '../utils/API';
 
-let QuestionActions = {
+let LectureActions = {
 
     updateLectures: (courseKey, lectures) => {
         if (!courseKey || !lectures) return;
@@ -13,19 +14,22 @@ let QuestionActions = {
         });
     },
 
-    create: (text) => {
+    create: (courseKey, lectureTitle) => {
+        let newLecture = {title: lectureTitle, questions: {}};
+        API.addToLectures(courseKey, newLecture);
         Dispatcher.dispatch({
             type: ActionTypes.LECTURE_CREATE,
-            text: text,
+            lecture: newLecture,
         });
     },
 
-    delete: (key) => {
+    delete: (courseKey, lectureKey) => {
+        API.removeLecture(courseKey, lectureKey);
         Dispatcher.dispatch({
             type: ActionTypes.LECTURE_DELETE,
-            key: key,
+            lectureKey: lectureKey,
         });
     },
-}
+};
 
-export default QuestionActions;
+export default LectureActions;
