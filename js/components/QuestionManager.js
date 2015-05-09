@@ -4,6 +4,7 @@ import Header from './Header';
 import { Link } from 'react-router';
 import QuestionList from './QuestionList';
 import LectureComposer from './LectureComposer';
+import HorizontalDragScroll from '../composables/HorizontalDragScroll.js';
 
 import QuestionActions from '../actions/QuestionActions.js';
 import QuestionStore from '../stores/QuestionStore.js';
@@ -48,9 +49,6 @@ class QuestionManager extends React.Component {
     LectureStore.addChangeListener(this.onLectureChange);
     QuestionStore.addChangeListener(this.onQuestionChange);
 
-    // Store dom node reference to scrolling div
-    this.state.node = React.findDOMNode(this.refs.cardLists);
-
     // Initialise store data
     this.initData(this.props.courseId);
   }
@@ -82,45 +80,6 @@ class QuestionManager extends React.Component {
 
   onQuestionChange() {
     this.setState({questions: QuestionStore.getAll(this.props.courseId)});
-  }
-
-  mouseMove(event) {
-    if (this.state.curDown === true) {
-      var node = this.state.node,
-          offset = this.state.curXPos - event.pageX,
-          scrollLeft = node.scrollLeft,
-          maxScroll = node.scrollWidth - node.clientWidth;
-
-      // Stop measuring negative offsets once scroll is 0
-      // This avoids buffering up scroll left distance if you keep dragging
-      // past the minimum scroll value
-      if (scrollLeft <= 0 && offset < 0) {
-        this.state.curScrollPos = 0;
-        this.state.curXPos = event.pageX;
-      }
-
-      // Stop measuring positive offsets once max scroll is reached
-      // This avoids buffering up scroll right distance if you keep dragging
-      // past the maximum scroll value
-      else if (scrollLeft >= maxScroll && offset > 0) {
-        this.state.curScrollPos = maxScroll;
-        this.state.curXPos = event.pageX;
-      }
-
-      node.scrollLeft = this.state.curScrollPos + offset;
-    }
-  }
-
-  mouseDown(event) {
-    if (event.target.dataset.scrollable) {
-      this.state.curDown = true;
-      this.state.curXPos = event.pageX;
-      this.state.curScrollPos = this.state.node.scrollLeft;
-    }
-  }
-
-  mouseUp() {
-    this.state.curDown = false;
   }
 
   showLectureModal(event) {
@@ -194,14 +153,14 @@ class QuestionManager extends React.Component {
             <Link to='archive' className='Stack-label'>Archives</Link>
           </div>
         </Header>
-        <div className='QuestionManager' onMouseDown={this.mouseDown.bind(this)} onMouseUp={this.mouseUp.bind(this)} onMouseMove={this.mouseMove.bind(this)} data-scrollable="true">
+        <div className='QuestionManager' {...this.props.scrollHandlers} data-scrollable="true">
           <div className='QustionManager-header' data-scrollable="true">
             <div className="TitleBar-title">
               <h1>Question Manager - {this.props.courseName}</h1>
             </div>
           </div>
           <div className='CardListsContainer'>
-            <div className='CardLists scrollbar' ref="cardLists" data-scrollable="true">
+            <div className='CardLists scrollbar' ref={this.props.setScrollRef} data-scrollable="true">
               {lectures}
               <div className="CardList--add" onClick={this.showLectureModal.bind(this)}>
                 <span>Add a new lecture...</span>
@@ -223,4 +182,4 @@ class QuestionManager extends React.Component {
   }
 }
 
-export default QuestionManager;
+export default HorizontalDragScroll(QuestionManager);
