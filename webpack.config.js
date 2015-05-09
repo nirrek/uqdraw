@@ -22,4 +22,5 @@ module.exports = {
   plugins: [
     new webpack.NoErrorsPlugin()
   ],
+  devtool: "source-map"
 };
