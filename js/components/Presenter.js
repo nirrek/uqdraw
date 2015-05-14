@@ -3,6 +3,11 @@ import config from '../config.js';
 import Header from './Header.js';
 import { Button } from './UI';
 
+import QuestionSelector from './QuestionSelector.js';
+import PresenterQuestion from './PresenterQuestion.js';
+import PresenterResponses from './PresenterResponses.js';
+import Timer from './Timer.js';
+
 let Firebase = require('firebase');
 let StyleSheet = require('react-style');
 let objectAssign = require('object-assign');
@@ -183,7 +188,7 @@ class Presenter extends React.Component {
           </div>
           <div className="PresentationQuestion">
             <h2 className='SectionHeading'>Question</h2>
-            <Question question={activeQuestion}/>
+            <PresenterQuestion question={activeQuestion}/>
             <div className='Timer'>
               {timer}
               {button}
@@ -200,190 +205,6 @@ class Presenter extends React.Component {
         <div className='Column--supporting'>
           <QuestionSelector questions={questions} onActivateQuestion={this.onActivateQuestion.bind(this)} activeQuestionKey={this.state.activeQuestionKey}/>
         </div>
-      </div>
-    );
-  }
-}
-
-class QuestionSelector extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.styles = {
-      questionSelector: {
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        flex: '200px 0 1',
-        fontSize: 20,
-        fontWeight: 200,
-      },
-      list: {
-      },
-      listItem: {
-        display: 'flex',
-        justifyContent: 'center',
-        borderBottom: 'solid 1px #ddd',
-        padding: '20px 10px',
-        cursor: 'pointer',
-        transition: 'all 0.2s',
-      }
-    };
-
-    this.state = {
-      styles: this.styles,
-    };
-  }
-
-  onActivateQuestion(key) {
-    this.props.onActivateQuestion(key);
-  }
-
-  render() {
-    let questions = this.props.questions.map((question, index) => {
-      let className = 'PresenterListItem';
-      if (question.key === this.props.activeQuestionKey) {
-        className += ' PresenterListItem--active';
-      }
-      return (
-        <div key={question.key} className={className} onClick={this.onActivateQuestion.bind(this, question.key)}>
-          <span>Question {index+1}</span>
-        </div>)
-      ;
-    });
-    return (
-      <div className='PresenterList'>
-        {questions}
-      </div>
-    );
-  }
-}
-
-class Question extends React.Component {
-  constructor(props) {
-    super(props);
-    this.styles = {
-      unselected: {
-        fontSize: '0.5em',
-        fontStyle: 'italic',
-      },
-    };
-
-    this.state = {
-      takingQuestions: false,
-      styles: this.styles,
-    };
-  }
-
-  render() {
-    if (!this.props.question) {
-      return (
-        <h2 className='Tip' /*style={this.styles.unselected}*/>
-          Select a question on the right when you are ready to begin.
-        </h2>
-      );
-    }
-
-    return (
-      <div>
-        <h1 className='Question'>{this.props.question.value}</h1>
-      </div>
-    );
-  }
-}
-
-class PresenterResponses extends React.Component {
-
-  onThumbnailClick(key, event) {
-    event.preventDefault();
-    this.props.onThumbnailClick(key);
-  }
-
-  render() {
-    this.styles = {
-      container: {
-        textAlign: 'center',
-        color: '#ccc',
-        justifyContent: 'center',
-      },
-      responses: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        marginLeft: 20,
-        marginRight: 10,
-      },
-      response: {
-        marginRight: 10,
-      },
-
-    };
-    // if (!this.props.responses.count) return (<div/>);
-    let thumbnails = this.props.responses.map((dataURI, key) => {
-      return (
-        <a key={key} href="" onClick={this.onThumbnailClick.bind(this, key)}>
-          <img className='Thumbnail' src={dataURI}/>
-        </a>
-      );
-    });
-    return (
-      <div style={this.styles.container}>
-        <div style={this.styles.responses}>{thumbnails}</div>
-      </div>
-    );
-  }
-}
-
-class Timer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      elapsed: 0,
-    };
-    this.startTimer = this.startTimer.bind(this);
-    this.stopTimer = this.stopTimer.bind(this);
-    this.resetTimer = this.resetTimer.bind(this);
-    this.tick = this.tick.bind(this);
-  }
-
-  startTimer() {
-    if (!this.timer) {
-      this.timer = setInterval(this.tick, this.props.interval);
-    }
-  }
-
-  stopTimer() {
-    clearInterval(this.timer);
-    this.timer = undefined;
-  }
-
-  resetTimer() {
-    this.stopTimer();
-    this.setState({elapsed: 0});
-  }
-
-  tick() {
-    this.setState({elapsed: Number(this.state.elapsed) + +Number(this.props.increment)});
-  }
-
-  componentWillUnmount() {
-    this.stopTimer();
-  }
-
-  render() {
-    this.styles = {
-      container: {
-        fontSize: 30,
-      }
-    };
-    let totalSeconds = Math.round(this.state.elapsed / 1000);
-    let minutes = Math.floor(totalSeconds / 60);
-    let seconds = totalSeconds % 60;
-    if (seconds < 10) { seconds = '0' + seconds; }
-    return (
-      <div style={this.styles.container}>
-        <span>{minutes}:{seconds}</span>
       </div>
     );
   }
