@@ -4,6 +4,7 @@
   "description": "Platform for asking in-lecture questions and getting free-form responses.",
   "main": "index.js",
   "scripts": {
+	"test": "jest",
     "start": "npm install && webpack-dev-server --port 9000 --hot --progress --colors --no-info",
     "build": "npm install && webpack --progress --colors",
     "deploy": "webpack --config webpack.config.deploy.js --progress --colors && scp build/bundle.js moss:. && ssh -At s4171639@moss.labs.eait.uq.edu.au scp bundle.js s4171639-uqdraw.zones.eait.uq.edu.au:./uqdraw",
@@ -17,6 +18,7 @@
     "babel-loader": "^5.1.0",
     "babel-plugin-object-assign": "^1.1.0",
     "css-loader": "^0.9.1",
+    "jest-cli": "^0.4.3",
     "react": "^0.13.1",
     "react-hot-loader": "^1.2.3",
     "react-router": "^0.13.1",
