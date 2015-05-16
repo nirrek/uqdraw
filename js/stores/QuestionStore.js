@@ -1,6 +1,5 @@
 let Dispatcher = require('../dispatcher/Dispatcher.js');
 let EventEmitter = require('events').EventEmitter;
-let objectAssign = require('object-assign');
 import API from '../utils/API.js';
 import QuestionConstants from '../constants/QuestionConstants.js';
 let ActionTypes = QuestionConstants.ActionTypes;
@@ -21,7 +20,7 @@ function destroy(id) {
 
 }
 
-let QuestionStore = objectAssign({}, EventEmitter.prototype, {
+let QuestionStore = Object.assign({}, EventEmitter.prototype, {
     get: function(key) {
         return _questions[key];
     },
@@ -53,7 +52,7 @@ function dispatcherCallback(action) {
                 if (!_questions[action.courseKey]) {
                     _questions[action.courseKey] = {};
                 }
-                objectAssign(_questions[action.courseKey], action.questions);
+                Object.assign(_questions[action.courseKey], action.questions);
                 QuestionStore.emitChange();
             }
             break;

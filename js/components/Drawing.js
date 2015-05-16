@@ -1,5 +1,4 @@
 import React from 'react';
-let objectAssign = require('object-assign');
 import Touchy from '../touchy.js';
 import config from '../config.js';
 let Spinner = require('react-spinkit');

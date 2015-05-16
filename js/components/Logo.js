@@ -1,12 +1,11 @@
 import React from 'react';
-let objectAssign = require('object-assign');
 
 require('../../css/components/Logo.scss');
 
 let m = function(...objects) {
   let result = {};
   objects.forEach((obj) => {
-    if (obj) objectAssign(result, obj);
+    if (obj) Object.assign(result, obj);
   });
   return result;
 };

@@ -1,6 +1,5 @@
 let Dispatcher = require('../dispatcher/Dispatcher.js');
 let EventEmitter = require('events').EventEmitter;
-let objectAssign = require('object-assign');
 import LectureConstants from '../constants/LectureConstants.js';
 let ActionTypes = LectureConstants.ActionTypes;
 
@@ -8,7 +7,11 @@ let CHANGE_EVENT = 'change';
 
 let _lectures = {};
 
-let LectureStore = objectAssign({}, EventEmitter.prototype, {
+let LectureStore = Object.assign({}, EventEmitter.prototype, {
+    get: function(courseId, lectureId) {
+        if (!_lectures[courseId]) return;
+        return _lectures[courseId][lectureId];
+    },
     getAll: function(courseId) {
         return _lectures[courseId];
     },
@@ -32,7 +35,7 @@ function dispatcherCallback(action) {
                 if (!_lectures[action.courseKey]) {
                     _lectures[action.courseKey] = action.lectures;
                 } else {
-                    objectAssign(_lectures[action.courseKey], action.lectures);
+                    Object.assign(_lectures[action.courseKey], action.lectures);
                 }
                 LectureStore.emitChange();
             }
