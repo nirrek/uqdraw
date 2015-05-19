@@ -1,6 +1,5 @@
 let Dispatcher = require('../dispatcher/Dispatcher.js');
 let EventEmitter = require('events').EventEmitter;
-import API from '../utils/API.js';
 import QuestionConstants from '../constants/QuestionConstants.js';
 let ActionTypes = QuestionConstants.ActionTypes;
 
@@ -42,9 +41,7 @@ let QuestionStore = Object.assign({}, EventEmitter.prototype, {
     }
 });
 
-QuestionStore.dispatchToken = Dispatcher.register(dispatcherCallback);
-
-function dispatcherCallback(action) {
+let dispatcherCallback = function(action) {
     let text;
     switch(action.type) {
         case ActionTypes.QUESTIONS_UPDATE:
@@ -68,6 +65,8 @@ function dispatcherCallback(action) {
         default:
             // no op
     }
-}
+};
+
+QuestionStore.dispatchToken = Dispatcher.register(dispatcherCallback);
 
 export default QuestionStore;

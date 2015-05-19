@@ -26,9 +26,7 @@ let LectureStore = Object.assign({}, EventEmitter.prototype, {
     },
 });
 
-LectureStore.dispatchToken = Dispatcher.register(dispatcherCallback);
-
-function dispatcherCallback(action) {
+let dispatcherCallback = function(action) {
     switch(action.type) {
         case ActionTypes.LECTURES_UPDATE:
             if (action.lectures) {
@@ -44,5 +42,7 @@ function dispatcherCallback(action) {
             //noop
     }
 }
+
+LectureStore.dispatchToken = Dispatcher.register(dispatcherCallback);
 
 export default LectureStore;
