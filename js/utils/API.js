@@ -2,57 +2,21 @@ import config from '../config';
 let Firebase = require('firebase');
 import LectureActions from '../actions/LectureActions.js';
 import QuestionActions from '../actions/QuestionActions.js';
+import PresentationActions from '../actions/PresentationActions.js';
+let keyMirror = require('keymirror');
 
-let questionRefs = {};
-let lectureRefs = {};
 let refs = {};
 let firebasePaths = {
-    'lectures': 'lectures',
-    'questions': 'questions',
+    lectures: 'lectures',
+    questions: 'questions',
+    responses: 'responses',
 };
 
-let publicAPI = {
-    subscribe: (refType, ...args) => {
-        let formattedRefType = refType[0].toUpperCase() + refType.slice(1).toLowerCase();
-        let methodName = 'subscribeTo'+formattedRefType;
-        if (API[methodName] && typeof API[methodName] === 'function') {
-            API[methodName].apply(API, args);
-        } else {
-            console.error('There is no subscription for ' + refType);
-        }
-    },
-
-    unsubscribe: (refType, ...args) => {
-        let formattedRefType = refType[0].toUpperCase() + refType.slice(1).toLowerCase();
-        let methodName = 'unsubscribeFrom'+formattedRefType;
-        if (API[methodName] && typeof API[methodName] === 'function') {
-            API[methodName].apply(API, args);
-        } else {
-            console.error('There is no subscription for ' + refType);
-        }
-    },
-
-    addToLectures: function(courseKey, lecture) {
-        return refs['lectures'][courseKey].ref.push(lecture);
-    },
-
-    removeLecture: function(courseKey, lectureId) {
-        refs['lectures'][courseKey].ref.child(lectureId).remove();
-    },
-
-    addToQuestions: function(courseKey, question) {
-        return refs['questions'][courseKey].ref.push(question);
-    },
-
-    updateLecture: function(courseKey, lectureKey, lecture) {
-        refs['lectures'][courseKey].ref.child(lectureKey).update(lecture);
-    },
-
-    removeQuestion: function(courseKey, lectures, questionId) {
-        refs['lectures'][courseKey].ref.update(lectures);
-        refs['questions'][courseKey].ref.child(questionId).remove();
-    },
-};
+const APIConstants = keyMirror({
+    questions: null,
+    lectures: null,
+    responses: null,
+});
 
 let API = {
     initialiseRefs: function(refType, filter) {
@@ -68,7 +32,30 @@ let API = {
 
         return refs[refType][filter];
     },
-    subscribe: function(refType, filter, componentKey, callback) {
+
+    subscribe: (refType, ...args) => {
+        let refTypeVal = APIConstants[refType];
+        let formattedRefType = refTypeVal[0].toUpperCase() + refTypeVal.slice(1).toLowerCase();
+        let methodName = 'subscribeTo' + formattedRefType;
+        if (API[methodName] && typeof API[methodName] === 'function') {
+            API[methodName].apply(API, args);
+        } else {
+            console.error('There is no subscription for ' + refType);
+        }
+    },
+
+    unsubscribe: (refType, ...args) => {
+        let refTypeVal = APIConstants[refType];
+        let formattedRefType = refTypeVal[0].toUpperCase() + refTypeVal.slice(1).toLowerCase();
+        let methodName = 'unsubscribeFrom' + formattedRefType;
+        if (API[methodName] && typeof API[methodName] === 'function') {
+            API[methodName].apply(API, args);
+        } else {
+            console.error('There is no subscription for ' + refType);
+        }
+    },
+
+    firebaseSubscribe: function(refType, filter, componentKey, callback) {
         // Get ref data for the chosen type and filter
         let current = this.initialiseRefs(refType, filter);
 
@@ -84,7 +71,8 @@ let API = {
         // Set the current component as a listener
         current.listening[componentKey] = componentKey;
     },
-    unsubscribe: function(refType, filter, componentKey) {
+
+    firebaseUnsubscribe: function(refType, filter, componentKey) {
         let refData = refs[refType];
         if (refData[filter] && refData[filter].ref && refData[filter].listening) {
             if (refData[filter].listening[componentKey]) {
@@ -99,27 +87,74 @@ let API = {
             }
         }
     },
+
     subscribeToLectures: function(componentKey, courseKey) {
-        this.subscribe('lectures', courseKey, componentKey, function(content) {
+        this.firebaseSubscribe(APIConstants.lectures, courseKey, componentKey, function(content) {
             LectureActions.updateLectures(courseKey, content);
         });
     },
 
     unsubscribeFromLectures: function(componentKey, courseKey) {
-        this.unsubscribe('lectures', courseKey, componentKey);
+        this.firebaseUnsubscribe(APIConstants.lectures, courseKey, componentKey);
+    },
+
+    addToLectures: function(courseKey, lecture) {
+        return refs[APIConstants.lectures][courseKey].ref.push(lecture);
+    },
+
+    removeLecture: function(courseKey, lectureId) {
+        refs[APIConstants.lectures][courseKey].ref.child(lectureId).remove();
+    },
+
+    updateLecture: function(courseKey, lectureKey, lecture) {
+        refs[APIConstants.lectures][courseKey].ref.child(lectureKey).update(lecture);
     },
 
     subscribeToQuestions: function(componentKey, courseKey) {
-        this.subscribe('questions', courseKey, componentKey, function(content) {
+        this.firebaseSubscribe(APIConstants.questions, courseKey, componentKey, function(content) {
             QuestionActions.updateQuestions(courseKey, content);
         });
     },
 
     unsubscribeFromQuestions: function(componentKey, courseKey) {
-        this.unsubscribe('questions', courseKey, componentKey);
+        this.firebaseUnsubscribe(APIConstants.questions, courseKey, componentKey);
+    },
+
+    addToQuestions: function(courseKey, question) {
+        return refs[APIConstants.questions][courseKey].ref.push(question);
+    },
+
+    removeQuestion: function(courseKey, lectures, questionId) {
+        refs[APIConstants.lectures][courseKey].ref.update(lectures);
+        refs[APIConstants.questions][courseKey].ref.child(questionId).remove();
+    },
+
+    subscribeToResponses: function(componentKey, lectureKey) {
+        this.firebaseSubscribe(APIConstants.responses, lectureKey, componentKey, function(content) {
+            PresentationActions.updateResponses(lectureKey, content);
+        });
+    },
+
+    unsubscribeFromResponses: function(componentKey, lectureKey) {
+        this.firebaseUnsubscribe(APIConstants.responses, lectureKey, componentKey);
+    },
+
+    addToResponses: function(lectureKey, questionKey, response) {
+        console.log(refs, lectureKey, questionKey);
+        return refs[APIConstants.responses][lectureKey].ref.child(questionKey).push(response);
     },
 };
 
-
+let publicAPI = {
+    subscribe: API.subscribe,
+    unsubscribe: API.unsubscribe,
+    addToLectures: API.addToLectures,
+    removeLecture: API.removeLecture,
+    updateLecture: API.updateLecture,
+    addToQuestions: API.addToQuestions,
+    removeQuestion: API.removeQuestion,
+    addToResponses: API.addToResponses,
+};
 
 export default publicAPI;
+export {APIConstants};
