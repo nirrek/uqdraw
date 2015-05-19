@@ -8,9 +8,15 @@ import PresenterQuestion from './PresenterQuestion.js';
 import PresenterResponses from './PresenterResponses.js';
 import Timer from './Timer.js';
 
+import LectureStore from '../stores/LectureStore.js';
+import QuestionStore from '../stores/QuestionStore.js';
+
+import ComponentKey from '../utils/ComponentKey.js';
+import API, {APIConstants} from '../utils/API.js';
+
+
 let Firebase = require('firebase');
 let StyleSheet = require('react-style');
-let objectAssign = require('object-assign');
 
 require('../../css/components/Presenter.scss');
 
@@ -19,6 +25,7 @@ class Presenter extends React.Component {
   constructor(props) {
     super(props);
     props.onChangeCourse(null, props.routeParams.courseName);
+    this.componentKey = ComponentKey.generate();
     this.state = {
       activeQuestionKey: undefined,
       responses: [],
@@ -30,32 +37,53 @@ class Presenter extends React.Component {
     this.start = this.start.bind(this);
     this.stop = this.stop.bind(this);
     this.reset = this.reset.bind(this);
-    this.getLecture = this.getLecture.bind(this);
-    this.getquestions = this.getQuestions.bind(this);
+
+    this.initData = this.initData.bind(this);
+    this.onLectureChange = this.onLectureChange.bind(this);
+    this.onQuestionChange = this.onQuestionChange.bind(this);
   }
 
   componentDidMount() {
-    if (this.props.courseId) {
-      this.getLecture(this.props.courseId);
-      this.getQuestions(this.props.courseId);
-    }
+    // Listen for store changes
+    LectureStore.addChangeListener(this.onLectureChange);
+    QuestionStore.addChangeListener(this.onQuestionChange);
+    this.initData(this.props.courseId);
 
     this.observeFirebaseResponses();
   }
 
   componentWillReceiveProps(newProps) {
-    if (!this.props.courseId) {
-      if (newProps.courseId) {
-        this.getLecture(newProps.courseId);
-        this.getquestions(newProps.courseId);
-      }
-    }
+    this.initData(newProps.courseId);
   }
 
   componentWillUnmount() {
+    LectureStore.removeChangeListener(this.onLectureChange);
+    QuestionStore.removeChangeListener(this.onQuestionChange);
+    API.unsubscribe(APIConstants.lectures, this.componentKey, this.props.courseId);
+    API.unsubscribe(APIConstants.questions, this.componentKey, this.props.courseId);
+
     this.lectureRef.off();
     this.questionsRef.off();
     this.responsesRef.off();
+  }
+
+  initData(courseKey) {
+    if (courseKey) {
+      let lecture = LectureStore.get(courseKey, this.props.routeParams.lectureId);
+      this.setState({lecture: lecture});
+      this.setState({questions: QuestionStore.getAll(courseKey)});
+      API.subscribe(APIConstants.lectures, this.componentKey, courseKey);
+      API.subscribe(APIConstants.questions, this.componentKey, courseKey);
+    }
+  }
+
+  onLectureChange() {
+    let lecture = LectureStore.get(this.props.courseId, this.props.routeParams.lectureId);
+    this.setState({'lecture': lecture});
+  }
+
+  onQuestionChange() {
+    this.setState({'questions': QuestionStore.getAll(this.props.courseId)});
   }
 
   // Setup responses endpoint observer to update responses state as new
@@ -69,22 +97,6 @@ class Presenter extends React.Component {
         return responses[key].submissionDataURI;
       });
       this.setState({ responses });
-    });
-  }
-
-  getLecture(courseId) {
-    this.lectureRef = new Firebase(`${config.firebase.base}/lectures/${courseId}`);
-    this.lectureRef.on('value', (snapshot) => {
-      let lectures = snapshot.val() || {};
-      this.setState({lecture: lectures[this.props.routeParams.lectureId]});
-    });
-  }
-
-  getQuestions(courseId) {
-    this.questionsRef = new Firebase(`${config.firebase.base}/questions/${courseId}`);
-    this.questionsRef.on('value', (snapshot) => {
-      let content = snapshot.val() || {};
-      this.setState({questions: content});
     });
   }
 
@@ -143,7 +155,7 @@ class Presenter extends React.Component {
 
     let questions = [];
     let activeQuestion;
-    if (this.state.lecture.questions) {
+    if (this.state.lecture && this.state.lecture.questions && this.state.questions) {
       questions = this.state.lecture.questions.map((key) => {
         return {
           key: key,
