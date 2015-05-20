@@ -200,7 +200,7 @@ class Presenter extends React.Component {
           <div className="PresentationResponses">
             <h2 className='SectionHeading'>Responses</h2>
             <div className="ResponseThumbnails">
-              <PresenterResponses responses={activeResponses} onThumbnailClick={this.onThumbnailClick}/>
+              <PresenterResponses responses={activeResponses || {}} onThumbnailClick={this.onThumbnailClick}/>
             </div>
           </div>
         </div>
