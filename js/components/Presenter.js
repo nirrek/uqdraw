@@ -10,6 +10,7 @@ import Timer from './Timer.js';
 
 import LectureStore from '../stores/LectureStore.js';
 import QuestionStore from '../stores/QuestionStore.js';
+import PresentationStore from '../stores/PresentationStore.js';
 
 import ComponentKey from '../utils/ComponentKey.js';
 import API, {APIConstants} from '../utils/API.js';
@@ -41,15 +42,15 @@ class Presenter extends React.Component {
     this.initData = this.initData.bind(this);
     this.onLectureChange = this.onLectureChange.bind(this);
     this.onQuestionChange = this.onQuestionChange.bind(this);
+    this.onPresentationChange = this.onPresentationChange.bind(this);
   }
 
   componentDidMount() {
     // Listen for store changes
     LectureStore.addChangeListener(this.onLectureChange);
     QuestionStore.addChangeListener(this.onQuestionChange);
+    PresentationStore.addChangeListener(this.onPresentationChange);
     this.initData(this.props.courseId);
-
-    this.observeFirebaseResponses();
   }
 
   componentWillReceiveProps(newProps) {
@@ -57,23 +58,25 @@ class Presenter extends React.Component {
   }
 
   componentWillUnmount() {
+    let lectureKey = this.props.routeParams.lectureId;
     LectureStore.removeChangeListener(this.onLectureChange);
     QuestionStore.removeChangeListener(this.onQuestionChange);
+    PresentationStore.removeChangeListener(this.onPresentationChange);
     API.unsubscribe(APIConstants.lectures, this.componentKey, this.props.courseId);
     API.unsubscribe(APIConstants.questions, this.componentKey, this.props.courseId);
-
-    this.lectureRef.off();
-    this.questionsRef.off();
-    this.responsesRef.off();
+    API.unsubscribe(APIConstants.responses, this.componentKey, lectureKey);
   }
 
   initData(courseKey) {
     if (courseKey) {
-      let lecture = LectureStore.get(courseKey, this.props.routeParams.lectureId);
+      let lectureKey = this.props.routeParams.lectureId;
+      let lecture = LectureStore.getAll(lectureKey);
       this.setState({lecture: lecture});
       this.setState({questions: QuestionStore.getAll(courseKey)});
+      this.setState({responses: PresentationStore.getResponses(lectureKey)});
       API.subscribe(APIConstants.lectures, this.componentKey, courseKey);
       API.subscribe(APIConstants.questions, this.componentKey, courseKey);
+      API.subscribe(APIConstants.responses, this.componentKey, lectureKey);
     }
   }
 
@@ -86,18 +89,9 @@ class Presenter extends React.Component {
     this.setState({'questions': QuestionStore.getAll(this.props.courseId)});
   }
 
-  // Setup responses endpoint observer to update responses state as new
-  // responses are submitted. Current endpoint is hardocded temporarily
-  // for Kerrins presentation.
-  observeFirebaseResponses() {
-    this.responsesRef = new Firebase(`${config.firebase.base}/presentations/3fa/responses`);
-    this.responsesRef.on('value', (snapshot) => {
-      let responses = snapshot.val() || {};
-      responses = Object.keys(responses).map((key) => {
-        return responses[key].submissionDataURI;
-      });
-      this.setState({ responses });
-    });
+  onPresentationChange() {
+    this.setState({'responses': PresentationStore.getResponses(this.props.routeParams.lectureId)});
+    console.log('responses', this.state.responses);
   }
 
   onActivateQuestion(key) {
