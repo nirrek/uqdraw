@@ -7,7 +7,11 @@ let CHANGE_EVENT = 'change';
 
 let _responses = {};
 let PresentationStore = Object.assign({}, EventEmitter.prototype, {
-    getResponses: function(lectureKey, questionKey) {
+    getResponses: function(lectureKey) {
+        return _responses[lectureKey];
+    },
+
+    getResponsesForQuestion: function(lectureKey, questionKey) {
         if (!_responses[lectureKey]) return;
         return _responses[lectureKey][questionKey];
     },
