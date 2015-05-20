@@ -1,6 +1,4 @@
 import React from 'react';
-import config from '../config.js';
-import Header from './Header.js';
 import { Button } from './UI';
 
 import QuestionSelector from './QuestionSelector.js';
@@ -14,10 +12,6 @@ import PresentationStore from '../stores/PresentationStore.js';
 
 import ComponentKey from '../utils/ComponentKey.js';
 import API, {APIConstants} from '../utils/API.js';
-
-
-let Firebase = require('firebase');
-let StyleSheet = require('react-style');
 
 require('../../css/components/Presenter.scss');
 
@@ -91,7 +85,6 @@ class Presenter extends React.Component {
 
   onPresentationChange() {
     this.setState({'responses': PresentationStore.getResponses(this.props.routeParams.lectureId)});
-    console.log('responses', this.state.responses);
   }
 
   onActivateQuestion(key) {
@@ -100,7 +93,7 @@ class Presenter extends React.Component {
   }
 
   onThumbnailClick(key) {
-    console.log('make a large version of submition '+key);
+    console.log('make a large version of submission ' + key);
   }
 
   start() {
@@ -173,9 +166,13 @@ class Presenter extends React.Component {
       }
     }
 
+    let activeResponses;
+    if (typeof this.state.activeQuestionKey !== 'undefined') {
+      activeResponses = this.state.responses[this.state.activeQuestionKey];
+    }
+
     return (
       <div className='PresenterView'>
-        {/* <Header/> */}
         <div className='Column--main'>
 
           <div className="PresentationDetails">
@@ -203,7 +200,7 @@ class Presenter extends React.Component {
           <div className="PresentationResponses">
             <h2 className='SectionHeading'>Responses</h2>
             <div className="ResponseThumbnails">
-              <PresenterResponses responses={this.state.responses} onThumbnailClick={this.onThumbnailClick}/>
+              <PresenterResponses responses={activeResponses} onThumbnailClick={this.onThumbnailClick}/>
             </div>
           </div>
         </div>
