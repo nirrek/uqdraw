@@ -10,7 +10,7 @@ import QuestionActions from '../actions/QuestionActions.js';
 import QuestionStore from '../stores/QuestionStore.js';
 import LectureActions from '../actions/LectureActions.js';
 import LectureStore from '../stores/LectureStore.js';
-import API from '../utils/API.js';
+import API, {APIConstants} from '../utils/API.js';
 import ComponentKey from '../utils/ComponentKey.js';
 
 let Firebase = require('firebase');
@@ -61,16 +61,16 @@ class QuestionManager extends React.Component {
   componentWillUnmount() {
     LectureStore.removeChangeListener(this.onLectureChange);
     QuestionStore.removeChangeListener(this.onQuestionChange);
-    API.unsubscribe('lectures', this.componentKey, this.props.courseId);
-    API.unsubscribe('questions', this.componentKey, this.props.courseId);
+    API.unsubscribe(APIConstants.lectures, this.componentKey, this.props.courseId);
+    API.unsubscribe(APIConstants.questions, this.componentKey, this.props.courseId);
   }
 
   initData(courseKey) {
     if (courseKey) {
       this.setState({lectures: LectureStore.getAll(courseKey)});
       this.setState({questions: QuestionStore.getAll(courseKey)});
-      API.subscribe('lectures', this.componentKey, courseKey);
-      API.subscribe('questions', this.componentKey, courseKey);
+      API.subscribe(APIConstants.lectures, this.componentKey, courseKey);
+      API.subscribe(APIConstants.questions, this.componentKey, courseKey);
     }
   }
 

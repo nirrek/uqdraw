@@ -1,6 +1,4 @@
 import React from 'react';
-import config from '../config.js';
-import Header from './Header.js';
 import { Button } from './UI';
 
 import QuestionSelector from './QuestionSelector.js';
@@ -8,9 +6,12 @@ import PresenterQuestion from './PresenterQuestion.js';
 import PresenterResponses from './PresenterResponses.js';
 import Timer from './Timer.js';
 
-let Firebase = require('firebase');
-let StyleSheet = require('react-style');
-let objectAssign = require('object-assign');
+import LectureStore from '../stores/LectureStore.js';
+import QuestionStore from '../stores/QuestionStore.js';
+import PresentationStore from '../stores/PresentationStore.js';
+
+import ComponentKey from '../utils/ComponentKey.js';
+import API, {APIConstants} from '../utils/API.js';
 
 require('../../css/components/Presenter.scss');
 
@@ -19,6 +20,7 @@ class Presenter extends React.Component {
   constructor(props) {
     super(props);
     props.onChangeCourse(null, props.routeParams.courseName);
+    this.componentKey = ComponentKey.generate();
     this.state = {
       activeQuestionKey: undefined,
       responses: [],
@@ -30,62 +32,59 @@ class Presenter extends React.Component {
     this.start = this.start.bind(this);
     this.stop = this.stop.bind(this);
     this.reset = this.reset.bind(this);
-    this.getLecture = this.getLecture.bind(this);
-    this.getquestions = this.getQuestions.bind(this);
+
+    this.initData = this.initData.bind(this);
+    this.onLectureChange = this.onLectureChange.bind(this);
+    this.onQuestionChange = this.onQuestionChange.bind(this);
+    this.onPresentationChange = this.onPresentationChange.bind(this);
   }
 
   componentDidMount() {
-    if (this.props.courseId) {
-      this.getLecture(this.props.courseId);
-      this.getQuestions(this.props.courseId);
-    }
-
-    this.observeFirebaseResponses();
+    // Listen for store changes
+    LectureStore.addChangeListener(this.onLectureChange);
+    QuestionStore.addChangeListener(this.onQuestionChange);
+    PresentationStore.addChangeListener(this.onPresentationChange);
+    this.initData(this.props.courseId);
   }
 
   componentWillReceiveProps(newProps) {
-    if (!this.props.courseId) {
-      if (newProps.courseId) {
-        this.getLecture(newProps.courseId);
-        this.getquestions(newProps.courseId);
-      }
-    }
+    this.initData(newProps.courseId);
   }
 
   componentWillUnmount() {
-    this.lectureRef.off();
-    this.questionsRef.off();
-    this.responsesRef.off();
+    let lectureKey = this.props.routeParams.lectureId;
+    LectureStore.removeChangeListener(this.onLectureChange);
+    QuestionStore.removeChangeListener(this.onQuestionChange);
+    PresentationStore.removeChangeListener(this.onPresentationChange);
+    API.unsubscribe(APIConstants.lectures, this.componentKey, this.props.courseId);
+    API.unsubscribe(APIConstants.questions, this.componentKey, this.props.courseId);
+    API.unsubscribe(APIConstants.responses, this.componentKey, lectureKey);
   }
 
-  // Setup responses endpoint observer to update responses state as new
-  // responses are submitted. Current endpoint is hardocded temporarily
-  // for Kerrins presentation.
-  observeFirebaseResponses() {
-    this.responsesRef = new Firebase(`${config.firebase.base}/presentations/3fa/responses`);
-    this.responsesRef.on('value', (snapshot) => {
-      let responses = snapshot.val() || {};
-      responses = Object.keys(responses).map((key) => {
-        return responses[key].submissionDataURI;
-      });
-      this.setState({ responses });
-    });
+  initData(courseKey) {
+    if (courseKey) {
+      let lectureKey = this.props.routeParams.lectureId;
+      let lecture = LectureStore.getAll(lectureKey);
+      this.setState({lecture: lecture});
+      this.setState({questions: QuestionStore.getAll(courseKey)});
+      this.setState({responses: PresentationStore.getResponses(lectureKey)});
+      API.subscribe(APIConstants.lectures, this.componentKey, courseKey);
+      API.subscribe(APIConstants.questions, this.componentKey, courseKey);
+      API.subscribe(APIConstants.responses, this.componentKey, lectureKey);
+    }
   }
 
-  getLecture(courseId) {
-    this.lectureRef = new Firebase(`${config.firebase.base}/lectures/${courseId}`);
-    this.lectureRef.on('value', (snapshot) => {
-      let lectures = snapshot.val() || {};
-      this.setState({lecture: lectures[this.props.routeParams.lectureId]});
-    });
+  onLectureChange() {
+    let lecture = LectureStore.get(this.props.courseId, this.props.routeParams.lectureId);
+    this.setState({'lecture': lecture});
   }
 
-  getQuestions(courseId) {
-    this.questionsRef = new Firebase(`${config.firebase.base}/questions/${courseId}`);
-    this.questionsRef.on('value', (snapshot) => {
-      let content = snapshot.val() || {};
-      this.setState({questions: content});
-    });
+  onQuestionChange() {
+    this.setState({'questions': QuestionStore.getAll(this.props.courseId)});
+  }
+
+  onPresentationChange() {
+    this.setState({'responses': PresentationStore.getResponses(this.props.routeParams.lectureId)});
   }
 
   onActivateQuestion(key) {
@@ -94,7 +93,7 @@ class Presenter extends React.Component {
   }
 
   onThumbnailClick(key) {
-    console.log('make a large version of submition '+key);
+    console.log('make a large version of submission ' + key);
   }
 
   start() {
@@ -143,7 +142,7 @@ class Presenter extends React.Component {
 
     let questions = [];
     let activeQuestion;
-    if (this.state.lecture.questions) {
+    if (this.state.lecture && this.state.lecture.questions && this.state.questions) {
       questions = this.state.lecture.questions.map((key) => {
         return {
           key: key,
@@ -167,9 +166,13 @@ class Presenter extends React.Component {
       }
     }
 
+    let activeResponses;
+    if (typeof this.state.activeQuestionKey !== 'undefined') {
+      activeResponses = this.state.responses[this.state.activeQuestionKey];
+    }
+
     return (
       <div className='PresenterView'>
-        {/* <Header/> */}
         <div className='Column--main'>
 
           <div className="PresentationDetails">
@@ -197,7 +200,7 @@ class Presenter extends React.Component {
           <div className="PresentationResponses">
             <h2 className='SectionHeading'>Responses</h2>
             <div className="ResponseThumbnails">
-              <PresenterResponses responses={this.state.responses} onThumbnailClick={this.onThumbnailClick}/>
+              <PresenterResponses responses={activeResponses} onThumbnailClick={this.onThumbnailClick}/>
             </div>
           </div>
         </div>

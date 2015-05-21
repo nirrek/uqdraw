@@ -27,14 +27,17 @@ class PresenterResponses extends React.Component {
       },
 
     };
-    // if (!this.props.responses.count) return (<div/>);
-    let thumbnails = this.props.responses.map((dataURI, key) => {
-      return (
-        <a key={key} href="" onClick={this.onThumbnailClick.bind(this, key)}>
-          <img className='Thumbnail' src={dataURI}/>
-        </a>
-      );
-    });
+
+    let thumbnails;
+    if (this.props.responses) {
+      thumbnails = Object.keys(this.props.responses).map((responseKey) => {
+        return (
+          <a key={responseKey} href="" onClick={this.onThumbnailClick.bind(this, responseKey)}>
+            <img className='Thumbnail' src={this.props.responses[responseKey].imageURI}/>
+          </a>
+        );
+      });
+    }
     return (
       <div style={this.styles.container}>
         <div style={this.styles.responses}>{thumbnails}</div>
