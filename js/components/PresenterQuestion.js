@@ -33,4 +33,11 @@ class PresenterQuestion extends React.Component {
   }
 }
 
+PresenterQuestion.propTypes = {
+  question: React.PropTypes.shape({
+    key: React.PropTypes.string,
+    value: React.PropTypes.string,
+  }),
+};
+
 export default PresenterQuestion;
