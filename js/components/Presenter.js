@@ -142,6 +142,7 @@ class Presenter extends React.Component {
 
     let questions = [];
     let activeQuestion;
+    let activeQuestionComponent;
     if (this.state.lecture && this.state.lecture.questions && this.state.questions) {
       questions = this.state.lecture.questions.map((key) => {
         return {
@@ -152,17 +153,22 @@ class Presenter extends React.Component {
 
       // Find the currently active question
       questions.forEach((q) => {
-        if (q.key === this.state.activeQuestionKey)
+        if (q.key === this.state.activeQuestionKey) {
           activeQuestion = q;
+          if (activeQuestion) {
+            activeQuestionComponent = <PresenterQuestion question={activeQuestion}/>;
+          }
+        }
       });
     }
 
     if (typeof this.state.activeQuestionKey !== 'undefined') {
       var timer = <Timer interval="1000" increment="1000" ref="timer"/>;
+      var button;
       if (this.state.takingQuestions) {
-        var button = <Button key="1" onClick={this.stop}>Stop Taking Responses</Button>;
+        button = <Button key="1" onClick={this.stop}>Stop Taking Responses</Button>;
       } else {
-        var button = <Button key="2" onClick={this.start}>Start Taking Responses</Button>;
+        button = <Button key="2" onClick={this.start}>Start Taking Responses</Button>;
       }
     }
 
@@ -191,7 +197,7 @@ class Presenter extends React.Component {
           </div>
           <div className="PresentationQuestion">
             <h2 className='SectionHeading'>Question</h2>
-            <PresenterQuestion question={activeQuestion}/>
+            {activeQuestionComponent}
             <div className='Timer'>
               {timer}
               {button}
