@@ -6,6 +6,7 @@ let ActionTypes = PresentationConstants.ActionTypes;
 let CHANGE_EVENT = 'change';
 
 let _responses = {};
+let _isSubmitting = false;
 let PresentationStore = Object.assign({}, EventEmitter.prototype, {
     getResponses: function(lectureKey) {
         return _responses[lectureKey];
@@ -14,6 +15,10 @@ let PresentationStore = Object.assign({}, EventEmitter.prototype, {
     getResponsesForQuestion: function(lectureKey, questionKey) {
         if (!_responses[lectureKey]) return;
         return _responses[lectureKey][questionKey];
+    },
+
+    isSubmitting: function() {
+        return _isSubmitting;
     },
 
     emitChange: function() {
@@ -38,6 +43,18 @@ let dispatchCallback = function(action) {
                 Object.assign(_responses[action.lectureKey], action.responses);
                 PresentationStore.emitChange();
             }
+            break;
+
+        case ActionTypes.RESPONSE_CREATE:
+            console.log('creating');
+            _isSubmitting = true;
+            PresentationStore.emitChange();
+            break;
+
+        case ActionTypes.RESPONSE_CREATED:
+        console.log('created');
+            _isSubmitting = false;
+            PresentationStore.emitChange();
             break;
     }
 };
