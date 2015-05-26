@@ -139,9 +139,9 @@ let API = {
         this.firebaseUnsubscribe(APIConstants.responses, lectureKey, componentKey);
     },
 
-    addToResponses: function(lectureKey, questionKey, response) {
-        console.log(refs, lectureKey, questionKey);
-        return refs[APIConstants.responses][lectureKey].ref.child(questionKey).push(response);
+    addToResponses: function(lectureKey, questionKey, response, callback) {
+        return  refs[APIConstants.responses][lectureKey].ref
+                    .child(questionKey).push(response, callback);
     },
 };
 
