@@ -12,7 +12,6 @@ class Drawing extends React.Component {
     this.state = {
       isEraserActive: false,
       lineWidth: 'm',
-      isQuestionOpen: true,
       isFullscreen: false,
     };
     this.ctx = undefined; // drawing canvas context
@@ -161,17 +160,9 @@ class Drawing extends React.Component {
   }
 
   // Submit the current canvas
-  submitImage() {
-    this.setState({ isSubmitting: true });
+  onSubmitImage() {
     let dataURL = this.displayCanvas.toDataURL(); // canvas encoded as dataURI
-
-    // Temporary hardcoding for the presentation.
-    let responsesRef = new Firebase(`${config.firebase.base}/presentations/3fa/responses`);
-    responsesRef.push({
-      submissionDataURI: dataURL
-    }, () => {
-      this.setState({ isSubmitting: false });
-    });
+    this.props.onSubmitImage(dataURL);
   }
 
   hideQuestion() {
@@ -184,6 +175,7 @@ class Drawing extends React.Component {
   }
 
   render() {
+    let markup;
     var eraserStyle = {};
     if (this.state.isEraserActive)
       eraserStyle = { backgroundImage: 'url(../../images/eraser-active.svg)' };
@@ -193,24 +185,14 @@ class Drawing extends React.Component {
     var mediumStyle = (this.state.lineWidth === 'm') ? activeStyle : {};
     var largeStyle = (this.state.lineWidth === 'l') ? activeStyle : {};
 
-    if (!this.state.isQuestionOpen)
-      var questionStyle = {display: 'none'};
-
     if (this.state.isFullscreen)
       var fullscreenStyle = {display: 'none'};
 
-    if (this.state.isSubmitting)
+    if (this.props.isSubmitting)
       var loadingIndicator = <Spinner spinnerName='double-bounce' noFadeIn />;
 
     return (
-      <div className='Drawing'>
-        <div className='QuestionOverlay' style={questionStyle}>
-          <div className="QuestionOverlay-content" >
-            <h3>Draw the 3-way handshake TCP uses to establish a connection</h3>
-            <button className='Button' onClick={this.hideQuestion.bind(this)}>Tap To Start Drawing</button>
-          </div>
-        </div>
-
+      <div>
         <div onClick={this.fullscreen.bind(this)} className='fullscreen' style={fullscreenStyle}></div>
         <canvas key='displayCanvas' ref='displayCanvas' id='displayCanvas'></canvas>
         <canvas key='canvas' ref='canvas' id='canvas'></canvas>
@@ -220,7 +202,7 @@ class Drawing extends React.Component {
             <div style={eraserStyle} className='Action-icon'></div>
           </div>
           <div className='Action Action--submit'>
-            <button className='Button--unstyled' onClick={this.submitImage.bind(this)}>Submit Answer</button>
+            <button className='Button--unstyled' onClick={this.onSubmitImage.bind(this)}>Submit Answer</button>
             {loadingIndicator}
           </div>
           <div onClick={this.cycleLineWidth.bind(this)} className='Action Action--strokeWidth'>
@@ -235,6 +217,11 @@ class Drawing extends React.Component {
     );
   }
 }
+
+Drawing.propTypes = {
+  onSubmitImage: React.PropTypes.func,
+  isSubmitting: React.PropTypes.bool,
+};
 
 
 export default Drawing;
