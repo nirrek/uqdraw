@@ -43,7 +43,7 @@
   "jest": {
     "scriptPreprocessor": "jestPreprocessor.js",
     "unmockedModulePathPatterns": [
-      "<rootDir>/node_modules/react"
+      "react"
     ],
     "moduleFileExtensions": [
       "js",
