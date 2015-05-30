@@ -41,7 +41,7 @@ let dispatcherCallback = function(action) {
         default:
             //noop
     }
-}
+};
 
 LectureStore.dispatchToken = Dispatcher.register(dispatcherCallback);
 

@@ -1,13 +1,12 @@
 import React from 'react';
 import Router from 'react-router';
-import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
+import { DefaultRoute, Route, RouteHandler } from 'react-router';
 
 import config from './config.js';
-import Header from './components/Header.js';
 import Welcome from './components/Welcome';
 import QuestionManager from './components/QuestionManager';
 import Presenter from './components/Presenter';
-import Drawing from './components/Drawing.js';
+import Answer from './components/Answer.js';
 import StartView from './components/StartView.js';
 import Archive from './components/Archive.js';
 import Responses from './components/Responses.js';
@@ -20,6 +19,7 @@ class App extends React.Component {
       userId: 'uqjstee8',
       courseId: undefined,
       courseName: undefined,
+      activeQuestionKey: undefined,
     };
     this.onChangeCourse = this.onChangeCourse.bind(this);
   }
@@ -54,10 +54,11 @@ let routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="questionManager" handler={QuestionManager} path="/:courseName/question-manager"/>
     <Route name="presenter" handler={Presenter} path="/:courseName/:lectureId"/>
-    <Route name="drawing" handler={Drawing} path="/drawing"/>
+    <Route name="drawing" handler={Answer} path="/drawing"/>
     <Route name="welcome" handler={Welcome} path="/welcome" />
     <Route name="archive" handler={Archive} path="/archive" />
     <Route name="responses" handler={Responses} path="/responses" />
+    <Route name="test" handler={Test} path="/test" />
     <DefaultRoute handler={StartView}/>
   </Route>
 );

@@ -28,16 +28,14 @@ class PresenterResponses extends React.Component {
 
     };
 
-    let thumbnails;
-    if (this.props.responses) {
-      thumbnails = Object.keys(this.props.responses).map((responseKey) => {
-        return (
-          <a key={responseKey} href="" onClick={this.onThumbnailClick.bind(this, responseKey)}>
-            <img className='Thumbnail' src={this.props.responses[responseKey].imageURI}/>
-          </a>
-        );
-      });
-    }
+    let thumbnails = Object.keys(this.props.responses).map((responseKey) => {
+      return (
+        <a key={responseKey} href="" onClick={this.onThumbnailClick.bind(this, responseKey)}>
+          <img className='Thumbnail' src={this.props.responses[responseKey].imageURI}/>
+        </a>
+      );
+    });
+
     return (
       <div style={this.styles.container}>
         <div style={this.styles.responses}>{thumbnails}</div>
@@ -45,5 +43,10 @@ class PresenterResponses extends React.Component {
     );
   }
 }
+
+PresenterResponses.propTypes = {
+  onThumbnailClick: React.PropTypes.func.isRequired,
+  responses: React.PropTypes.object.isRequired,
+};
 
 export default PresenterResponses;
