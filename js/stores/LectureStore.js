@@ -13,7 +13,7 @@ let LectureStore = Object.assign({}, EventEmitter.prototype, {
         return _lectures[courseId][lectureId];
     },
     getAll: function(courseId) {
-        return _lectures[courseId];
+        return _lectures[courseId] || {};
     },
     emitChange: function() {
         this.emit(CHANGE_EVENT);
@@ -28,6 +28,14 @@ let LectureStore = Object.assign({}, EventEmitter.prototype, {
 
 let dispatcherCallback = function(action) {
     switch(action.type) {
+        case ActionTypes.LECTURE_CREATE:
+            if (action.lecture) {
+                if (!_lectures[action.courseKey]) _lectures[action.courseKey] = {};
+                _lectures[action.courseKey][action.lectureKey] = action.lecture;
+                LectureStore.emitChange();
+            }
+            break;
+
         case ActionTypes.LECTURES_UPDATE:
             if (action.lectures) {
                 if (!_lectures[action.courseKey]) {
@@ -38,6 +46,17 @@ let dispatcherCallback = function(action) {
                 LectureStore.emitChange();
             }
             break;
+
+        case ActionTypes.LECTURE_DELETE:
+            if (action.lectureKey) {
+                if (!_lectures[action.courseKey]) _lectures[action.courseKey] = {};
+                if (_lectures[action.courseKey][action.lectureKey]) {
+                    delete _lectures[action.courseKey][action.lectureKey];
+                }
+                LectureStore.emitChange();
+            }
+            break;
+
         default:
             //noop
     }

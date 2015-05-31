@@ -15,10 +15,12 @@ let LectureActions = {
     },
 
     create: (courseKey, lectureTitle) => {
-        let newLecture = {title: lectureTitle, questions: {}};
-        API.addToLectures(courseKey, newLecture);
+        let newLecture = {title: lectureTitle, questions: []};
+        let ref = API.addToLectures(courseKey, newLecture);
         Dispatcher.dispatch({
             type: ActionTypes.LECTURE_CREATE,
+            courseKey: courseKey,
+            lectureKey: ref.key(),
             lecture: newLecture,
         });
     },
@@ -27,7 +29,8 @@ let LectureActions = {
         API.removeLecture(courseKey, lectureKey);
         Dispatcher.dispatch({
             type: ActionTypes.LECTURE_DELETE,
-            lectureKey: lectureKey,
+            courseKey,
+            lectureKey,
         });
     },
 };
