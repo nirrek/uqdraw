@@ -2,8 +2,8 @@ import React from 'react';
 import config from '../config';
 import { Link } from 'react-router';
 
-import Header from './Header.js';
-import { Button } from './UI.js';
+import Header from './Header.jsx';
+import { Button } from './UI.jsx';
 let Firebase = require('firebase');
 let Modal = require('react-modal');
 require('../../css/components/Button.scss');

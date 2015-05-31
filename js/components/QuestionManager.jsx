@@ -1,9 +1,9 @@
 import React from 'react';
 import config from '../config';
-import Header from './Header';
+import Header from './Header.jsx';
 import { Link } from 'react-router';
-import QuestionList from './QuestionList';
-import LectureComposer from './LectureComposer';
+import QuestionList from './QuestionList.jsx';
+import LectureComposer from './LectureComposer.jsx';
 import HorizontalDragScroll from '../composables/HorizontalDragScroll.js';
 
 import QuestionActions from '../actions/QuestionActions.js';

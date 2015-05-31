@@ -1,10 +1,10 @@
 import React from 'react';
-import { Button } from './UI';
+import { Button } from './UI.jsx';
 
-import QuestionSelector from './QuestionSelector.js';
-import PresenterQuestion from './PresenterQuestion.js';
-import PresenterResponses from './PresenterResponses.js';
-import Timer from './Timer.js';
+import QuestionSelector from './QuestionSelector.jsx';
+import PresenterQuestion from './PresenterQuestion.jsx';
+import PresenterResponses from './PresenterResponses.jsx';
+import Timer from './Timer.jsx';
 
 import LectureStore from '../stores/LectureStore.js';
 import QuestionStore from '../stores/QuestionStore.js';

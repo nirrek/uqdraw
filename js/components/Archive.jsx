@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './Header.js';
+import Header from './Header.jsx';
 import { Link } from 'react-router';
 
 require('../../css/components/Table.scss');

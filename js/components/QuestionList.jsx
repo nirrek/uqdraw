@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
-import Question from './Question';
-import QuestionComposer from './QuestionComposer';
+import Question from './Question.jsx';
+import QuestionComposer from './QuestionComposer.jsx';
 require('../../css/components/QuestionManager.scss');
 
 class QuestionList extends React.Component {

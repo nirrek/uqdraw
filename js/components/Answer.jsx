@@ -6,7 +6,7 @@ require('../../css/components/Button.scss');
 
 import PresentationStore from '../stores/PresentationStore.js';
 import PresentationActions from '../actions/PresentationActions.js';
-import Drawing from '../components/Drawing.js';
+import Drawing from '../components/Drawing.jsx';
 import API, {APIConstants} from '../utils/API.js';
 
 class Answer extends React.Component {

@@ -1,5 +1,5 @@
 import React from 'react';
-import Logo from './Logo.js';
+import Logo from './Logo.jsx';
 require('../../css/components/StartView.scss');
 
 class StartView extends React.Component {

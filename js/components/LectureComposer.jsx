@@ -1,6 +1,6 @@
 import React from 'react';
-import Question from './Question';
-import {Button} from './UI';
+import Question from './Question.jsx';
+import {Button} from './UI.jsx';
 let Modal = require('react-modal');
 require('../../css/components/QuestionManager.scss');
 
