@@ -10,8 +10,7 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /\.js?$/, loaders: ['react-hot', 'babel'], exclude: /node_modules/},
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader'},
+      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel'},
       { test: /\.css$/, loader: 'style!css' },
       {
         test: /\.scss$/,
