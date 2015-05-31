@@ -7,7 +7,12 @@
     "browser": true,
     // Allow node globals
     "node": true,
-    "es6": true
+    "es6": true,
+    "jasmine": true
+  },
+
+  "globals": {
+    "jest": true
   },
 
   "ecmaFeatures": {
@@ -39,7 +44,7 @@
     "react/prop-types": 1,
     "react/react-in-jsx-scope": 1,
     "react/self-closing-comp": 1,
-    "react/sort-comp": [1 {order: ['constructor', 'lifecycle', 'everything-else', 'render']}],
+    "react/sort-comp": [1, {order: ['constructor', 'lifecycle', 'everything-else', 'render']}],
     "react/wrap-multilines": 1
   }
 }
