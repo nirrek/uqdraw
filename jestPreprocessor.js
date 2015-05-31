@@ -1,11 +1,9 @@
 // preprocessor.js
 var babelJest = require('babel-jest');
 var path = require('path');
-var count = 0;
+
 module.exports = {
   process: function(src, filename) {
-    console.log(++count, filename);
-    return src;
     var isProjectFile = false;
     var isJsx = false;
     var isJs = false;
