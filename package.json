@@ -43,7 +43,8 @@
   "jest": {
     "scriptPreprocessor": "jestPreprocessor.js",
     "unmockedModulePathPatterns": [
-      "react"
+      "react",
+      "keymirror"
     ],
     "moduleFileExtensions": [
       "js",
