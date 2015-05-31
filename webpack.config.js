@@ -2,7 +2,7 @@ var webpack = require('webpack');
 
 module.exports = {
   entry: {
-    app: ['webpack/hot/dev-server', './js/app.js']
+    app: ['webpack/hot/dev-server', './js/app.jsx']
   },
   output: {
     path: './build',
