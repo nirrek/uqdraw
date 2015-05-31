@@ -3,13 +3,13 @@ import Router from 'react-router';
 import { DefaultRoute, Route, RouteHandler } from 'react-router';
 
 import config from './config.js';
-import Welcome from './components/Welcome';
-import QuestionManager from './components/QuestionManager';
-import Presenter from './components/Presenter';
-import Answer from './components/Answer.js';
-import StartView from './components/StartView.js';
-import Archive from './components/Archive.js';
-import Responses from './components/Responses.js';
+import Welcome from './components/Welcome.jsx';
+import QuestionManager from './components/QuestionManager.jsx';
+import Presenter from './components/Presenter.jsx';
+import Answer from './components/Answer.jsx';
+import StartView from './components/StartView.jsx';
+import Archive from './components/Archive.jsx';
+import Responses from './components/Responses.jsx';
 let Firebase = require('firebase');
 
 class App extends React.Component {
