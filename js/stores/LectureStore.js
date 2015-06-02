@@ -9,10 +9,12 @@ let _lectures = {};
 
 let LectureStore = Object.assign({}, EventEmitter.prototype, {
     get: function(courseId, lectureId) {
+        if (!courseId || !lectureId) throw new Error('LectureStore.get requires a courseId and a lectureId');
         if (!_lectures[courseId]) return;
         return _lectures[courseId][lectureId];
     },
     getAll: function(courseId) {
+        if (!courseId) throw new Error('LectureStore.getAll requires a courseId');
         return _lectures[courseId] || {};
     },
     emitChange: function() {
