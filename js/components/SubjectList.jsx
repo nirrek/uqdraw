@@ -32,6 +32,13 @@ class SubjectListItem extends React.Component {
     );
   }
 }
+SubjectListItem.propTypes = {
+  to: React.PropTypes.string,
+  courseName: React.PropTypes.string,
+  courseId: React.PropTypes.string,
+  children: React.PropTypes.node,
+  onChangeCourse: React.PropTypes.func,
+};
 
 class SubjectList extends React.Component {
   constructor(props) {
