@@ -8,7 +8,6 @@ describe('LectureStore', () => {
     let callback;
 
     let testCourseKey = 'testCourseKey';
-    let testLectureKey = 'testLectureKey';
     let testLectures = {
         one: {
             title: 'Test Lecture 1',
