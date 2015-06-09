@@ -16,6 +16,7 @@ const APIConstants = keyMirror({
     questions: null,
     lectures: null,
     responses: null,
+    subjects: null,
 });
 
 let API = {
@@ -140,8 +141,22 @@ let API = {
     },
 
     addToResponses: function(lectureKey, questionKey, response, callback) {
-        return  refs[APIConstants.responses][lectureKey].ref
+        return refs[APIConstants.responses][lectureKey].ref
                     .child(questionKey).push(response, callback);
+    },
+
+    subscribeToSubjects: function(userId) {
+        // subscribe to relevant part of firebase
+
+        // dispatch relevent event
+    },
+
+    unsubscribeFromSubjects: function(userId) {
+        // unsubscribe from firebase
+    },
+
+    addToSubjects: function(userId, subjectName, callback) {
+
     },
 };
 
@@ -154,6 +169,7 @@ let publicAPI = {
     addToQuestions: API.addToQuestions,
     removeQuestion: API.removeQuestion,
     addToResponses: API.addToResponses,
+    addToSubjects: API.addToSubjects,
 };
 
 export default publicAPI;

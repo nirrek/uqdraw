@@ -58,7 +58,7 @@ let routes = (
     <Route name="welcome" handler={Welcome} path="/welcome" />
     <Route name="archive" handler={Archive} path="/archive" />
     <Route name="responses" handler={Responses} path="/responses" />
-    <Route name="test" handler={Test} path="/test" />
+    {/* <Route name="test" handler={Test} path="/test" /> */}
     <DefaultRoute handler={StartView}/>
   </Route>
 );
