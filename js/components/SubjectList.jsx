@@ -74,7 +74,10 @@ class SubjectList extends React.Component {
   }
 
   addNewCourse(event) {
-    this.ref.push(this.state.newCourse);
+    this.props.onAddSubject(this.state.newCourse);
+
+    // this.ref.push(this.state.newCourse);
+
     this.setState({
       modalIsOpen: false,
       newCourse: '',
