@@ -50,7 +50,7 @@ class LectureComposer extends React.Component {
 
 LectureComposer.propTypes = {
     onSave: React.PropTypes.func,
-    isOpen: React.PropTypes.func,
+    isOpen: React.PropTypes.bool,
     onClose: React.PropTypes.func,
 };
 
