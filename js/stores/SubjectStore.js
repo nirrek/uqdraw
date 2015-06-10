@@ -1,18 +1,25 @@
 let Dispatcher = require('../dispatcher/Dispatcher.js');
 let EventEmitter = require('events').EventEmitter;
 import SubjectActions from '../constants/SubjectConstants.js';
-let ActionTypes = SubjectActions.ActionTypes;
+let actionTypes = SubjectActions.ActionTypes;
 
 let CHANGE_EVENT = 'change';
 
 // List of subject name strings
 let _subjects = [];
 
+// Is an operation to add a subject to Firebase in progress?
+let _isSubmitting = false;
+
 let SubjectStore = Object.assign({}, EventEmitter.prototype, {
   getAll: function() {
     // This gives a pointer into the data structure. This means outside
     // people can mutate the state. How to prevent?
     return _subjects;
+  },
+
+  isSubmitting: function() {
+    return _isSubmitting;
   },
 
   emitChange: function() {
@@ -24,17 +31,37 @@ let SubjectStore = Object.assign({}, EventEmitter.prototype, {
   },
 
   removeChangeListener: function(callback) {
-    this.on(CHANGE_EVENT, callback);
+    this.removeListener(CHANGE_EVENT, callback);
   }
 });
 
 let dispatcherCallback = function(action) {
   switch(action.type) {
-    case ActionTypes.SUBJECT_CREATE:
-      _subjects.push(action.subjectName);
-      console.log('STORE update for _subjects: ', SubjectStore.getAll());
+    case actionTypes.SUBJECT_CREATE:
+      console.log('SUBJECT_CREATE SubjectStore handler');
+      _isSubmitting = true;
       SubjectStore.emitChange();
       break;
+
+    case actionTypes.SUBJECT_CREATED:
+      console.log('SUBJECT_CREATED SubjectStore handler');
+      _isSubmitting = false;
+      SubjectStore.emitChange();
+      break;
+
+    case actionTypes.SUBJECT_CREATE_FAIL:
+      console.log('SUBJECT_CREATE_FAIL SubjectStore handler');
+      _isSubmitting = false;
+      SubjectStore.emitChange();
+      break;
+
+    case actionTypes.SUBJECTS_UPDATE:
+      _subjects = action.subjects;
+      console.log('SUBJECTS_UPDATE SubjectStore handler');
+      console.log('new subjects = ', action.subjects);
+      SubjectStore.emitChange();
+      break;
+
     default:
       // noop
   }
