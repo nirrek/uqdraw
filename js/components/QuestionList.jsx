@@ -23,8 +23,8 @@ class QuestionList extends React.Component {
     event.preventDefault();
   }
 
-  onAddQuestion(lectureId, question) {
-    this.props.onAddQuestion(lectureId, question);
+  onAddQuestion(lectureKey, lecture, question) {
+    this.props.onAddQuestion(lectureKey, lecture, question);
     this.setState({modalIsOpen: false});
     event.preventDefault();
   }
@@ -33,26 +33,29 @@ class QuestionList extends React.Component {
     this.props.onRemoveLecture(key);
   }
 
+  onRemoveQuestion(lectureKey, lecture, questionKey) {
+    this.props.onRemoveQuestion(lectureKey, lecture, questionKey);
+  }
+
   render() {
-    let {courseName, lectureId, lecture, questions, ...delegateProps} = this.props;
+    let {courseName, lectureKey, lecture, questions, ...delegateProps} = this.props;
     let questionComponents;
     // Make sure both the lecture question refs and matching questions exist
     if (lecture.questions && questions) {
-      questionComponents = lecture.questions.map((id) => {
+      questionComponents = lecture.questions.map((questionKey) => {
 
         // If the lecture question ref exists but there is no matching question
-        if (!questions.hasOwnProperty(id)) {
+        if (!questions.hasOwnProperty(questionKey)) {
           return null;
         }
 
-        let question = questions[id];
+        let question = questions[questionKey];
         return (
           <Question
-            key={id}
-            lectureId={lectureId}
-            questionId={id}
+            key={questionKey}
+            questionKey={questionKey}
             question={question}
-            {...delegateProps}
+            onRemoveQuestion={this.onRemoveQuestion.bind(this, lectureKey, lecture)}
           />
         );
       });
@@ -62,11 +65,11 @@ class QuestionList extends React.Component {
         <div className='CardList-header'>
           <h2>{lecture.title}</h2>
           <div className='PresenterLinkContainer'>
-            <Link to="presenter" params={{courseName: courseName, lectureId: lectureId}}>Launch {lecture.title} Presentation</Link>
+            <Link to="presenter" params={{courseName: courseName, lectureId: lectureKey}}>Launch {lecture.title} Presentation</Link>
           </div>
           <a
             className="Button--close"
-            onClick={this.onRemoveLecture.bind(this, lectureId)}>
+            onClick={this.onRemoveLecture.bind(this, lectureKey)}>
             &times;
           </a>
         </div>
@@ -78,7 +81,7 @@ class QuestionList extends React.Component {
         <QuestionComposer
           isOpen={this.state.modalIsOpen}
           onClose={this.hideQuestionModal.bind(this)}
-          onSave={this.onAddQuestion.bind(this, lectureId)}
+          onSave={this.onAddQuestion.bind(this, lectureKey, lecture)}
         />
       </div>
     );
@@ -87,11 +90,12 @@ class QuestionList extends React.Component {
 
 QuestionList.propTypes = {
   courseName: React.PropTypes.string,
-  lectureId: React.PropTypes.string,
+  lectureKey: React.PropTypes.string,
   lecture: React.PropTypes.object,
   questions: React.PropTypes.object,
   onAddQuestion: React.PropTypes.func,
   onRemoveLecture: React.PropTypes.func,
+  onRemoveQuestion: React.PropTypes.func,
 };
 
 export default QuestionList;
