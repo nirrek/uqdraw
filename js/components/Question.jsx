@@ -3,19 +3,18 @@ require('../../css/components/QuestionManager.scss');
 
 class Question extends React.Component {
 
-  onRemoveQuestion(event) {
-    this.props.onRemoveQuestion(this.props.lectureId, event.currentTarget.dataset.id);
+  onRemoveQuestion(questionKey) {
+    this.props.onRemoveQuestion(questionKey);
   }
 
   render() {
-    let {question, questionId} = this.props;
+    const {questionKey, question} = this.props;
     return (
       <div className="Card" draggable="true">
         <span>{question}</span>
         <a
           className="Button--close"
-          onClick={this.onRemoveQuestion.bind(this)}
-          data-id={questionId}>
+          onClick={this.onRemoveQuestion.bind(this, questionKey)}>
           &times;
         </a>
       </div>
@@ -24,8 +23,9 @@ class Question extends React.Component {
 }
 
 Question.propTypes = {
+  questionKey: React.PropTypes.string,
   question: React.PropTypes.string,
-  questionId: React.PropTypes.string,
+  onRemoveQuestion: React.PropTypes.func,
 };
 
 export default Question;
