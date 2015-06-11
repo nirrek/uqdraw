@@ -59,6 +59,30 @@ let dispatcherCallback = function(action) {
             }
             break;
 
+        case ActionTypes.QUESTION_CREATED:
+            if (action.questionKey) {
+                if (!_lectures[action.courseKey]) _lectures[action.courseKey] = {};
+                if (_lectures[action.courseKey][action.lectureKey]) {
+                    _lectures[action.courseKey][action.lectureKey].questions.push(action.questionKey);
+                }
+            }
+            LectureStore.emitChange();
+            break;
+
+        case ActionTypes.QUESTION_DELETE_SUCCESS:
+            if (action.courseKey && action.questionKey) {
+                if (!_lectures[action.courseKey]) break;
+                if (_lectures[action.courseKey][action.lectureKey]) {
+                    let index = _lectures[action.courseKey][action.lectureKey].questions
+                                    .findIndex(x => x === action.questionKey);
+                    if (index) {
+                        _lectures[action.courseKey][action.questionKey].questions.splice(index, 1);
+                    }
+                }
+            }
+            LectureStore.emitChange();
+            break;
+
         default:
             //noop
     }
