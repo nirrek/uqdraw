@@ -38,27 +38,22 @@ let SubjectStore = Object.assign({}, EventEmitter.prototype, {
 let dispatcherCallback = function(action) {
   switch(action.type) {
     case actionTypes.SUBJECT_CREATE_INITIATED:
-      console.log('SUBJECT_CREATE SubjectStore handler');
       _isSubmitting = true;
       SubjectStore.emitChange();
       break;
 
     case actionTypes.SUBJECT_CREATE_SUCCESS:
-      console.log('SUBJECT_CREATED SubjectStore handler');
       _isSubmitting = false;
       SubjectStore.emitChange();
       break;
 
     case actionTypes.SUBJECT_CREATE_FAIL:
-      console.log('SUBJECT_CREATE_FAIL SubjectStore handler');
       _isSubmitting = false;
       SubjectStore.emitChange();
       break;
 
     case actionTypes.SUBJECTS_UPDATE:
       _subjects = action.subjects;
-      console.log('SUBJECTS_UPDATE SubjectStore handler');
-      console.log('new subjects = ', action.subjects);
       SubjectStore.emitChange();
       break;
 
