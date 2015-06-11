@@ -6,18 +6,7 @@ let ActionTypes = QuestionConstants.ActionTypes;
 let CHANGE_EVENT = 'change';
 
 let _questions = {};
-
-function create(text) {
-    console.log('creating');
-}
-
-function update(id, updates) {
-
-}
-
-function destroy(id) {
-
-}
+let _isQuestionCreating;
 
 let QuestionStore = Object.assign({}, EventEmitter.prototype, {
     get: function(key) {
@@ -26,6 +15,10 @@ let QuestionStore = Object.assign({}, EventEmitter.prototype, {
 
     getAll: function(courseKey) {
         return _questions[courseKey];
+    },
+
+    isQuestionCreating: function() {
+        return _isQuestionCreating;
     },
 
     emitChange: function() {
@@ -42,7 +35,7 @@ let QuestionStore = Object.assign({}, EventEmitter.prototype, {
 });
 
 let dispatcherCallback = function(action) {
-    let text;
+    console.log(action);
     switch(action.type) {
         case ActionTypes.QUESTIONS_UPDATE:
             if (action.questions) {
@@ -55,11 +48,33 @@ let dispatcherCallback = function(action) {
             break;
 
         case ActionTypes.QUESTION_CREATE:
-            text = action.text.trim();
-            if (text !== '') {
-                create(text);
-                QuestionStore.emitChange();
+            _isQuestionCreating = true;
+            QuestionStore.emitChange();
+            break;
+
+        case ActionTypes.QUESTION_CREATED:
+            _isQuestionCreating = false;
+            let question = action.question.trim();
+            if (question) {
+                if (!_questions[action.courseKey]) _questions[action.courseKey] = {};
+                _questions[action.courseKey][action.questionKey] = question;
             }
+            QuestionStore.emitChange();
+            break;
+
+        case ActionTypes.QUESTION_CREATE_FAIL:
+            _isQuestionCreating = false;
+            QuestionStore.emitChange();
+            break;
+
+        case ActionTypes.QUESTION_DELETE_SUCCESS:
+            if (action.courseKey && action.questionKey) {
+                if (!_questions[action.courseKey]) break;
+                if (_questions[action.courseKey][action.questionKey]) {
+                    delete _questions[action.courseKey][action.questionKey];
+                }
+            }
+            QuestionStore.emitChange();
             break;
 
         default:
