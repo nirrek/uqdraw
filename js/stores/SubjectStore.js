@@ -5,8 +5,8 @@ let actionTypes = SubjectActions.ActionTypes;
 
 let CHANGE_EVENT = 'change';
 
-// List of subject name strings
-let _subjects = [];
+// Map of subject name strings, keyed by Firebase key
+let _subjects = {};
 
 // Is an operation to add a subject to Firebase in progress?
 let _isSubmitting = false;
@@ -37,13 +37,13 @@ let SubjectStore = Object.assign({}, EventEmitter.prototype, {
 
 let dispatcherCallback = function(action) {
   switch(action.type) {
-    case actionTypes.SUBJECT_CREATE:
+    case actionTypes.SUBJECT_CREATE_INITIATED:
       console.log('SUBJECT_CREATE SubjectStore handler');
       _isSubmitting = true;
       SubjectStore.emitChange();
       break;
 
-    case actionTypes.SUBJECT_CREATED:
+    case actionTypes.SUBJECT_CREATE_SUCCESS:
       console.log('SUBJECT_CREATED SubjectStore handler');
       _isSubmitting = false;
       SubjectStore.emitChange();

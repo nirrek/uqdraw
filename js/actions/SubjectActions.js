@@ -10,7 +10,7 @@ let SubjectActions = {
     API.addToSubjects(userId, subjectName, (error) => {
       if (error === null) {
         Dispatcher.dispatch({
-          type: actionTypes.SUBJECT_CREATED,
+          type: actionTypes.SUBJECT_CREATE_SUCCESS,
           userId: userId,
           subjectName: subjectName,
         });
@@ -25,7 +25,7 @@ let SubjectActions = {
     });
 
     Dispatcher.dispatch({
-      type: actionTypes.SUBJECT_CREATE,
+      type: actionTypes.SUBJECT_CREATE_INITIATED,
       subjectName: subjectName,
     });
   },
