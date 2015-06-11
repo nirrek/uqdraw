@@ -3,13 +3,28 @@ let Firebase = require('firebase');
 import LectureActions from '../actions/LectureActions.js';
 import QuestionActions from '../actions/QuestionActions.js';
 import PresentationActions from '../actions/PresentationActions.js';
+import SubjectActions from '../actions/SubjectActions.js';
 let keyMirror = require('keymirror');
 
+// Map of currently active Firebase refs, and who is observing said refs.
+// {
+//     questions: {
+//         presentationId1234: {
+//             ref: firebaseRefObject,
+//             listeners: {
+//                 123412341: 123412341
+//             }
+//         }
+//     }
+// }
 let refs = {};
+
+// APIConstants will be used to index into the map
 let firebasePaths = {
     lectures: 'lectures',
     questions: 'questions',
     responses: 'responses',
+    subjects: 'courseLists',
 };
 
 const APIConstants = keyMirror({
@@ -151,18 +166,18 @@ let API = {
                     .child(questionKey).push(response, callback);
     },
 
-    subscribeToSubjects: function(userId) {
-        // subscribe to relevant part of firebase
-
-        // dispatch relevent event
+    subscribeToSubjects: function(componentKey, userId) {
+        this.firebaseSubscribe(APIConstants.subjects, userId, componentKey, function(content) {
+            SubjectActions.updateSubjects(content);
+        });
     },
 
-    unsubscribeFromSubjects: function(userId) {
-        // unsubscribe from firebase
+    unsubscribeFromSubjects: function(componentKey, userId) {
+        this.firebaseSubscribe(APIConstants.subjects, userId, componentKey);
     },
 
     addToSubjects: function(userId, subjectName, callback) {
-
+        return refs[APIConstants.subjects][userId].ref.push(subjectName, callback);
     },
 };
 

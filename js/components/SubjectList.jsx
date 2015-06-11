@@ -1,8 +1,6 @@
 import React from 'react';
-import config from '../config';
 import { Link } from 'react-router';
 
-let Firebase = require('firebase');
 let Modal = require('react-modal');
 require('../../css/components/Button.scss');
 require('../../css/components/WelcomeView.scss');
@@ -44,24 +42,10 @@ class SubjectList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      courseLists: {},
       showForm: false,
       newCourse: '', // populated by the 'add course' model input
       modalIsOpen: false,
     };
-  }
-
-  componentDidMount() {
-    let firebaseEndpoint = config.firebase.base + '/courseLists/uqjstee8';
-    let ref = this.ref = new Firebase(firebaseEndpoint);
-    ref.on('value', (snapshot) => {
-      this.setState({ courseLists: snapshot.val() });
-    });
-  }
-
-  componentWillUnmount() {
-    // unbind any Firebase callbacks
-    this.ref.off();
   }
 
   // Click handler for adding a new course button.
@@ -75,8 +59,6 @@ class SubjectList extends React.Component {
 
   addNewCourse(event) {
     this.props.onAddSubject(this.state.newCourse);
-
-    // this.ref.push(this.state.newCourse);
 
     this.setState({
       modalIsOpen: false,
@@ -107,16 +89,16 @@ class SubjectList extends React.Component {
       flexWrap: 'wrap',
     };
 
-    var items = Object.keys(this.state.courseLists).map((key) => {
+    var items = Object.keys(this.props.subjects).map((key) => {
       return (
         <SubjectListItem
           key={key}
           to='questionManager'
           courseId={key}
-          courseName={this.state.courseLists[key]}
+          courseName={this.props.subjects[key]}
           onChangeCourse={this.props.onChangeCourse}
         >
-          {this.state.courseLists[key]}
+          {this.props.subjects[key]}
         </SubjectListItem>);
     });
 
@@ -144,6 +126,7 @@ class SubjectList extends React.Component {
   }
 }
 SubjectList.propTypes = {
+  subjects: React.PropTypes.object,
   onChangeCourse: React.PropTypes.func,
 };
 

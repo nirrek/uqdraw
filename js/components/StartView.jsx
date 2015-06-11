@@ -82,7 +82,8 @@ class StartView extends React.Component {
 
   onLogin(event) {
     event.preventDefault();
-    this.context.router.transitionTo('welcome');
+    this.context.router
+      .transitionTo('welcome', {'userId': 'uqjstee8'}, {});
   }
 
   render() {

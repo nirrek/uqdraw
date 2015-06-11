@@ -53,9 +53,9 @@ class App extends React.Component {
 let routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="questionManager" handler={QuestionManager} path="/:courseName/question-manager"/>
+    <Route name="welcome" handler={Welcome} path="/welcome/:userId" />
     <Route name="presenter" handler={Presenter} path="/:courseName/:lectureId"/>
     <Route name="drawing" handler={Answer} path="/drawing"/>
-    <Route name="welcome" handler={Welcome} path="/welcome" />
     <Route name="archive" handler={Archive} path="/archive" />
     <Route name="responses" handler={Responses} path="/responses" />
     {/* <Route name="test" handler={Test} path="/test" /> */}
