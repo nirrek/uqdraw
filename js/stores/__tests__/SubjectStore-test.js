@@ -22,6 +22,10 @@ describe('SubjectStore', () => {
     expect(subjects).toEqual({});
   });
 
+  it('initializes with _isSubmitting as false', () => {
+    expect(SubjectStore.isSubmitting()).toBe(false);
+  });
+
   it('invokes registered listeners', () => {
     let listener1 = jest.genMockFunction();
     let listener2 = jest.genMockFunction();
@@ -43,6 +47,15 @@ describe('SubjectStore', () => {
 
     expect(listener1.mock.calls.length).toBe(1);
     expect(listener2.mock.calls.length).toBe(0);
+  });
+
+  it('unrecognized action types are treated as a noop', () => {
+    let action = {
+      type: 'someRandomAction'
+    };
+    callback(action);
+    expect(SubjectStore.getAll()).toEqual({});
+    expect(SubjectStore.isSubmitting()).toBe(false);
   });
 
   describe('SUBJECT_CREATE_INITIATED action', () => {
