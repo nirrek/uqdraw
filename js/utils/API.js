@@ -19,20 +19,20 @@ let keyMirror = require('keymirror');
 // }
 let refs = {};
 
-// APIConstants will be used to index into the map
-let firebasePaths = {
-    lectures: 'lectures',
-    questions: 'questions',
-    responses: 'responses',
-    subjects: 'courseLists',
-};
-
 const APIConstants = keyMirror({
     questions: null,
     lectures: null,
     responses: null,
     subjects: null,
 });
+
+// APIConstants will be used to index into the map
+let firebasePaths = {
+    [APIConstants.lectures]: 'lectures',
+    [APIConstants.questions]: 'questions',
+    [APIConstants.responses]: 'responses',
+    [APIConstants.subjects]: 'courseLists',
+};
 
 let API = {
     initialiseRefs: function(refType, filter) {
