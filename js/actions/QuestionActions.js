@@ -1,7 +1,7 @@
 import Dispatcher from '../dispatcher/Dispatcher.js';
 import QuestionConstants from '../constants/QuestionConstants.js';
 let ActionTypes = QuestionConstants.ActionTypes;
-let API = require('../utils/API.js').default;
+import API from '../utils/API.js';
 
 let QuestionActions = {
 
