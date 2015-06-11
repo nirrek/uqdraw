@@ -46,7 +46,8 @@
     "collectCoverage": true,
     "unmockedModulePathPatterns": [
       "react",
-      "keymirror"
+      "keymirror",
+      "babel-runtime"
     ],
     "moduleFileExtensions": [
       "js",
