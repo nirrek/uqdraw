@@ -102,40 +102,26 @@ class QuestionManager extends React.Component {
     LectureActions.delete(this.props.courseId, lectureId);
   }
 
-  onAddQuestion(lectureId, question) {
-    // Add new question to questions bucket
-    let questionRef = API.addToQuestions(this.props.courseId, question);
-
-    // Lecture needs to store a reference to the question we just added
-    let lecture = this.state.lectures[lectureId];
-    lecture.questions = lecture.questions || [];
-    lecture.questions.push(questionRef.key());
-    API.updateLecture(this.props.courseId, lectureId, lecture);
+  onAddQuestion(lectureKey, lecture, question) {
+    QuestionActions.create(this.props.courseId, lectureKey, lecture, question);
+    event.preventDefault();
   }
 
-  onRemoveQuestion(lectureId, questionId) {
-    let lectures = this.state.lectures;
-    let lecture = lectures[lectureId];
-    let questions = this.state.questions;
-    let position = lecture.questions.indexOf(questionId);
-    if (position > -1) {
-      lecture.questions.splice(position, 1);
-      delete questions[questionId];
-      this.setState({lectures: lectures, questions: questions});
-      API.removeQuestion(this.props.courseId, lectures, questionId);
-    }
+  onRemoveQuestion(lectureKey, lecture, questionKey) {
+    QuestionActions.delete(this.props.courseId, lectureKey, lecture, questionKey);
+    event.preventDefault();
   }
 
   render() {
     let lectures;
     if (this.state.lectures) {
-      lectures = Object.keys(this.state.lectures).map((key) => {
+      lectures = Object.keys(this.state.lectures).map((lectureKey) => {
         return (
           <QuestionList
-            key={key}
+            key={lectureKey}
             courseName={this.props.courseName}
-            lectureId={key}
-            lecture={this.state.lectures[key]}
+            lectureKey={lectureKey}
+            lecture={this.state.lectures[lectureKey]}
             questions={this.state.questions}
             onRemoveLecture={this.onRemoveLecture.bind(this)}
             onAddQuestion={this.onAddQuestion.bind(this)}
