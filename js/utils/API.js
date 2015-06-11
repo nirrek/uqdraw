@@ -107,8 +107,8 @@ let API = {
         refs[APIConstants.lectures][courseKey].ref.child(lectureId).remove();
     },
 
-    updateLecture: function(courseKey, lectureKey, lecture) {
-        refs[APIConstants.lectures][courseKey].ref.child(lectureKey).update(lecture);
+    updateLecture: function(courseKey, lectureKey, lecture, callback) {
+        refs[APIConstants.lectures][courseKey].ref.child(lectureKey).update(lecture, callback);
     },
 
     subscribeToQuestions: function(componentKey, courseKey) {
@@ -121,13 +121,19 @@ let API = {
         this.firebaseUnsubscribe(APIConstants.questions, courseKey, componentKey);
     },
 
-    addToQuestions: function(courseKey, question) {
-        return refs[APIConstants.questions][courseKey].ref.push(question);
+    addToQuestions: function(courseKey, question, callback) {
+        return refs[APIConstants.questions][courseKey].ref.push(question, callback);
     },
 
-    removeQuestion: function(courseKey, lectures, questionId) {
-        refs[APIConstants.lectures][courseKey].ref.update(lectures);
-        refs[APIConstants.questions][courseKey].ref.child(questionId).remove();
+    removeQuestion: function(courseKey, lectureKey, lecture, questionKey, callback) {
+        let count = 0;
+        let cb = (error) => {
+            count++;
+            if (error) callback(error);
+            if (count >= 2) callback(null);
+        };
+        refs[APIConstants.lectures][courseKey].ref.child(lectureKey).update(lecture, cb);
+        refs[APIConstants.questions][courseKey].ref.child(questionKey).remove(cb);
     },
 
     subscribeToResponses: function(componentKey, lectureKey) {
