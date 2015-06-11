@@ -1,6 +1,9 @@
 import Dispatcher from '../dispatcher/Dispatcher.js';
 import SubjectConstants from '../constants/SubjectConstants.js';
-import API, {APIConstants} from '../utils/API.js';
+let API = require('../utils/API.js').default;
+let APIConstants = require('../utils/API.js').APIConstants;
+// import API from '../utils/API.js';
+// import {APIConstants} from '../utils/API.js';
 let actionTypes = SubjectConstants.ActionTypes;
 
 let SubjectActions = {
