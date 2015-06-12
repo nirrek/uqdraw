@@ -10,6 +10,7 @@
     "deploy": "webpack --config webpack.config.deploy.js --progress --colors && scp build/bundle.js moss:. && ssh -At s4171639@moss.labs.eait.uq.edu.au scp bundle.js s4171639-uqdraw.zones.eait.uq.edu.au:./uqdraw",
     "rawbuild": "webpack --progres --colors"
   },
+  "pre-commit": [""],
   "author": "nirrek",
   "license": "ISC",
   "devDependencies": {
@@ -24,6 +25,7 @@
     "eslint": "^0.21.1",
     "eslint-plugin-react": "^2.3.0",
     "jest-cli": "^0.4.10",
+    "precommit-hook": "^2.0.1",
     "react": "^0.13.1",
     "react-hot-loader": "^1.2.3",
     "react-router": "^0.13.1",
