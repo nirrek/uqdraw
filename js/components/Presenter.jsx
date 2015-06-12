@@ -7,7 +7,6 @@ import PresenterResponses from './PresenterResponses.jsx';
 import Timer from './Timer.jsx';
 
 import LectureStore from '../stores/LectureStore.js';
-import QuestionStore from '../stores/QuestionStore.js';
 import PresentationStore from '../stores/PresentationStore.js';
 
 import ComponentKey from '../utils/ComponentKey.js';
@@ -26,7 +25,6 @@ class Presenter extends React.Component {
       responses: [],
       courseId: undefined,
       lecture: {},
-      questions: {},
     };
 
     this.start = this.start.bind(this);
@@ -35,14 +33,12 @@ class Presenter extends React.Component {
 
     this.initData = this.initData.bind(this);
     this.onLectureChange = this.onLectureChange.bind(this);
-    this.onQuestionChange = this.onQuestionChange.bind(this);
     this.onPresentationChange = this.onPresentationChange.bind(this);
   }
 
   componentDidMount() {
     // Listen for store changes
     LectureStore.addChangeListener(this.onLectureChange);
-    QuestionStore.addChangeListener(this.onQuestionChange);
     PresentationStore.addChangeListener(this.onPresentationChange);
     this.initData(this.props.courseId);
   }
@@ -54,10 +50,8 @@ class Presenter extends React.Component {
   componentWillUnmount() {
     let lectureKey = this.props.routeParams.lectureId;
     LectureStore.removeChangeListener(this.onLectureChange);
-    QuestionStore.removeChangeListener(this.onQuestionChange);
     PresentationStore.removeChangeListener(this.onPresentationChange);
     API.unsubscribe(APIConstants.lectures, this.componentKey, this.props.courseId);
-    API.unsubscribe(APIConstants.questions, this.componentKey, this.props.courseId);
     API.unsubscribe(APIConstants.responses, this.componentKey, lectureKey);
   }
 
@@ -66,10 +60,8 @@ class Presenter extends React.Component {
       let lectureKey = this.props.routeParams.lectureId;
       let lecture = LectureStore.getAll(lectureKey);
       this.setState({lecture: lecture});
-      this.setState({questions: QuestionStore.getAll(courseKey)});
       this.setState({responses: PresentationStore.getResponses(lectureKey)});
       API.subscribe(APIConstants.lectures, this.componentKey, courseKey);
-      API.subscribe(APIConstants.questions, this.componentKey, courseKey);
       API.subscribe(APIConstants.responses, this.componentKey, lectureKey);
     }
   }
@@ -77,10 +69,6 @@ class Presenter extends React.Component {
   onLectureChange() {
     let lecture = LectureStore.get(this.props.courseId, this.props.routeParams.lectureId);
     this.setState({'lecture': lecture});
-  }
-
-  onQuestionChange() {
-    this.setState({'questions': QuestionStore.getAll(this.props.courseId)});
   }
 
   onPresentationChange() {
@@ -143,11 +131,11 @@ class Presenter extends React.Component {
     let questions = [];
     let activeQuestion;
     let activeQuestionComponent;
-    if (this.state.lecture && this.state.lecture.questions && this.state.questions) {
-      questions = this.state.lecture.questions.map((key) => {
+    if (this.state.lecture && this.state.lecture.questions && this.state.lecture.questionOrder) {
+      questions = this.state.lecture.questionOrder.map((key) => {
         return {
           key: key,
-          value: this.state.questions[key],
+          value: this.state.lecture.questions[key],
         };
       });
 
