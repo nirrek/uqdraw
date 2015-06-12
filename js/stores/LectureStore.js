@@ -30,7 +30,7 @@ let LectureStore = Object.assign({}, EventEmitter.prototype, {
 
 let dispatcherCallback = function(action) {
     switch(action.type) {
-        case ActionTypes.LECTURE_CREATE_SUCCESS:
+        case ActionTypes.LECTURE_CREATE_SUCCESS: {
             let {courseKey, lectureKey, lecture} = action;
             if (lecture) {
                 if (!_lectures[courseKey]) _lectures[courseKey] = {};
@@ -38,8 +38,9 @@ let dispatcherCallback = function(action) {
                 LectureStore.emitChange();
             }
             break;
+        }
 
-        case ActionTypes.LECTURES_UPDATE_SUCCESS:
+        case ActionTypes.LECTURES_UPDATE_SUCCESS: {
             let {courseKey, lectures} = action;
             if (lectures) {
                 if (!_lectures[courseKey]) {
@@ -50,8 +51,9 @@ let dispatcherCallback = function(action) {
                 LectureStore.emitChange();
             }
             break;
+        }
 
-        case ActionTypes.LECTURE_DELETE_SUCCESS:
+        case ActionTypes.LECTURE_DELETE_SUCCESS: {
             let {courseKey, lectureKey} = action;
             if (lectureKey) {
                 if (!_lectures[courseKey]) _lectures[courseKey] = {};
@@ -61,8 +63,9 @@ let dispatcherCallback = function(action) {
                 LectureStore.emitChange();
             }
             break;
+        }
 
-        case ActionTypes.QUESTION_CREATE_SUCCESS:
+        case ActionTypes.QUESTION_CREATE_SUCCESS: {
             let {courseKey, lectureKey, questionKey, question} = action;
             if (questionKey) {
                 if (!_lectures[courseKey]) _lectures[courseKey] = {};
@@ -76,8 +79,9 @@ let dispatcherCallback = function(action) {
             }
             LectureStore.emitChange();
             break;
+        }
 
-        case ActionTypes.QUESTION_UPDATE_SUCCESS:
+        case ActionTypes.QUESTION_UPDATE_SUCCESS: {
             let {courseKey, lectureKey, questionKey, question} = action;
             if (questionKey) {
                 if (!_lectures[courseKey]) _lectures[courseKey] = {};
@@ -88,8 +92,9 @@ let dispatcherCallback = function(action) {
             }
             LectureStore.emitChange();
             break;
+        }
 
-        case ActionTypes.QUESTION_DELETE_SUCCESS:
+        case ActionTypes.QUESTION_DELETE_SUCCESS: {
             let {courseKey, lectureKey, questionKey} = action;
             if (courseKey && questionKey) {
                 if (!_lectures[courseKey]) break;
@@ -110,7 +115,7 @@ let dispatcherCallback = function(action) {
             }
             LectureStore.emitChange();
             break;
-
+        }
         default:
             //noop
     }
