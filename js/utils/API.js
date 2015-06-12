@@ -117,12 +117,12 @@ let API = {
         this.firebaseUnsubscribe(APIConstants.lectures, courseKey, componentKey);
     },
 
-    addToLectures: function(courseKey, lecture) {
-        return refs[APIConstants.lectures][courseKey].ref.push(lecture);
+    addToLectures: function(courseKey, lecture, callback) {
+        return refs[APIConstants.lectures][courseKey].ref.push(lecture, callback);
     },
 
-    removeLecture: function(courseKey, lectureId) {
-        refs[APIConstants.lectures][courseKey].ref.child(lectureId).remove();
+    removeLecture: function(courseKey, lectureId, callback) {
+        refs[APIConstants.lectures][courseKey].ref.child(lectureId).remove(callback);
     },
 
     updateLecture: function(courseKey, lectureKey, lecture, callback) {
@@ -139,19 +139,35 @@ let API = {
         this.firebaseUnsubscribe(APIConstants.questions, courseKey, componentKey);
     },
 
-    addToQuestions: function(courseKey, question, callback) {
-        return refs[APIConstants.questions][courseKey].ref.push(question, callback);
-    },
-
-    removeQuestion: function(courseKey, lectureKey, lecture, questionKey, callback) {
+    addToQuestions: function(courseKey, lectureKey, lecture, question, callback) {
         let count = 0;
         let cb = (error) => {
             count++;
             if (error) callback(error);
-            if (count >= 2) callback(null);
+            if (count >= 2) {
+                callback(null);
+            }
         };
-        refs[APIConstants.lectures][courseKey].ref.child(lectureKey).update(lecture, cb);
-        refs[APIConstants.questions][courseKey].ref.child(questionKey).remove(cb);
+        let lectureRef = refs[APIConstants.lectures][courseKey].ref.child(lectureKey);
+        let questionRef = lectureRef.child('questions').push(question, cb);
+        let questionKey = questionRef.key();
+        let questionOrder = lecture.questionOrder || [];
+        questionOrder.push(questionKey);
+        lectureRef.child('questionOrder').update(questionOrder, cb);
+        return questionKey;
+    },
+
+    removeQuestion: function(courseKey, lectureKey, lecture, questionKey, callback) {
+        // Remove question from lecture object
+        let index = Array.findIndex(lecture.questionOrder, x => x === questionKey);
+        lecture.questionOrder.splice(index, 1);
+        if (lecture.questions[questionKey]) {
+            delete lecture.questions[questionKey];
+        }
+
+        // Update lecture object
+        let lectureRef = refs[APIConstants.lectures][courseKey].ref.child(lectureKey);
+        lectureRef.update(lecture, callback);
     },
 
     subscribeToResponses: function(componentKey, lectureKey) {

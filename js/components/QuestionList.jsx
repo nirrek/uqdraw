@@ -38,18 +38,18 @@ class QuestionList extends React.Component {
   }
 
   render() {
-    let {courseName, lectureKey, lecture, questions, ...delegateProps} = this.props;
+    let {courseName, lectureKey, lecture, ...delegateProps} = this.props;
     let questionComponents;
-    // Make sure both the lecture question refs and matching questions exist
-    if (lecture.questions && questions) {
-      questionComponents = lecture.questions.map((questionKey) => {
+    // Make sure both the lecture questions and lecture question order exist
+    if (lecture.questions && lecture.questionOrder) {
+      questionComponents = lecture.questionOrder.map((questionKey) => {
 
-        // If the lecture question ref exists but there is no matching question
-        if (!questions.hasOwnProperty(questionKey)) {
+        // If a question key is in questionOrder but has no matching question
+        if (!lecture.questions.hasOwnProperty(questionKey)) {
           return null;
         }
 
-        let question = questions[questionKey];
+        let question = lecture.questions[questionKey];
         return (
           <Question
             key={questionKey}
@@ -92,7 +92,6 @@ QuestionList.propTypes = {
   courseName: React.PropTypes.string,
   lectureKey: React.PropTypes.string,
   lecture: React.PropTypes.object,
-  questions: React.PropTypes.object,
   onAddQuestion: React.PropTypes.func,
   onRemoveLecture: React.PropTypes.func,
   onRemoveQuestion: React.PropTypes.func,

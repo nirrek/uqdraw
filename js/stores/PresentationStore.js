@@ -37,25 +37,25 @@ let PresentationStore = Object.assign({}, EventEmitter.prototype, {
 
 let dispatchCallback = function(action) {
     switch(action.type) {
-        case ActionTypes.RESPONSES_UPDATE:
-            if (action.lectureKey && action.responses) {
-                _responses[action.lectureKey] = _responses[action.lectureKey] || {};
-                Object.assign(_responses[action.lectureKey], action.responses);
+        case ActionTypes.RESPONSES_UPDATE: {
+            let {lectureKey, responses} = action;
+            if (lectureKey && responses) {
+                _responses[lectureKey] = _responses[lectureKey] || {};
+                Object.assign(_responses[lectureKey], responses);
                 PresentationStore.emitChange();
             }
             break;
-
-        case ActionTypes.RESPONSE_CREATE:
-            console.log('creating');
+        }
+        case ActionTypes.RESPONSE_CREATE: {
             _isSubmitting = true;
             PresentationStore.emitChange();
             break;
-
-        case ActionTypes.RESPONSE_CREATED:
-        console.log('created');
+        }
+        case ActionTypes.RESPONSE_CREATED: {
             _isSubmitting = false;
             PresentationStore.emitChange();
             break;
+        }
     }
 };
 

@@ -8,7 +8,7 @@ let LectureActions = {
     updateLectures: (courseKey, lectures) => {
         if (!courseKey || !lectures) return;
         Dispatcher.dispatch({
-            type: ActionTypes.LECTURES_UPDATE,
+            type: ActionTypes.LECTURES_UPDATE_SUCCESS,
             courseKey: courseKey,
             lectures: lectures,
         });
@@ -16,19 +16,47 @@ let LectureActions = {
 
     create: (courseKey, lectureTitle) => {
         let newLecture = {title: lectureTitle, questions: []};
-        let ref = API.addToLectures(courseKey, newLecture);
+        let ref = API.addToLectures(courseKey, newLecture, (error) => {
+            if (error) {
+                Dispatcher.dispatch({
+                    type: ActionTypes.LECTURE_CREATE_FAIL,
+                    courseKey: courseKey,
+                    lecture: newLecture,
+                });
+            } else {
+                Dispatcher.dispatch({
+                    type: ActionTypes.LECTURE_CREATE_SUCCESS,
+                    courseKey: courseKey,
+                    lectureKey: ref.key(),
+                    lecture: newLecture,
+                });
+            }
+        });
         Dispatcher.dispatch({
-            type: ActionTypes.LECTURE_CREATE,
+            type: ActionTypes.LECTURE_CREATE_INITIATED,
             courseKey: courseKey,
-            lectureKey: ref.key(),
             lecture: newLecture,
         });
     },
 
     delete: (courseKey, lectureKey) => {
-        API.removeLecture(courseKey, lectureKey);
+        API.removeLecture(courseKey, lectureKey, (error) => {
+            if (error) {
+                Dispatcher.dispatch({
+                    type: ActionTypes.LECTURE_DELETE_FAIL,
+                    courseKey,
+                    lectureKey,
+                });
+            } else {
+                Dispatcher.dispatch({
+                    type: ActionTypes.LECTURE_DELETE_SUCCESS,
+                    courseKey,
+                    lectureKey,
+                });
+            }
+        });
         Dispatcher.dispatch({
-            type: ActionTypes.LECTURE_DELETE,
+            type: ActionTypes.LECTURE_DELETE_INITIATED,
             courseKey,
             lectureKey,
         });

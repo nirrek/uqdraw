@@ -30,59 +30,92 @@ let LectureStore = Object.assign({}, EventEmitter.prototype, {
 
 let dispatcherCallback = function(action) {
     switch(action.type) {
-        case ActionTypes.LECTURE_CREATE:
-            if (action.lecture) {
-                if (!_lectures[action.courseKey]) _lectures[action.courseKey] = {};
-                _lectures[action.courseKey][action.lectureKey] = action.lecture;
+        case ActionTypes.LECTURE_CREATE_SUCCESS: {
+            let {courseKey, lectureKey, lecture} = action;
+            if (lecture) {
+                if (!_lectures[courseKey]) _lectures[courseKey] = {};
+                _lectures[courseKey][lectureKey] = lecture;
                 LectureStore.emitChange();
             }
             break;
+        }
 
-        case ActionTypes.LECTURES_UPDATE:
-            if (action.lectures) {
-                if (!_lectures[action.courseKey]) {
-                    _lectures[action.courseKey] = action.lectures;
+        case ActionTypes.LECTURES_UPDATE_SUCCESS: {
+            let {courseKey, lectures} = action;
+            if (lectures) {
+                if (!_lectures[courseKey]) {
+                    _lectures[courseKey] = lectures;
                 } else {
-                    Object.assign(_lectures[action.courseKey], action.lectures);
+                    Object.assign(_lectures[courseKey], lectures);
                 }
                 LectureStore.emitChange();
             }
             break;
+        }
 
-        case ActionTypes.LECTURE_DELETE:
-            if (action.lectureKey) {
-                if (!_lectures[action.courseKey]) _lectures[action.courseKey] = {};
-                if (_lectures[action.courseKey][action.lectureKey]) {
-                    delete _lectures[action.courseKey][action.lectureKey];
+        case ActionTypes.LECTURE_DELETE_SUCCESS: {
+            let {courseKey, lectureKey} = action;
+            if (lectureKey) {
+                if (!_lectures[courseKey]) _lectures[courseKey] = {};
+                if (_lectures[courseKey][lectureKey]) {
+                    delete _lectures[courseKey][lectureKey];
                 }
                 LectureStore.emitChange();
             }
             break;
+        }
 
-        case ActionTypes.QUESTION_CREATED:
-            if (action.questionKey) {
-                if (!_lectures[action.courseKey]) _lectures[action.courseKey] = {};
-                if (_lectures[action.courseKey][action.lectureKey]) {
-                    _lectures[action.courseKey][action.lectureKey].questions.push(action.questionKey);
+        case ActionTypes.QUESTION_CREATE_SUCCESS: {
+            let {courseKey, lectureKey, questionKey, question} = action;
+            if (questionKey) {
+                if (!_lectures[courseKey]) _lectures[courseKey] = {};
+                if (_lectures[courseKey][lectureKey]) {
+                    let lecture = _lectures[courseKey][lectureKey];
+                    if (!lecture.questions) lecture.questions = {};
+                    if (!lecture.questionOrder) lecture.questionOrder = [];
+                    lecture.questions[questionKey] = question;
+                    lecture.questionOrder.push(questionKey);
                 }
             }
             LectureStore.emitChange();
             break;
+        }
 
-        case ActionTypes.QUESTION_DELETE_SUCCESS:
-            if (action.courseKey && action.questionKey) {
-                if (!_lectures[action.courseKey]) break;
-                if (_lectures[action.courseKey][action.lectureKey]) {
-                    let index = _lectures[action.courseKey][action.lectureKey].questions
-                                    .findIndex(x => x === action.questionKey);
+        case ActionTypes.QUESTION_UPDATE_SUCCESS: {
+            let {courseKey, lectureKey, questionKey, question} = action;
+            if (questionKey) {
+                if (!_lectures[courseKey]) _lectures[courseKey] = {};
+                if (_lectures[courseKey][lectureKey]) {
+                    let lecture = _lectures[courseKey][lectureKey];
+                    Object.assign(lecture.questions[questionKey], question);
+                }
+            }
+            LectureStore.emitChange();
+            break;
+        }
+
+        case ActionTypes.QUESTION_DELETE_SUCCESS: {
+            let {courseKey, lectureKey, questionKey} = action;
+            if (courseKey && questionKey) {
+                if (!_lectures[courseKey]) break;
+                if (_lectures[courseKey][lectureKey]) {
+                    let lecture = _lectures[courseKey][lectureKey];
+
+                    // Remove question from questionOrder
+                    let index = lecture.questionOrder.findIndex(x => x === questionKey);
                     if (index) {
-                        _lectures[action.courseKey][action.questionKey].questions.splice(index, 1);
+                        lecture.questionOrder.splice(index, 1);
+                    }
+
+                    // Remove actual question object
+                    if (lecture.questions[questionKey]) {
+                        delete lecture.questions[questionKey];
                     }
                 }
             }
             LectureStore.emitChange();
             break;
-
+        }
         default:
             //noop
     }
