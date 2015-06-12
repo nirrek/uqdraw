@@ -107,15 +107,13 @@ describe('API', () => {
 
   // Describe persistence related behaviour (add, remove, update, etc)
   describe('persistence', () => {
-    // What happens if the ref no exist (eg forgot to subscribe first)?
+    const componentKey = '1asdf6';
+    const courseKey = 'COMS3200';
+    const lecture = 'Lecture 1';
+    const userId = 'someUser';
 
-    // Test that return type is what we expected
-
+    // I'm going to hold off on finishing this until schema updates have been made
     describe('lectures', () => {
-      const componentKey = '1asdf6';
-      const courseKey = 'COMS3200';
-      const lecture = 'Lecture 1';
-
       it('calls updateLectures action creator when Firebase receives a payload', () => {
         API.subscribe(APIConstants.lectures, componentKey, courseKey);
 
@@ -151,6 +149,25 @@ describe('API', () => {
 
       it('updates a lecture on Firebase', () => {
 
+      });
+    });
+
+    describe('questions', () => {
+
+    });
+
+    describe('responses', () => {
+
+    });
+
+    describe('subjects', () => {
+      it('adds a new subject to Firebase', () => {
+        let callback = function withAName() {};
+        API.subscribe(APIConstants.subjects, componentKey, userId);
+        API.addToSubjects(userId, courseKey, callback);
+
+        let ref = API.getRefs()[APIConstants.subjects][userId].ref;
+        expect(ref.push).toBeCalledWith(courseKey, callback);
       });
     });
 
