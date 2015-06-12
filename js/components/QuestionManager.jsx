@@ -7,7 +7,6 @@ import LectureComposer from './LectureComposer.jsx';
 import HorizontalDragScroll from '../composables/HorizontalDragScroll.js';
 
 import QuestionActions from '../actions/QuestionActions.js';
-import QuestionStore from '../stores/QuestionStore.js';
 import LectureActions from '../actions/LectureActions.js';
 import LectureStore from '../stores/LectureStore.js';
 import API, {APIConstants} from '../utils/API.js';
@@ -36,18 +35,15 @@ class QuestionManager extends React.Component {
       curOffset: 0,
       isLectureModalOpen: false,
       lectures: {},
-      questions: {},
     };
 
     this.initData = this.initData.bind(this);
     this.onLectureChange = this.onLectureChange.bind(this);
-    this.onQuestionChange = this.onQuestionChange.bind(this);
   }
 
   componentDidMount() {
     // Listen for store changes
     LectureStore.addChangeListener(this.onLectureChange);
-    QuestionStore.addChangeListener(this.onQuestionChange);
 
     // Initialise store data
     this.initData(this.props.courseId);
@@ -60,7 +56,6 @@ class QuestionManager extends React.Component {
 
   componentWillUnmount() {
     LectureStore.removeChangeListener(this.onLectureChange);
-    QuestionStore.removeChangeListener(this.onQuestionChange);
     API.unsubscribe(APIConstants.lectures, this.componentKey, this.props.courseId);
     API.unsubscribe(APIConstants.questions, this.componentKey, this.props.courseId);
   }
@@ -68,7 +63,6 @@ class QuestionManager extends React.Component {
   initData(courseKey) {
     if (courseKey) {
       this.setState({lectures: LectureStore.getAll(courseKey)});
-      this.setState({questions: QuestionStore.getAll(courseKey)});
       API.subscribe(APIConstants.lectures, this.componentKey, courseKey);
       API.subscribe(APIConstants.questions, this.componentKey, courseKey);
     }
@@ -76,10 +70,6 @@ class QuestionManager extends React.Component {
 
   onLectureChange() {
     this.setState({lectures: LectureStore.getAll(this.props.courseId)});
-  }
-
-  onQuestionChange() {
-    this.setState({questions: QuestionStore.getAll(this.props.courseId)});
   }
 
   showLectureModal(event) {
@@ -122,7 +112,6 @@ class QuestionManager extends React.Component {
             courseName={this.props.courseName}
             lectureKey={lectureKey}
             lecture={this.state.lectures[lectureKey]}
-            questions={this.state.questions}
             onRemoveLecture={this.onRemoveLecture.bind(this)}
             onAddQuestion={this.onAddQuestion.bind(this)}
             onRemoveQuestion={this.onRemoveQuestion.bind(this)}

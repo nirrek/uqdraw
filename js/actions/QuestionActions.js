@@ -15,55 +15,34 @@ let QuestionActions = {
     },
 
     create: (courseKey, lectureKey, lecture, question) => {
-        let questionRef;
-        let questionUpdated = false;
-        let lectureUpdated = false;
-
-        let dispatchInitiated = () => {
-            Dispatcher.dispatch({
-                type: ActionTypes.QUESTION_CREATE,
-                courseKey,
-                question,
-            });
-        };
-
-        let dispatchSuccess = () => {
-            Dispatcher.dispatch({
-                type: ActionTypes.QUESTION_CREATED,
-                courseKey,
-                questionKey: questionRef.key(),
-                question,
-            });
-        };
-
-        let dispatchFail = (error) => {
-            Dispatcher.dispatch({
-                type: ActionTypes.QUESTION_CREATE_FAIL,
-                courseKey,
-                lectureKey,
-                lecture,
-                question,
-                error
-            });
-        };
-
-        let callback = (type, response) => {
-            if (response !== null) {
-                dispatchFail(response);
+        let questionKey = API.addToQuestions(courseKey, lectureKey, lecture, question, (error) => {
+            if (error) {
+                Dispatcher.dispatch({
+                    type: ActionTypes.QUESTION_CREATE_FAIL,
+                    courseKey,
+                    lectureKey,
+                    questionKey,
+                    question,
+                    error
+                });
             } else {
-                if (type === 'question') questionUpdated = true;
-                if (type === 'lecture') lectureUpdated = true;
-                if (questionUpdated && lectureUpdated) {
-                    dispatchSuccess();
-                }
+                Dispatcher.dispatch({
+                    type: ActionTypes.QUESTION_CREATE_SUCCESS,
+                    courseKey,
+                    lectureKey,
+                    questionKey,
+                    question,
+                });
             }
-        };
+        });
 
-        questionRef = API.addToQuestions(courseKey, question, (response) => callback('question', response));
-        lecture.questions.push(questionRef.key());
-        API.updateLecture(courseKey, lectureKey, lecture, (response) => callback('lecture', response));
-
-        dispatchInitiated();
+        Dispatcher.dispatch({
+            type: ActionTypes.QUESTION_CREATE_INITIATED,
+            courseKey,
+            lectureKey,
+            questionKey,
+            question,
+        });
     },
 
     delete: (courseKey, lectureKey, lecture, questionKey) => {
@@ -84,10 +63,6 @@ let QuestionActions = {
                 });
             }
         };
-
-        // Remove question from lecture object
-        let index = Array.findIndex(lecture.questions, x => x === questionKey);
-        lecture.questions.splice(index, 1);
 
         API.removeQuestion(courseKey, lectureKey, lecture, questionKey, callback);
         Dispatcher.dispatch({
