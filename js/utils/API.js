@@ -117,12 +117,12 @@ let API = {
         this.firebaseUnsubscribe(APIConstants.lectures, courseKey, componentKey);
     },
 
-    addToLectures: function(courseKey, lecture) {
-        return refs[APIConstants.lectures][courseKey].ref.push(lecture);
+    addToLectures: function(courseKey, lecture, callback) {
+        return refs[APIConstants.lectures][courseKey].ref.push(lecture, callback);
     },
 
-    removeLecture: function(courseKey, lectureId) {
-        refs[APIConstants.lectures][courseKey].ref.child(lectureId).remove();
+    removeLecture: function(courseKey, lectureId, callback) {
+        refs[APIConstants.lectures][courseKey].ref.child(lectureId).remove(callback);
     },
 
     updateLecture: function(courseKey, lectureKey, lecture, callback) {

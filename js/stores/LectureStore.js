@@ -30,7 +30,7 @@ let LectureStore = Object.assign({}, EventEmitter.prototype, {
 
 let dispatcherCallback = function(action) {
     switch(action.type) {
-        case ActionTypes.LECTURE_CREATE:
+        case ActionTypes.LECTURE_CREATE_SUCCESS:
             let {courseKey, lectureKey, lecture} = action;
             if (lecture) {
                 if (!_lectures[courseKey]) _lectures[courseKey] = {};
@@ -39,7 +39,7 @@ let dispatcherCallback = function(action) {
             }
             break;
 
-        case ActionTypes.LECTURES_UPDATE:
+        case ActionTypes.LECTURES_UPDATE_SUCCESS:
             let {courseKey, lectures} = action;
             if (lectures) {
                 if (!_lectures[courseKey]) {
@@ -51,7 +51,7 @@ let dispatcherCallback = function(action) {
             }
             break;
 
-        case ActionTypes.LECTURE_DELETE:
+        case ActionTypes.LECTURE_DELETE_SUCCESS:
             let {courseKey, lectureKey} = action;
             if (lectureKey) {
                 if (!_lectures[courseKey]) _lectures[courseKey] = {};
