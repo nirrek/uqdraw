@@ -104,6 +104,9 @@ let API = {
         }
     },
 
+    // I don't like how this inverts the order of filter and component key.
+    // the order here is:       (componentKey, filter)
+    // the delegate's order is: (filter, componentKey)
     subscribeToLectures: function(componentKey, courseKey) {
         this.firebaseSubscribe(APIConstants.lectures, courseKey, componentKey, function(content) {
             LectureActions.updateLectures(courseKey, content);
@@ -173,15 +176,20 @@ let API = {
     },
 
     unsubscribeFromSubjects: function(componentKey, userId) {
-        this.firebaseSubscribe(APIConstants.subjects, userId, componentKey);
+        this.firebaseUnsubscribe(APIConstants.subjects, userId, componentKey);
     },
 
     addToSubjects: function(userId, subjectName, callback) {
         return refs[APIConstants.subjects][userId].ref.push(subjectName, callback);
     },
+
+    getRefs: function() {
+        return refs;
+    }
 };
 
 let publicAPI = {
+    getRefs: API.getRefs, // exposed for testing
     subscribe: API.subscribe,
     unsubscribe: API.unsubscribe,
     addToLectures: API.addToLectures,
