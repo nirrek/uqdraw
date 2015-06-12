@@ -37,25 +37,33 @@ let SubjectStore = Object.assign({}, EventEmitter.prototype, {
 
 let dispatcherCallback = function(action) {
   switch(action.type) {
-    case actionTypes.SUBJECT_CREATE_INITIATED:
+    case actionTypes.SUBJECT_CREATE_INITIATED: {
+      let { subjectName } = action;
       _isSubmitting = true;
       SubjectStore.emitChange();
       break;
+    }
 
-    case actionTypes.SUBJECT_CREATE_SUCCESS:
+    case actionTypes.SUBJECT_CREATE_SUCCESS: {
+      let { userId, subjectName } = action;
       _isSubmitting = false;
       SubjectStore.emitChange();
       break;
+    }
 
-    case actionTypes.SUBJECT_CREATE_FAIL:
+    case actionTypes.SUBJECT_CREATE_FAIL: {
+      let { userId, subjectName, error } = action;
       _isSubmitting = false;
       SubjectStore.emitChange();
       break;
+    }
 
-    case actionTypes.SUBJECTS_UPDATE:
-      _subjects = action.subjects;
+    case actionTypes.SUBJECTS_UPDATE: {
+      let { subjects } = action;
+      _subjects = subjects;
       SubjectStore.emitChange();
       break;
+    }
 
     default:
       // noop
