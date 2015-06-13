@@ -1,42 +1,43 @@
 import Dispatcher from '../dispatcher/Dispatcher.js';
 import PresentationConstants from '../constants/PresentationConstants.js';
-import API, {APIConstants} from '../utils/API.js';
+import API from '../utils/API.js';
 let actionTypes = PresentationConstants.ActionTypes;
 
 
 let PresentationActions = {
     createResponse: function(lectureKey, questionKey, response) {
-        API.addToResponses(lectureKey, questionKey, response, (result) => {
-            if (result === null) {
+        let responseKey = API.addToResponses(lectureKey, questionKey, response, (error) => {
+            if (error) {
                 Dispatcher.dispatch({
-                    type: actionTypes.RESPONSE_CREATED,
-                    lectureKey: lectureKey,
-                    questionKey: questionKey,
-                    response: response,
+                    type: actionTypes.RESPONSE_CREATE_FAIL,
+                    lectureKey,
+                    questionKey,
+                    response,
+                    error,
                 });
             } else {
                 Dispatcher.dispatch({
-                    type: actionTypes.RESPONSE_CREATE_FAIL,
-                    lectureKey: lectureKey,
-                    questionKey: questionKey,
-                    response: response,
-                    error: result,
+                    type: actionTypes.RESPONSE_CREATE_SUCCESS,
+                    lectureKey,
+                    questionKey,
+                    responseKey,
+                    response,
                 });
             }
         });
         Dispatcher.dispatch({
-            type: actionTypes.RESPONSE_CREATE,
-            lectureKey: lectureKey,
-            questionKey: questionKey,
-            response: response,
+            type: actionTypes.RESPONSE_CREATE_INITIATED,
+            lectureKey,
+            questionKey,
+            response,
         });
     },
 
-    updateResponses: function(lectureKey, response) {
+    updateResponses: function(lectureKey, responses) {
         Dispatcher.dispatch({
-            type: actionTypes.RESPONSES_UPDATE,
-            lectureKey: lectureKey,
-            responses: response,
+            type: actionTypes.RESPONSES_UPDATE_SUCCESS,
+            lectureKey,
+            responses,
         });
     }
 };
