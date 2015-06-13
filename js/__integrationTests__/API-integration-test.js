@@ -1,16 +1,18 @@
+var expect = require('expect.js');
+
 describe('API Integration', function() {
   var Firebase = require('firebase');
   var FirebaseServer = require('firebase-server');
   var server;
 
-  beforeAll(function() {
+  before(function() {
     server = new FirebaseServer(5000, 'test.firebaseio.com', {});
   });
 
   describe('Empty Firebase', function() {
     var client; // Firebase client used in each spec.
 
-    beforeAll(function(done) {
+    before(function(done) {
       var fbClient = new Firebase('ws://test.firebaseio.com:5000');
 
       // Empty out the Firebase
@@ -29,7 +31,7 @@ describe('API Integration', function() {
       client = new Firebase('ws://test.firebaseio.com:5000');
       client.on('value', function(snapshot) {
         var data = snapshot.val();
-        expect(data).toEqual(null);
+        expect(data).to.be(null);
         done();
       });
     });
@@ -38,7 +40,7 @@ describe('API Integration', function() {
   describe('Prepopulated Firebase', function() {
     var client; // Firebase client used in each spec.
 
-    beforeAll(function(done) {
+    before(function(done) {
       var fbClient = new Firebase('ws://test.firebaseio.com:5000');
       var data = {
         courseLists: {
@@ -63,12 +65,19 @@ describe('API Integration', function() {
     });
 
     it('finds all the subjects', function(done) {
+      var isInitialNullPayload = true;
       client = new Firebase('ws://test.firebaseio.com:5000/courseLists');
 
       client.on('value', function(snapshot) {
+        // The initial payload sent is a null payload. Filter this out.
+        if (isInitialNullPayload) {
+          isInitialNullPayload = false;
+          return;
+        }
+
         var data = snapshot.val();
 
-        expect(data).toEqual({
+        expect(data).to.eql({
           uqjstee8: {
             '-JlUd0xRBkwULfuGFGqo': 'COMS3200',
             '-JldDBERX2jaTHTanV-P': 'INFS3202',
