@@ -87,7 +87,14 @@ let dispatcherCallback = function(action) {
                 if (!_lectures[courseKey]) _lectures[courseKey] = {};
                 if (_lectures[courseKey][lectureKey]) {
                     let lecture = _lectures[courseKey][lectureKey];
-                    Object.assign(lecture.questions[questionKey], question);
+                    if (!lecture.questions) lecture.questions = {};
+                    if (!lecture.questions[questionKey]) {
+                        lecture.questions[questionKey] = question;
+                        if (!lecture.questionOrder) lecture.questionOrder = [];
+                        lecture.questionOrder.push(questionKey);
+                    } else {
+                        Object.assign(lecture.questions[questionKey], question);
+                    }
                 }
             }
             LectureStore.emitChange();
