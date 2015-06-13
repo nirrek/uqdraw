@@ -182,8 +182,9 @@ let API = {
     },
 
     addToResponses: function(lectureKey, questionKey, response, callback) {
-        return refs[APIConstants.responses][lectureKey].ref
+        let ref = refs[APIConstants.responses][lectureKey].ref
                     .child(questionKey).push(response, callback);
+        return ref.key();
     },
 
     subscribeToSubjects: function(componentKey, userId) {
