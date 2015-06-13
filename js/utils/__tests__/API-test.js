@@ -1,10 +1,16 @@
 jest.dontMock('../API.js');
 
+// let LectureActions = require('../../actions/LectureActions.js');
+// import LectureActions from '../../actions/LectureActions.js';
+
+
 describe('API', () => {
   let API;
   let APIConstants = require('../API.js').APIConstants;
+  let LectureActions;
 
   beforeEach(() => {
+    LectureActions = require('../../actions/LectureActions.js');
     API = require('../API.js').default;
   });
 
@@ -19,7 +25,6 @@ describe('API', () => {
           API.subscribe(key, componentKey, filter);
 
           let refs = API.getRefs();
-
           expect(refs[key]).toBeDefined();
           expect(refs[key][filter]).toBeDefined();
           expect(refs[key][filter].ref).toBeTruthy();
@@ -102,8 +107,69 @@ describe('API', () => {
 
   // Describe persistence related behaviour (add, remove, update, etc)
   describe('persistence', () => {
-    // What happens if the ref no exist (eg forgot to subscribe first)?
+    const componentKey = '1asdf6';
+    const courseKey = 'COMS3200';
+    const lecture = 'Lecture 1';
+    const userId = 'someUser';
 
-    // Test that return type is what we expected
+    // I'm going to hold off on finishing this until schema updates have been made
+    describe('lectures', () => {
+      it('calls updateLectures action creator when Firebase receives a payload', () => {
+        API.subscribe(APIConstants.lectures, componentKey, courseKey);
+
+        // Get a reference to callback registered with Firebase. Then invoke
+        // the callback with a simulated payload.
+        let ref = API.getRefs()[APIConstants.lectures][courseKey].ref;
+        let refCallback = ref.on.mock.calls[0][1];
+        let lecturePayload = {
+          'someLecture': {
+            title: 'Test Lecture 1',
+            questions: ['some question'],
+          }
+        };
+        let firebaseSnapshot = {
+          val: function() { return lecturePayload; }
+        };
+        refCallback(firebaseSnapshot);
+
+        expect(LectureActions.updateLectures).toBeCalledWith(courseKey, lecturePayload);
+      });
+
+      it('adds a new lecture to Firebase', () => {
+        API.subscribe(APIConstants.lectures, componentKey, courseKey);
+        API.addToLectures(courseKey, lecture);
+
+        let ref = API.getRefs()[APIConstants.lectures][courseKey].ref;
+        expect(ref.push).toBeCalledWith(lecture);
+      });
+
+      it('removes a lecture from Firebase', () => {
+
+      });
+
+      it('updates a lecture on Firebase', () => {
+
+      });
+    });
+
+    describe('questions', () => {
+
+    });
+
+    describe('responses', () => {
+
+    });
+
+    describe('subjects', () => {
+      it('adds a new subject to Firebase', () => {
+        let callback = function withAName() {};
+        API.subscribe(APIConstants.subjects, componentKey, userId);
+        API.addToSubjects(userId, courseKey, callback);
+
+        let ref = API.getRefs()[APIConstants.subjects][userId].ref;
+        expect(ref.push).toBeCalledWith(courseKey, callback);
+      });
+    });
+
   });
 });

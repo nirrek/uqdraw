@@ -1,4 +1,5 @@
 import config from '../config';
+let firebaseRoot = config.firebase.base;
 let Firebase = require('firebase');
 import LectureActions from '../actions/LectureActions.js';
 import QuestionActions from '../actions/QuestionActions.js';
@@ -77,7 +78,7 @@ let API = {
 
         // If a ref for the current course doesn't exist
         if (!current.ref) {
-            current.ref = new Firebase(`${config.firebase.base}/${firebasePaths[refType]}/${filter}`);
+            current.ref = new Firebase(`${firebaseRoot}/${firebasePaths[refType]}/${filter}`);
             current.ref.on('value', (snapshot) => {
               let content = snapshot.val() || {};
               callback(content);
@@ -201,11 +202,16 @@ let API = {
 
     getRefs: function() {
         return refs;
-    }
+    },
+
+    setFirebaseRoot: function(newFirebaseRoot) {
+        firebaseRoot = newFirebaseRoot;
+    },
 };
 
 let publicAPI = {
     getRefs: API.getRefs, // exposed for testing
+    setFirebaseRoot: API.setFirebaseRoot, // exposed for test configurationn
     subscribe: API.subscribe,
     unsubscribe: API.unsubscribe,
     addToLectures: API.addToLectures,
