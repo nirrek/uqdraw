@@ -1,9 +1,0 @@
-{
-  "spec_dir": "js/__integrationTests__/",
-  "spec_files": [
-    "*.js"
-  ],
-  "helpers": [
-    "helpers/**/*.js"
-  ]
-}
