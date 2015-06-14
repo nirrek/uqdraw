@@ -1,6 +1,6 @@
 import Dispatcher from '../dispatcher/Dispatcher.js';
 import PresentationConstants from '../constants/PresentationConstants.js';
-import API from '../utils/API.js';
+let API = require('../utils/API').default;
 let actionTypes = PresentationConstants.ActionTypes;
 
 
