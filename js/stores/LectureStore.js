@@ -56,11 +56,11 @@ let dispatcherCallback = function(action) {
         case ActionTypes.LECTURE_DELETE_SUCCESS: {
             let {courseKey, lectureKey} = action;
             if (lectureKey) {
-                if (!_lectures[courseKey]) _lectures[courseKey] = {};
-                if (_lectures[courseKey][lectureKey]) {
+                if (_lectures[courseKey] &&
+                    _lectures[courseKey][lectureKey]) {
                     delete _lectures[courseKey][lectureKey];
+                    LectureStore.emitChange();
                 }
-                LectureStore.emitChange();
             }
             break;
         }
