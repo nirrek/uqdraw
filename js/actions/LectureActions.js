@@ -1,7 +1,7 @@
 import Dispatcher from '../dispatcher/Dispatcher';
 import LectureConstants from '../constants/LectureConstants';
 let ActionTypes = LectureConstants.ActionTypes;
-import API from '../utils/API';
+let API = require('../utils/API').default;
 
 let LectureActions = {
 
