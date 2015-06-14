@@ -2,7 +2,6 @@ import config from '../config';
 let firebaseRoot = config.firebase.base;
 let Firebase = require('firebase');
 import LectureActions from '../actions/LectureActions.js';
-import QuestionActions from '../actions/QuestionActions.js';
 import PresentationActions from '../actions/PresentationActions.js';
 import SubjectActions from '../actions/SubjectActions.js';
 let keyMirror = require('keymirror');
@@ -21,7 +20,6 @@ let keyMirror = require('keymirror');
 let refs = {};
 
 const APIConstants = keyMirror({
-    questions: null,
     lectures: null,
     responses: null,
     subjects: null,
@@ -30,7 +28,6 @@ const APIConstants = keyMirror({
 // APIConstants will be used to index into the map
 let firebasePaths = {
     [APIConstants.lectures]: 'lectures',
-    [APIConstants.questions]: 'questions',
     [APIConstants.responses]: 'responses',
     [APIConstants.subjects]: 'courseLists',
 };
@@ -128,16 +125,6 @@ let API = {
 
     updateLecture: function(courseKey, lectureKey, lecture, callback) {
         refs[APIConstants.lectures][courseKey].ref.child(lectureKey).update(lecture, callback);
-    },
-
-    subscribeToQuestions: function(componentKey, courseKey) {
-        this.firebaseSubscribe(APIConstants.questions, courseKey, componentKey, function(content) {
-            QuestionActions.updateQuestions(courseKey, content);
-        });
-    },
-
-    unsubscribeFromQuestions: function(componentKey, courseKey) {
-        this.firebaseUnsubscribe(APIConstants.questions, courseKey, componentKey);
     },
 
     addToQuestions: function(courseKey, lectureKey, lecture, question, callback) {
