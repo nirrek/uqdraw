@@ -10,11 +10,32 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel'},
-      { test: /\.css$/, loader: 'style!css' },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loaders: [
+          'babel-loader'
+        ]
+      },
+      {
+        test: /\.css$/,
+        loaders: [
+          'style-loader',
+          'css-loader'
+        ]
+      },
       {
         test: /\.scss$/,
-        loader: 'style!css!sass'
+        loaders: [
+          'style-loader',
+          'css-loader',
+          'autoprefixer-loader',
+          'sass-loader'
+        ]
+      },
+      {
+        test: /\.(png|jpg)$/,
+        loader: 'file-loader'
       }
     ]
   },
