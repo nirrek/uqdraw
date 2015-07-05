@@ -26,6 +26,10 @@ module.exports = {
           'autoprefixer-loader?browsers=last 2 version'
           'sass-loader'
         ]
+      },
+      {
+        test: /\.(png|jpg)$/,
+        loader: 'file-loader'
       }
     ]
   }
