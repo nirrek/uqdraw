@@ -1,25 +1,32 @@
 var webpack = require('webpack');
+var path = require('path');
 
 module.exports = {
-  entry: {
-    app: ['./js/app.js']
-  },
+  entry: './js/app.jsx',
   output: {
-    path: './build',
+    path: path.join(__dirname, 'build'),
     filename: 'bundle.js'
   },
   module: {
     loaders: [
-      { test: /\.js?$/, loaders: ['babel'], exclude: /node_modules/},
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader?stage=1'},
-      { test: /\.css$/, loader: 'style!css' },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loaders: ['babel-loader']
+      },
+      {
+        test: /\.css$/,
+        loaders: ['style-loader', 'css-loader']
+      },
       {
         test: /\.scss$/,
-        loader: 'style!css!sass'
+        loaders: [
+          'style-loader',
+          'css-loader',
+          'autoprefixer-loader?browsers=last 2 version'
+          'sass-loader'
+        ]
       }
     ]
-  },
-  plugins: [
-    new webpack.NoErrorsPlugin()
-  ],
+  }
 };
