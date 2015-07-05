@@ -217,22 +217,13 @@ input:focus {
   outline: none;
 }
 
-
-/*
- * NOTE
-   | All these url references are here as Webpack Sass loader is chucking a shit
-   |  with url references. No time to figure it out at the moment, probably need
-   |  to configure webpack and/or the loader to know how to resolve path names.
-   |  Once done these should be moved to their respective components Sass.
-   V  */
-
 /* Action Bar */
 .Action--eraser > .Action-icon {
-  background-image: url('../../images/eraser.svg');
+  background-image: url('../images/eraser.svg');
 }
 
 .fullscreen {
-  background-image: url('../../images/arrows_expand.svg');
+  background-image: url('../images/arrows_expand.svg');
 }
 
 /*
