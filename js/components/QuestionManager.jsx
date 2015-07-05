@@ -57,14 +57,12 @@ class QuestionManager extends React.Component {
   componentWillUnmount() {
     LectureStore.removeChangeListener(this.onLectureChange);
     API.unsubscribe(APIConstants.lectures, this.componentKey, this.props.courseId);
-    API.unsubscribe(APIConstants.questions, this.componentKey, this.props.courseId);
   }
 
   initData(courseKey) {
     if (courseKey) {
       this.setState({lectures: LectureStore.getAll(courseKey)});
       API.subscribe(APIConstants.lectures, this.componentKey, courseKey);
-      API.subscribe(APIConstants.questions, this.componentKey, courseKey);
     }
   }
 
