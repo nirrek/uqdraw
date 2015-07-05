@@ -12,6 +12,9 @@ import Archive from './components/Archive.jsx';
 import Responses from './components/Responses.jsx';
 let Firebase = require('firebase');
 
+require('../css/main.css');
+require('../node_modules/normalize.css/normalize.css');
+
 class App extends React.Component {
   constructor() {
     super();
