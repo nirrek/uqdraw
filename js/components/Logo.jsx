@@ -1,14 +1,5 @@
 import React from 'react';
-
 require('../../css/components/Logo.scss');
-
-let m = function(...objects) {
-  let result = {};
-  objects.forEach((obj) => {
-    if (obj) Object.assign(result, obj);
-  });
-  return result;
-};
 
 class Logo extends React.Component {
   constructor(props) {
@@ -33,22 +24,6 @@ class Logo extends React.Component {
         cursor: 'pointer',
       },
     };
-
-    this.nameStyle = {
-      padding: '20px 0',
-      display: 'inline-block',
-    };
-
-    this.pencilStyle = {
-      backgroundImage: 'url("/images/pen.svg")',
-      width: 22,
-      height: 22,
-      display: 'inline-block',
-      backgroundSize: 'cover',
-      position: 'absolute',
-      top: 26,
-      marginLeft: -26,
-    };
   }
 
   mouseOver() { this.setState({ isHovered: true }); }
@@ -60,22 +35,10 @@ class Logo extends React.Component {
 
     return (
       <div className='Logo' ref='logo'>
-        <img className='Logo-img' src='../../images/logo.svg'
+        <img className='Logo-img' src={require('../../images/logo.svg')}
              onMouseOver={this.mouseOver.bind(this)}
              onMouseOut={this.mouseOut.bind(this)}
              style={logoStyle}/>
-        {/* style={m(
-          this.logoStyle.default,
-          this.props.logoStyle,
-          this.state.isHovered && this.logoStyle.hovered
-        )}>
-        <span ref="pencil" style={this.pencilStyle}
-              onMouseOver={this.mouseOver.bind(this)}
-              onMouseOut={this.mouseOut.bind(this)} />
-        <span ref="name" style={this.nameStyle}
-              onMouseOver={this.mouseOver.bind(this)}
-              onMouseOut={this.mouseOut.bind(this)}>UQDraw</span>
-        */}
       </div>
     );
   }
