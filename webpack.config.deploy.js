@@ -23,7 +23,7 @@ module.exports = {
         loaders: [
           'style-loader',
           'css-loader',
-          'autoprefixer-loader?browsers=last 2 version'
+          'autoprefixer-loader?browsers=last 2 version',
           'sass-loader'
         ]
       },
