@@ -11,31 +11,30 @@ let _subjects = {};
 // Is an operation to add a subject to Firebase in progress?
 let _isSubmitting = false;
 
-let SubjectStore = Object.assign({}, EventEmitter.prototype, {
-  getAll: function() {
-    // This gives a pointer into the data structure. This means outside
-    // people can mutate the state. How to prevent?
+const SubjectStore = Object.assign({}, EventEmitter.prototype, {
+  ...EventEmitter.prototype,
+  getAll() {
     return _subjects;
   },
 
-  isSubmitting: function() {
+  isSubmitting() {
     return _isSubmitting;
   },
 
-  emitChange: function() {
+  emitChange() {
     this.emit(CHANGE_EVENT);
   },
 
-  addChangeListener: function(callback) {
+  addChangeListener(callback) {
     this.on(CHANGE_EVENT, callback);
   },
 
-  removeChangeListener: function(callback) {
+  removeChangeListener(callback) {
     this.removeListener(CHANGE_EVENT, callback);
   }
 });
 
-let dispatcherCallback = function(action) {
+const dispatcherCallback = (action) => {
   switch(action.type) {
     case actionTypes.SUBJECT_CREATE_INITIATED: {
       let { subjectName } = action;
