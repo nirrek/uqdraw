@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 require('../../css/components/Logo.scss');
 
-class Logo extends React.Component {
+export default class Logo extends Component {
   constructor(props) {
     super(props);
 
@@ -43,5 +43,3 @@ class Logo extends React.Component {
     );
   }
 }
-
-export default Logo;

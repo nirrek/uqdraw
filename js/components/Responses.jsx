@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Header from './Header.jsx';
-let Firebase = require('firebase');
+const Firebase = require('firebase');
 import config from '../config.js';
 
-class Responses extends React.Component {
+export default class Responses extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -67,5 +67,3 @@ class Responses extends React.Component {
     );
   }
 }
-
-export default Responses;

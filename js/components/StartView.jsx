@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Logo from './Logo.jsx';
 require('../../css/components/StartView.scss');
 
-class StartView extends React.Component {
+export default class StartView extends Component {
   constructor(props) {
     super(props);
     this.logoBarStyle = {
@@ -136,5 +136,3 @@ class StartView extends React.Component {
 StartView.contextTypes = {
   router: React.PropTypes.func
 };
-
-export default StartView;

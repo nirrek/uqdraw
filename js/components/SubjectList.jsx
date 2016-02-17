@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router';
-
 let Modal = require('react-modal');
 require('../../css/components/Button.scss');
 require('../../css/components/WelcomeView.scss');
@@ -11,7 +10,7 @@ let appElement = document.getElementById('react');
 Modal.setAppElement(appElement);
 Modal.injectCSS();
 
-class SubjectListItem extends React.Component {
+class SubjectListItem extends Component {
   onChangeCourse(courseId, courseName) {
     this.props.onChangeCourse(courseId, courseName);
   }
@@ -30,6 +29,7 @@ class SubjectListItem extends React.Component {
     );
   }
 }
+
 SubjectListItem.propTypes = {
   to: React.PropTypes.string,
   courseName: React.PropTypes.string,
@@ -38,7 +38,7 @@ SubjectListItem.propTypes = {
   onChangeCourse: React.PropTypes.func,
 };
 
-class SubjectList extends React.Component {
+export default class SubjectList extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -125,9 +125,8 @@ class SubjectList extends React.Component {
     );
   }
 }
+
 SubjectList.propTypes = {
   subjects: React.PropTypes.object,
   onChangeCourse: React.PropTypes.func,
 };
-
-export default SubjectList;

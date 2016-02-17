@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Touchy from '../touchy.js';
 let Spinner = require('react-spinkit');
 
 require('../../css/components/Drawing.scss');
 require('../../css/components/Button.scss');
 
-class Drawing extends React.Component {
+export default class Drawing extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -221,6 +221,3 @@ Drawing.propTypes = {
   onSubmitImage: React.PropTypes.func,
   isSubmitting: React.PropTypes.bool,
 };
-
-
-export default Drawing;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Header from './Header.jsx';
 import { Link } from 'react-router';
 import QuestionList from './QuestionList.jsx';
@@ -20,7 +20,7 @@ var appElement = document.getElementById('react');
 Modal.setAppElement(appElement);
 Modal.injectCSS();
 
-class QuestionManager extends React.Component {
+class QuestionManager extends Component {
   constructor(props) {
     super(props);
     props.onChangeCourse(null, props.routeParams.courseName);

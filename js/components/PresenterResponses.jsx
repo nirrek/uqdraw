@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-class PresenterResponses extends React.Component {
+export default class PresenterResponses extends Component {
 
   onThumbnailClick(key, event) {
     event.preventDefault();
@@ -48,5 +48,3 @@ PresenterResponses.propTypes = {
   onThumbnailClick: React.PropTypes.func.isRequired,
   responses: React.PropTypes.object.isRequired,
 };
-
-export default PresenterResponses;

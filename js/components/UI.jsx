@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-class Button extends React.Component {
+export class Button extends Component {
   shouldComponentUpdate() { return false; }
   render() {
     return (
@@ -9,5 +9,3 @@ class Button extends React.Component {
       </button>);
   }
 }
-
-export {Button};

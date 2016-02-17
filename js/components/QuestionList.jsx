@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router';
 import Question from './Question.jsx';
 import QuestionComposer from './QuestionComposer.jsx';
 require('../../css/components/QuestionManager.scss');
 
-class QuestionList extends React.Component {
-
+export default class QuestionList extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -96,5 +95,3 @@ QuestionList.propTypes = {
   onRemoveLecture: React.PropTypes.func,
   onRemoveQuestion: React.PropTypes.func,
 };
-
-export default QuestionList;

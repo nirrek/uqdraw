@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-class QuestionSelector extends React.Component {
+export default class QuestionSelector extends Component {
 
   constructor(props) {
     super(props);
@@ -53,5 +53,3 @@ class QuestionSelector extends React.Component {
     );
   }
 }
-
-export default QuestionSelector;

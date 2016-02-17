@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import Header from './Header.jsx';
 import SubjectList from './SubjectList.jsx';
@@ -10,7 +10,7 @@ import SubjectStore from '../stores/SubjectStore.js';
 import ComponentKey from '../utils/ComponentKey.js';
 import API, {APIConstants} from '../utils/API.js';
 
-class Welcome extends React.Component {
+export default class Welcome extends Component {
   constructor(props) {
     super(props);
     this.componentKey = ComponentKey.generate();
@@ -23,30 +23,22 @@ class Welcome extends React.Component {
     this.onSubmitChange = this.onSubmitChange.bind(this);
     this.onAddSubject = this.onAddSubject.bind(this);
     this.initData = this.initData.bind(this);
-
-
-
-    console.log('DID CONSTRUCT');
   }
 
   componentDidMount() {
     // Populate local state from store & setup Firebase observation.
     this.initData();
 
-    console.log('DID MOUNT');
-    console.log('subjectsNow = ', SubjectStore.getAll());
     // Listen for store changes
     SubjectStore.addChangeListener(this.onSubjectChange);
     SubjectStore.addChangeListener(this.onSubmitChange);
   }
 
   componentWillReceiveProps(newProps) {
-    console.log('WILL RECEIVE PROPS');
     this.initData(newProps.courseId);
   }
 
   componentWillUnmount() {
-    console.log('DID UNMOUNT');
     let userId = this.props.routeParams.userId;
     SubjectStore.removeChangeListener(this.onSubjectChange);
     SubjectStore.removeChangeListener(this.onSubmitChange);
@@ -55,14 +47,10 @@ class Welcome extends React.Component {
 
   initData() {
     let userId = this.props.routeParams.userId;
-    console.log('USERID = ', userId);
-    console.log('subjects = ', SubjectStore.getAll());
 
     this.setState({
       subjects: SubjectStore.getAll(),
       isSubmitting: SubjectStore.isSubmitting(),
-    }, () => {
-      console.log('cb subjects = ', this.state.subjects);
     });
     API.subscribe(APIConstants.subjects, this.componentKey, userId);
   }
@@ -82,8 +70,6 @@ class Welcome extends React.Component {
   }
 
   render() {
-    console.log('render()');
-    console.log('subjects = ', this.state.subjects);
     return (
       <div className='RouteContainer'>
         <Header />

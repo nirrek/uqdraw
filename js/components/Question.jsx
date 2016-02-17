@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 require('../../css/components/QuestionManager.scss');
 
-class Question extends React.Component {
+export default class Question extends Component {
 
   onRemoveQuestion(questionKey) {
     this.props.onRemoveQuestion(questionKey);
@@ -27,5 +27,3 @@ Question.propTypes = {
   question: React.PropTypes.string,
   onRemoveQuestion: React.PropTypes.func,
 };
-
-export default Question;

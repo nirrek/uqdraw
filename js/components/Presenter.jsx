@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Button } from './UI.jsx';
 
 import QuestionSelector from './QuestionSelector.jsx';
@@ -14,7 +14,7 @@ import API, {APIConstants} from '../utils/API.js';
 
 require('../../css/components/Presenter.scss');
 
-class Presenter extends React.Component {
+export default class Presenter extends Component {
 
   constructor(props) {
     super(props);
@@ -206,5 +206,3 @@ class Presenter extends React.Component {
     );
   }
 }
-
-export default Presenter;

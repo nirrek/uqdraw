@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-class PresenterQuestion extends React.Component {
+export default class PresenterQuestion extends Component {
   constructor(props) {
     super(props);
     this.styles = {
@@ -39,5 +39,3 @@ PresenterQuestion.propTypes = {
     value: React.PropTypes.string,
   }),
 };
-
-export default PresenterQuestion;

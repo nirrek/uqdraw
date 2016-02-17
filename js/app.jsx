@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { render } from 'react-dom';
 import Router from 'react-router';
 import { DefaultRoute, Route, RouteHandler } from 'react-router';
@@ -16,7 +16,7 @@ let Firebase = require('firebase');
 require('../css/main.css');
 require('../node_modules/normalize.css/normalize.css');
 
-class App extends React.Component {
+class App extends Component {
   constructor() {
     super();
     this.state = {

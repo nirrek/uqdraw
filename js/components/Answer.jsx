@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ComponentKey from '../utils/ComponentKey.js';
 
 require('../../css/components/Button.scss');
@@ -8,7 +8,7 @@ import PresentationActions from '../actions/PresentationActions.js';
 import Drawing from '../components/Drawing.jsx';
 import API, {APIConstants} from '../utils/API.js';
 
-class Answer extends React.Component {
+export default class Answer extends Component {
   constructor(props) {
     super(props);
     this.componentKey = ComponentKey.generate();
@@ -110,6 +110,3 @@ class Answer extends React.Component {
 Answer.propTypes = {
   activeQuestionKey: React.PropTypes.string,
 };
-
-
-export default Answer;

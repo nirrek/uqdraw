@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Header from './Header.jsx';
 import { Link } from 'react-router';
 
 require('../../css/components/Table.scss');
 require('../../css/components/Button.scss');
 
-class Archive extends React.Component {
+export default class Archive extends Component {
   render() {
     let style = {
       display: 'flex',
@@ -35,5 +35,3 @@ class Archive extends React.Component {
     );
   }
 }
-
-export default Archive;

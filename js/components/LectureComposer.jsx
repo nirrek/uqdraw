@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 let Modal = require('react-modal');
 require('../../css/components/QuestionManager.scss');
 
-class LectureComposer extends React.Component {
+export default class LectureComposer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -51,5 +51,3 @@ LectureComposer.propTypes = {
     isOpen: React.PropTypes.bool,
     onClose: React.PropTypes.func,
 };
-
-export default LectureComposer;

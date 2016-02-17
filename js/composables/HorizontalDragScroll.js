@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-let HorizontalDragScroll = ComposedComponent => class extends React.Component {
+export default (ComposedComponent) => class extends Component {
   constructor(props) {
     super(props);
     this.data = {};
@@ -63,6 +63,4 @@ let HorizontalDragScroll = ComposedComponent => class extends React.Component {
       <ComposedComponent {...this.props} scrollHandlers={this.handlers} setScrollRef={this.setScrollRef.bind(this)}/>
     );
   }
-}
-
-export default HorizontalDragScroll;
+};

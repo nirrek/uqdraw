@@ -1,11 +1,11 @@
-import React from 'react';
-import {Button} from './UI.jsx';
+import React, { Component } from 'react';
+import { Button } from './UI.jsx';
 let Modal = require('react-modal');
 require('../../css/components/QuestionManager.scss');
 
 // A component that allows a lecturer to compose a new question, or to edit
 // and existing one.
-class QuestionComposer extends React.Component {
+export default class QuestionComposer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -56,5 +56,3 @@ QuestionComposer.propTypes = {
     onClose: React.PropTypes.func,
     onSave: React.PropTypes.func,
 };
-
-export default QuestionComposer;

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Logo from './Logo.jsx';
 
-class Header extends React.Component {
+export default class Header extends Component {
   shouldComponentUpdate() { return false; }
 
   render() {
