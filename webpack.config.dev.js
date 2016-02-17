@@ -1,4 +1,5 @@
 var webpack = require('webpack');
+var autoprefixer = require('autoprefixer');
 
 module.exports = {
   entry: {
@@ -29,8 +30,8 @@ module.exports = {
         loaders: [
           'style-loader',
           'css-loader',
-          'autoprefixer-loader',
-          'sass-loader'
+          'postcss-loader',
+          'sass-loader',
         ]
       },
       {
@@ -42,8 +43,11 @@ module.exports = {
       }
     ]
   },
+  postcss: [
+    autoprefixer({ browsers: ['last 2 versions'] })
+  ],
   plugins: [
     new webpack.NoErrorsPlugin()
   ],
-  devtool: "source-map"
+  devtool: 'source-map',
 };

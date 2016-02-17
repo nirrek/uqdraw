@@ -1,5 +1,5 @@
-var webpack = require('webpack');
 var path = require('path');
+var autoprefixer = require('autoprefixer');
 
 module.exports = {
   entry: './js/app.jsx',
@@ -23,8 +23,8 @@ module.exports = {
         loaders: [
           'style-loader',
           'css-loader',
-          'autoprefixer-loader?browsers=last 2 version',
-          'sass-loader'
+          'postcss-loader',
+          'sass-loader',
         ]
       },
       {
@@ -35,5 +35,8 @@ module.exports = {
         ]
       }
     ]
-  }
+  },
+  postcss: [
+    autoprefixer({ browsers: ['last 2 versions'] })
+  ],
 };
