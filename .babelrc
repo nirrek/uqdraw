@@ -1,5 +1,7 @@
 {
-    "stage": 1,
-    "plugins": ["babel-plugin-object-assign"],
-    "optional": ["runtime"]
+  "presets": [
+    "babel-preset-es2015",
+    "babel-preset-stage-0",
+    "babel-preset-react"
+  ]
 }

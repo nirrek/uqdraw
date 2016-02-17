@@ -1,5 +1,5 @@
-let Dispatcher = require('../dispatcher/Dispatcher.js');
-let EventEmitter = require('events').EventEmitter;
+import Dispatcher from '../dispatcher/Dispatcher.js';
+import { EventEmitter } from 'events';
 import LectureConstants from '../constants/LectureConstants.js';
 let ActionTypes = LectureConstants.ActionTypes;
 
