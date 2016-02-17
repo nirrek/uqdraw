@@ -8,7 +8,15 @@
 
 .Logo-img {
   height: 100%;
-  transition: opacity 300ms ease-in-out;
+  font-size: 25;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #E1DDED;
+  transition: opacity 150ms linear;
+  &:hover {
+    opacity: 0.8;
+    cursor: pointer;
+  }
 }
 
 @media(max-width: 360px) {
