@@ -1,6 +1,5 @@
 import React from 'react';
 import Touchy from '../touchy.js';
-import config from '../config.js';
 let Spinner = require('react-spinkit');
 
 require('../../css/components/Drawing.scss');

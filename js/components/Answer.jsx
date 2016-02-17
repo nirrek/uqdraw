@@ -1,5 +1,4 @@
 import React from 'react';
-import config from '../config.js';
 import ComponentKey from '../utils/ComponentKey.js';
 
 require('../../css/components/Button.scss');

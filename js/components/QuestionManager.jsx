@@ -1,5 +1,4 @@
 import React from 'react';
-import config from '../config';
 import Header from './Header.jsx';
 import { Link } from 'react-router';
 import QuestionList from './QuestionList.jsx';
@@ -12,7 +11,6 @@ import LectureStore from '../stores/LectureStore.js';
 import API, {APIConstants} from '../utils/API.js';
 import ComponentKey from '../utils/ComponentKey.js';
 
-let Firebase = require('firebase');
 let Modal = require('react-modal');
 
 require('../../css/components/Colors.scss');
