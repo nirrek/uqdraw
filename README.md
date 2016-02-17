@@ -1,7 +1,7 @@
 # UQDraw
 UQDraw is an active learning tool for increasing engagement during lectures. It allows lecturers to pose free-form questions to the audience, and gather real-time, hand-drawn responses from students. The app is built using React and Firebase.
 
-[View Demo →](uqdraw.co)
+[View Demo →](http://uqdraw.co)
 
 ### Setup
 ```bash
