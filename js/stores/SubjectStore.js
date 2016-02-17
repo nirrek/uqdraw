@@ -12,7 +12,6 @@ let _subjects = {};
 let _isSubmitting = false;
 
 const SubjectStore = Object.assign({}, EventEmitter.prototype, {
-  ...EventEmitter.prototype,
   getAll() {
     return _subjects;
   },

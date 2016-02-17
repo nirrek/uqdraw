@@ -8,7 +8,6 @@ let CHANGE_EVENT = 'change';
 let _responses = {};
 let _isSubmitting = false;
 const PresentationStore = Object.assign({}, EventEmitter.prototype, {
-  ...EventEmitter.prototype,
   getResponses(lectureKey) {
     return _responses[lectureKey];
   },
@@ -71,6 +70,7 @@ const dispatchCallback = (action) => {
   }
 };
 
+console.log('About to register with', Dispatcher, Dispatcher.register);
 PresentationStore.dispatchToken = Dispatcher.register(dispatchCallback);
 
 export default PresentationStore;
