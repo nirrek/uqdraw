@@ -1,4 +1,5 @@
 import React from 'react';
+import { render } from 'react-dom';
 import Router from 'react-router';
 import { DefaultRoute, Route, RouteHandler } from 'react-router';
 
@@ -67,5 +68,8 @@ let routes = (
 );
 
 Router.run(routes, function(Handler, state) {
-  React.render(<Handler routeParams={state.params}/>, document.querySelector('#react'));
+  render(
+    <Handler routeParams={state.params}/>,
+    document.querySelector('#react')
+  );
 });
