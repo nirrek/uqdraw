@@ -13,12 +13,12 @@ class QuestionList extends React.Component {
     };
   }
 
-  showQuestionModal() {
+  showQuestionModal(event) {
     this.setState({modalIsOpen: true});
     event.preventDefault();
   }
 
-  hideQuestionModal() {
+  hideQuestionModal(event) {
     this.setState({modalIsOpen: false});
     event.preventDefault();
   }
