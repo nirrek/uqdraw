@@ -1,6 +1,6 @@
 import Dispatcher from '../dispatcher/Dispatcher';
 import { ActionTypes } from '../constants/LectureConstants.js'
-import API from '../utils/API.js';
+import { addToLectures, removeLecture } from '../utils/API.js';
 
 export const updateLectures = (courseKey, lectures) => {
   if (!courseKey || !lectures) return;
@@ -13,7 +13,7 @@ export const updateLectures = (courseKey, lectures) => {
 
 export const createLecture = (courseKey, lectureTitle) => {
   let newLecture = {title: lectureTitle, questions: []};
-  let ref = API.addToLectures(courseKey, newLecture, (error) => {
+  let ref = addToLectures(courseKey, newLecture, (error) => {
     if (error) {
       Dispatcher.dispatch({
         type: ActionTypes.LECTURE_CREATE_FAIL,
@@ -37,7 +37,7 @@ export const createLecture = (courseKey, lectureTitle) => {
 };
 
 export const deleteLecture = (courseKey, lectureKey) => {
-  API.removeLecture(courseKey, lectureKey, (error) => {
+  removeLecture(courseKey, lectureKey, (error) => {
     if (error) {
       Dispatcher.dispatch({
         type: ActionTypes.LECTURE_DELETE_FAIL,

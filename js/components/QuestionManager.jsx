@@ -8,8 +8,8 @@ import HorizontalDragScroll from '../composables/HorizontalDragScroll.js';
 import { createQuestion, deleteQuestion } from '../actions/QuestionActions.js';
 import { createLecture, deleteLecture } from '../actions/LectureActions.js';
 import LectureStore from '../stores/LectureStore.js';
-import API, {APIConstants} from '../utils/API.js';
-import ComponentKey from '../utils/ComponentKey.js';
+import { subscribe, unsubscribe, APIConstants } from '../utils/API.js';
+import generateComponentKey from '../utils/ComponentKey.js';
 
 let Modal = require('react-modal');
 
@@ -24,7 +24,7 @@ class QuestionManager extends Component {
   constructor(props) {
     super(props);
     props.onChangeCourse(null, props.routeParams.courseName);
-    this.componentKey = ComponentKey.generate();
+    this.componentKey = generateComponentKey();
     this.state = {
       curYPos: 0,
       curXPos: 0,
@@ -54,13 +54,13 @@ class QuestionManager extends Component {
 
   componentWillUnmount() {
     LectureStore.removeChangeListener(this.onLectureChange);
-    API.unsubscribe(APIConstants.lectures, this.componentKey, this.props.courseId);
+    unsubscribe(APIConstants.lectures, this.componentKey, this.props.courseId);
   }
 
   initData(courseKey) {
     if (courseKey) {
       this.setState({lectures: LectureStore.getAll(courseKey)});
-      API.subscribe(APIConstants.lectures, this.componentKey, courseKey);
+      subscribe(APIConstants.lectures, this.componentKey, courseKey);
     }
   }
 

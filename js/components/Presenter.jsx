@@ -9,8 +9,8 @@ import Timer from './Timer.jsx';
 import LectureStore from '../stores/LectureStore.js';
 import PresentationStore from '../stores/PresentationStore.js';
 
-import ComponentKey from '../utils/ComponentKey.js';
-import API, {APIConstants} from '../utils/API.js';
+import generateComponentKey from '../utils/ComponentKey.js';
+import { subscribe, unsubscribe, APIConstants } from '../utils/API.js';
 
 require('../../css/components/Presenter.scss');
 
@@ -19,7 +19,7 @@ export default class Presenter extends Component {
   constructor(props) {
     super(props);
     props.onChangeCourse(null, props.routeParams.courseName);
-    this.componentKey = ComponentKey.generate();
+    this.componentKey = generateComponentKey();
     this.state = {
       activeQuestionKey: undefined,
       responses: [],
@@ -51,8 +51,8 @@ export default class Presenter extends Component {
     let lectureKey = this.props.routeParams.lectureId;
     LectureStore.removeChangeListener(this.onLectureChange);
     PresentationStore.removeChangeListener(this.onPresentationChange);
-    API.unsubscribe(APIConstants.lectures, this.componentKey, this.props.courseId);
-    API.unsubscribe(APIConstants.responses, this.componentKey, lectureKey);
+    unsubscribe(APIConstants.lectures, this.componentKey, this.props.courseId);
+    unsubscribe(APIConstants.responses, this.componentKey, lectureKey);
   }
 
   initData(courseKey) {
@@ -61,8 +61,8 @@ export default class Presenter extends Component {
       let lecture = LectureStore.getAll(lectureKey);
       this.setState({lecture: lecture});
       this.setState({responses: PresentationStore.getResponses(lectureKey)});
-      API.subscribe(APIConstants.lectures, this.componentKey, courseKey);
-      API.subscribe(APIConstants.responses, this.componentKey, lectureKey);
+      subscribe(APIConstants.lectures, this.componentKey, courseKey);
+      subscribe(APIConstants.responses, this.componentKey, lectureKey);
     }
   }
 

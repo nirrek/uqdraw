@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
-import ComponentKey from '../utils/ComponentKey.js';
+import generateComponentKey from '../utils/ComponentKey.js';
 
 require('../../css/components/Button.scss');
 
 import PresentationStore from '../stores/PresentationStore.js';
 import PresentationActions from '../actions/PresentationActions.js';
 import Drawing from '../components/Drawing.jsx';
-import API, {APIConstants} from '../utils/API.js';
+import { subscribe, unsubscribe, APIConstants } from '../utils/API.js';
 
 export default class Answer extends Component {
   constructor(props) {
     super(props);
-    this.componentKey = ComponentKey.generate();
+    this.componentKey = generateComponentKey();
     this.state = {
       isQuestionOpen: true,
       lectureKey: '-JliFPJmDtXhEAv-YRZ4',
@@ -23,12 +23,12 @@ export default class Answer extends Component {
 
   componentDidMount() {
     this.getPresentationState();
-    API.subscribe(APIConstants.responses, this.componentKey, this.state.lectureKey);
+    subscribe(APIConstants.responses, this.componentKey, this.state.lectureKey);
     PresentationStore.addChangeListener(this.onPresentationChange);
   }
 
   componentDidUnmount() {
-    API.unsubscribe(APIConstants.responses, this.componentKey, this.state.lectureKey);
+    unsubscribe(APIConstants.responses, this.componentKey, this.state.lectureKey);
     PresentationStore.removeChangeListener(this.onPresentationChange);
   }
 

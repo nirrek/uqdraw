@@ -1,6 +1,6 @@
 import Dispatcher from '../dispatcher/Dispatcher.js';
 import { ActionTypes } from '../constants/QuestionConstants.js';
-import API from '../utils/API.js';
+import { addToQuestions, removeQuestion } from '../utils/API.js';
 
 export const updateQuestions = (courseKey, questions) => {
   if (!courseKey || !questions) return;
@@ -13,7 +13,7 @@ export const updateQuestions = (courseKey, questions) => {
 
 export const createQuestion = (courseKey, lectureKey, lecture, question) => {
   let questionKey =
-    API.addToQuestions(courseKey, lectureKey, lecture, question, (error) => {
+    addToQuestions(courseKey, lectureKey, lecture, question, (error) => {
       if (error) {
         Dispatcher.dispatch({
           type: ActionTypes.QUESTION_CREATE_FAIL,
@@ -62,7 +62,7 @@ export const deleteQuestion = (courseKey, lectureKey, lecture, questionKey) => {
       }
     };
 
-    API.removeQuestion(courseKey, lectureKey, lecture, questionKey, callback);
+    removeQuestion(courseKey, lectureKey, lecture, questionKey, callback);
     Dispatcher.dispatch({
       type: ActionTypes.QUESTION_DELETE_INITIATED,
       courseKey,

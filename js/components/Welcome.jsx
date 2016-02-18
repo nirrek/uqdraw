@@ -7,13 +7,13 @@ require('../../css/components/WelcomeView.scss');
 import SubjectActions from '../actions/SubjectActions.js';
 import SubjectStore from '../stores/SubjectStore.js';
 
-import ComponentKey from '../utils/ComponentKey.js';
-import API, {APIConstants} from '../utils/API.js';
+import generateComponentKey from '../utils/ComponentKey.js';
+import { subscribe, unsubscribe, APIConstants } from '../utils/API.js';
 
 export default class Welcome extends Component {
   constructor(props) {
     super(props);
-    this.componentKey = ComponentKey.generate();
+    this.componentKey = generateComponentKey();
     this.state = {
       subjects: [], // list of subject names
     };
@@ -42,7 +42,7 @@ export default class Welcome extends Component {
     let userId = this.props.routeParams.userId;
     SubjectStore.removeChangeListener(this.onSubjectChange);
     SubjectStore.removeChangeListener(this.onSubmitChange);
-    API.unsubscribe(APIConstants.subjects, this.componentKey, userId);
+    unsubscribe(APIConstants.subjects, this.componentKey, userId);
   }
 
   initData() {
@@ -52,7 +52,7 @@ export default class Welcome extends Component {
       subjects: SubjectStore.getAll(),
       isSubmitting: SubjectStore.isSubmitting(),
     });
-    API.subscribe(APIConstants.subjects, this.componentKey, userId);
+    subscribe(APIConstants.subjects, this.componentKey, userId);
   }
 
   onSubjectChange() {

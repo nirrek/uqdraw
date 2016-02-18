@@ -1,10 +1,10 @@
 import Dispatcher from '../dispatcher/Dispatcher.js';
 import { ActionTypes } from '../constants/PresentationConstants.js';
-import API from '../utils/API.js';
+import { addToResponses } from '../utils/API.js';
 
 export const createResponse = (lectureKey, questionKey, response) => {
   let responseKey =
-    API.addToResponses(lectureKey, questionKey, response, (error) => {
+    addToResponses(lectureKey, questionKey, response, (error) => {
       if (error) {
         Dispatcher.dispatch({
           type: ActionTypes.RESPONSE_CREATE_FAIL,

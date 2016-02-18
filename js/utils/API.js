@@ -1,215 +1,231 @@
 import config from '../config';
-let firebaseRoot = config.firebase.base;
-let Firebase = require('firebase');
+import Firebase from 'firebase';
 import { updateLectures } from '../actions/LectureActions.js';
 import { updateResponses } from '../actions/PresentationActions.js';
 import { updateSubjects } from '../actions/SubjectActions.js';
-let keyMirror = require('keymirror');
+import keyMirror from 'keymirror';
+import { hasPath } from '../utils/utils.js';
+let firebaseRoot = config.firebase.base;
 
-// Map of currently active Firebase refs, and who is observing said refs.
+// Tracks currently active Firebase refs, along with the components that are
+// currently interested in receiving updates from the ref.
 // {
-//     questions: {
-//         presentationId1234: {
-//             ref: firebaseRefObject,
-//             listeners: {
-//                 123412341: 123412341
-//             }
-//         }
+//   questions: {
+//     someFilterKey: {
+//       ref: firebaseRefObject,
+//       listeners: {
+//         123412341: 123412341, // component key
+//       }
 //     }
+//   }
 // }
-let refs = {};
+const refs = {};
 
-const APIConstants = keyMirror({
-    lectures: null,
-    responses: null,
-    subjects: null,
+// Subscription types that allow a consumer to specify what logical Firebase
+// resource they wish to subscribe/unsubscribe to.
+export const APIConstants = keyMirror({
+  lectures: null,
+  responses: null,
+  subjects: null,
 });
 
-// APIConstants will be used to index into the map
-let firebasePaths = {
-    [APIConstants.lectures]: 'lectures',
-    [APIConstants.responses]: 'responses',
-    [APIConstants.subjects]: 'courseLists',
+// Maps a subscription type to a Firebase namespace for the type.
+const firebasePaths = {
+  [APIConstants.lectures]: 'lectures',
+  [APIConstants.responses]: 'responses',
+  [APIConstants.subjects]: 'courseLists',
 };
 
-let API = {
-    initialiseRefs: function(refType, filter) {
-        // If refs for the refType don't exist
-        if (!refs[refType]) refs[refType] = {};
+// Maps a subscription type to subscribe/unsubscribe functions for the type.
+const subscriptionFunctions = {
+  [APIConstants.lectures]: {
+    subscribe: subscribeToLectures,
+    unsubscribe: unsubscribeFromLectures,
+  },
+  [APIConstants.responses]: {
+    subscribe: subscribeToResponses,
+    unsubscribe: unsubscribeFromResponses,
+  },
+  [APIConstants.subjects]: {
+    subscribe: subscribeToSubjects,
+    unsubscribe: unsubscribeFromSubjects,
+  },
+}
 
-        // If refs for the current filter don't exist
-        if (!refs[refType][filter]) refs[refType][filter] = {};
+// getRefInfo :: (String, String) -> Object
+// Returns ref information for the given refType and filter. If ref information
+// does not exist, it will be initialized.
+function getRefInfo(refType, filter) {
+  // Does ref info exist for the refType?
+  if (!refs[refType]) refs[refType] = {};
 
-        if (!refs[refType][filter].ref) refs[refType][filter].ref = undefined;
+  // Does ref info exist for the filter?
+  if (!refs[refType][filter])
+    refs[refType][filter] = {};
 
-        if (!refs[refType][filter].listening) refs[refType][filter].listening = {};
+  // Is there a currently active ref for the refType + filter?
+  if (!refs[refType][filter].ref)
+    refs[refType][filter] = {
+      ref: null,
+      listening: {},
+    };
 
-        return refs[refType][filter];
-    },
-
-    subscribe: (refType, ...args) => {
-        let refTypeVal = APIConstants[refType];
-        let formattedRefType = refTypeVal[0].toUpperCase() + refTypeVal.slice(1).toLowerCase();
-        let methodName = 'subscribeTo' + formattedRefType;
-        if (API[methodName] && typeof API[methodName] === 'function') {
-            API[methodName].apply(API, args);
-        } else {
-            console.error('There is no subscription for ' + refType);
-        }
-    },
-
-    unsubscribe: (refType, ...args) => {
-        let refTypeVal = APIConstants[refType];
-        let formattedRefType = refTypeVal[0].toUpperCase() + refTypeVal.slice(1).toLowerCase();
-        let methodName = 'unsubscribeFrom' + formattedRefType;
-        if (API[methodName] && typeof API[methodName] === 'function') {
-            API[methodName].apply(API, args);
-        } else {
-            console.error('There is no subscription for ' + refType);
-        }
-    },
-
-    firebaseSubscribe: function(refType, filter, componentKey, callback) {
-        // Get ref data for the chosen type and filter
-        let current = this.initialiseRefs(refType, filter);
-
-        // If a ref for the current course doesn't exist
-        if (!current.ref) {
-            current.ref = new Firebase(`${firebaseRoot}/${firebasePaths[refType]}/${filter}`);
-            current.ref.on('value', (snapshot) => {
-              let content = snapshot.val() || {};
-              callback(content);
-            });
-        }
-
-        // Set the current component as a listener
-        current.listening[componentKey] = componentKey;
-    },
-
-    firebaseUnsubscribe: function(refType, filter, componentKey) {
-        let refData = refs[refType];
-        if (refData[filter] && refData[filter].ref && refData[filter].listening) {
-            if (refData[filter].listening[componentKey]) {
-                // Remove component from list of listeners
-                delete refData[filter].listening[componentKey];
-                // If the list of listeners is now empty
-                if (!Object.keys(refData[filter].listening).length) {
-                    // Stop ref listening and set to null
-                    refData[filter].ref.off();
-                    refData[filter].ref = null;
-                }
-            }
-        }
-    },
-
-    // I don't like how this inverts the order of filter and component key.
-    // the order here is:       (componentKey, filter)
-    // the delegate's order is: (filter, componentKey)
-    subscribeToLectures: function(componentKey, courseKey) {
-        this.firebaseSubscribe(APIConstants.lectures, courseKey, componentKey, function(content) {
-            updateLectures(courseKey, content);
-        });
-    },
-
-    unsubscribeFromLectures: function(componentKey, courseKey) {
-        this.firebaseUnsubscribe(APIConstants.lectures, courseKey, componentKey);
-    },
-
-    addToLectures: function(courseKey, lecture, callback) {
-        return refs[APIConstants.lectures][courseKey].ref.push(lecture, callback);
-    },
-
-    removeLecture: function(courseKey, lectureId, callback) {
-        refs[APIConstants.lectures][courseKey].ref.child(lectureId).remove(callback);
-    },
-
-    updateLecture: function(courseKey, lectureKey, lecture, callback) {
-        refs[APIConstants.lectures][courseKey].ref.child(lectureKey).update(lecture, callback);
-    },
-
-    addToQuestions: function(courseKey, lectureKey, lecture, question, callback) {
-        let count = 0;
-        let cb = (error) => {
-            count++;
-            if (error) callback(error);
-            if (count >= 2) {
-                callback(null);
-            }
-        };
-        let lectureRef = refs[APIConstants.lectures][courseKey].ref.child(lectureKey);
-        let questionRef = lectureRef.child('questions').push(question, cb);
-        let questionKey = questionRef.key();
-        let questionOrder = lecture.questionOrder || [];
-        questionOrder.push(questionKey);
-        lectureRef.child('questionOrder').update(questionOrder, cb);
-        return questionKey;
-    },
-
-    removeQuestion: function(courseKey, lectureKey, lecture, questionKey, callback) {
-        // Remove question from lecture object
-        let index = Array.findIndex(lecture.questionOrder, x => x === questionKey);
-        lecture.questionOrder.splice(index, 1);
-        if (lecture.questions[questionKey]) {
-            delete lecture.questions[questionKey];
-        }
-
-        // Update lecture object
-        let lectureRef = refs[APIConstants.lectures][courseKey].ref.child(lectureKey);
-        lectureRef.update(lecture, callback);
-    },
-
-    subscribeToResponses: function(componentKey, lectureKey) {
-        this.firebaseSubscribe(APIConstants.responses, lectureKey, componentKey, function(content) {
-            updateResponses(lectureKey, content);
-        });
-    },
-
-    unsubscribeFromResponses: function(componentKey, lectureKey) {
-        this.firebaseUnsubscribe(APIConstants.responses, lectureKey, componentKey);
-    },
-
-    addToResponses: function(lectureKey, questionKey, response, callback) {
-        let ref = refs[APIConstants.responses][lectureKey].ref
-                    .child(questionKey).push(response, callback);
-        return ref.key();
-    },
-
-    subscribeToSubjects: function(componentKey, userId) {
-        this.firebaseSubscribe(APIConstants.subjects, userId, componentKey, function(content) {
-            updateSubjects(content);
-        });
-    },
-
-    unsubscribeFromSubjects: function(componentKey, userId) {
-        this.firebaseUnsubscribe(APIConstants.subjects, userId, componentKey);
-    },
-
-    addToSubjects: function(userId, subjectName, callback) {
-        return refs[APIConstants.subjects][userId].ref.push(subjectName, callback);
-    },
-
-    getRefs: function() {
-        return refs;
-    },
-
-    setFirebaseRoot: function(newFirebaseRoot) {
-        firebaseRoot = newFirebaseRoot;
-    },
+  return refs[refType][filter];
 };
 
-let publicAPI = {
-    getRefs: API.getRefs, // exposed for testing
-    setFirebaseRoot: API.setFirebaseRoot, // exposed for test configurationn
-    subscribe: API.subscribe,
-    unsubscribe: API.unsubscribe,
-    addToLectures: API.addToLectures,
-    removeLecture: API.removeLecture,
-    updateLecture: API.updateLecture,
-    addToQuestions: API.addToQuestions,
-    removeQuestion: API.removeQuestion,
-    addToResponses: API.addToResponses,
-    addToSubjects: API.addToSubjects,
+export function subscribe(refType, ...args) {
+  if (!refType in subscriptionFunctions)
+    return console.error(`Invalid subscribe type: ${refType}`);
+
+  subscriptionFunctions[refType].subscribe(...args);
 };
 
-export default publicAPI;
-export {APIConstants};
+export function unsubscribe(refType, ...args) {
+  if (!refType in subscriptionFunctions)
+    return console.error(`Invalid unsubscribe type: ${refType}`);
+
+  subscriptionFunctions[refType].unsubscribe(...args);
+};
+
+function firebaseSubscribe(refType, filter, componentKey, callback) {
+  const refInfo = getRefInfo(refType, filter);
+
+  // If there is no active Firebase ref, initialize one.
+  if (!refInfo.ref) {
+    refInfo.ref = new Firebase(`${firebaseRoot}/${firebasePaths[refType]}/${filter}`);
+    refInfo.ref.on('value', (snapshot) => {
+      const content = snapshot.val() || {};
+      callback(content);
+    });
+  }
+
+  // Set the current component as a listener
+  refInfo.listening[componentKey] = componentKey;
+};
+
+function firebaseUnsubscribe(refType, filter, componentKey) {
+  if (!hasPath(refs, [refType, filter, 'listening', componentKey]))
+    return;
+
+  const refInfo = refs[refType][filter];
+  delete refInfo.listening[componentKey];
+
+  // Remove the ref if we unsubscribed the final subscriber.
+  if (!Object.keys(refInfo.listening).length) {
+    refInfo.ref.off();
+    refInfo.ref = null;
+  }
+}
+
+
+// -----------------------------------------------------------------------------
+//  Lectures
+// -----------------------------------------------------------------------------
+
+// I don't like how this inverts the order of filter and component key.
+// the order here is:       (componentKey, filter)
+// the delegate's order is: (filter, componentKey)
+function subscribeToLectures(componentKey, courseKey) {
+  firebaseSubscribe(APIConstants.lectures, courseKey, componentKey, function(content) {
+    updateLectures(courseKey, content);
+  });
+};
+
+function unsubscribeFromLectures(componentKey, courseKey) {
+  firebaseUnsubscribe(APIConstants.lectures, courseKey, componentKey);
+};
+
+export function addToLectures(courseKey, lecture, callback) {
+  return refs[APIConstants.lectures][courseKey].ref.push(lecture, callback);
+};
+
+export function removeLecture(courseKey, lectureId, callback) {
+  refs[APIConstants.lectures][courseKey].ref.child(lectureId).remove(callback);
+};
+
+export function updateLecture(courseKey, lectureKey, lecture, callback) {
+  refs[APIConstants.lectures][courseKey].ref.child(lectureKey).update(lecture, callback);
+};
+
+export function addToQuestions(courseKey, lectureKey, lecture, question, callback) {
+  let count = 0;
+  const cb = (error) => {
+    count++;
+    if (error) callback(error);
+    if (count >= 2) {
+      callback(null);
+    }
+  };
+  const lectureRef = refs[APIConstants.lectures][courseKey].ref.child(lectureKey);
+  const questionRef = lectureRef.child('questions').push(question, cb);
+  const questionKey = questionRef.key();
+  const questionOrder = lecture.questionOrder || [];
+  questionOrder.push(questionKey);
+  lectureRef.child('questionOrder').update(questionOrder, cb);
+  return questionKey;
+};
+
+export function removeQuestion(courseKey, lectureKey, lecture, questionKey, callback) {
+  // Remove question from lecture object
+  const index = Array.findIndex(lecture.questionOrder, x => x === questionKey);
+  lecture.questionOrder.splice(index, 1);
+  if (lecture.questions[questionKey]) {
+    delete lecture.questions[questionKey];
+  }
+
+  // Update lecture object
+  const lectureRef = refs[APIConstants.lectures][courseKey].ref.child(lectureKey);
+  lectureRef.update(lecture, callback);
+};
+
+
+// -----------------------------------------------------------------------------
+//  Responses
+// -----------------------------------------------------------------------------
+function subscribeToResponses(componentKey, lectureKey) {
+  firebaseSubscribe(APIConstants.responses, lectureKey, componentKey, function(content) {
+    updateResponses(lectureKey, content);
+  });
+};
+
+function unsubscribeFromResponses(componentKey, lectureKey) {
+  firebaseUnsubscribe(APIConstants.responses, lectureKey, componentKey);
+};
+
+export function addToResponses(lectureKey, questionKey, response, callback) {
+  const ref = refs[APIConstants.responses][lectureKey].ref
+                .child(questionKey).push(response, callback);
+  return ref.key();
+};
+
+
+// -----------------------------------------------------------------------------
+//  Subjects
+// -----------------------------------------------------------------------------
+function subscribeToSubjects(componentKey, userId) {
+  firebaseSubscribe(APIConstants.subjects, userId, componentKey, function(content) {
+    updateSubjects(content);
+  });
+};
+
+function unsubscribeFromSubjects(componentKey, userId) {
+  firebaseUnsubscribe(APIConstants.subjects, userId, componentKey);
+};
+
+export function addToSubjects(userId, subjectName, callback) {
+  return refs[APIConstants.subjects][userId].ref.push(subjectName, callback);
+};
+
+
+// -----------------------------------------------------------------------------
+//  Testing
+// -----------------------------------------------------------------------------
+// exposed for testing
+export function getRefs() {
+  return refs;
+};
+
+// exposed for test configurationn
+export function setFirebaseRoot(newFirebaseRoot) {
+  firebaseRoot = newFirebaseRoot;
+};

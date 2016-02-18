@@ -1,11 +1,11 @@
 import Dispatcher from '../dispatcher/Dispatcher.js';
 import { ActionTypes } from '../constants/SubjectConstants.js';
-import API from '../utils/API.js';
+import { addToSubjects } from '../utils/API.js';
 
 export const create = (userId, subjectName) => {
   if (!subjectName) return;
 
-  API.addToSubjects(userId, subjectName, (error) => {
+  addToSubjects(userId, subjectName, (error) => {
     if (error === null) {
       Dispatcher.dispatch({
         type: ActionTypes.SUBJECT_CREATE_SUCCESS,
