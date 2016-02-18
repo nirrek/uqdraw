@@ -1,41 +1,36 @@
 import Dispatcher from '../dispatcher/Dispatcher.js';
-import SubjectConstants from '../constants/SubjectConstants.js';
-let API = require('../utils/API.js').default;
-let actionTypes = SubjectConstants.ActionTypes;
+import { ActionTypes } from '../constants/SubjectConstants.js';
+import API from '../utils/API.js';
 
-let SubjectActions = {
-  create: (userId, subjectName) => {
-    if (!subjectName) return;
+export const create = (userId, subjectName) => {
+  if (!subjectName) return;
 
-    API.addToSubjects(userId, subjectName, (error) => {
-      if (error === null) {
-        Dispatcher.dispatch({
-          type: actionTypes.SUBJECT_CREATE_SUCCESS,
-          userId: userId,
-          subjectName: subjectName,
-        });
-      } else {
-        Dispatcher.dispatch({
-          type: actionTypes.SUBJECT_CREATE_FAIL,
-          userId: userId,
-          subjectName: subjectName,
-          error: error,
-        });
-      }
-    });
+  API.addToSubjects(userId, subjectName, (error) => {
+    if (error === null) {
+      Dispatcher.dispatch({
+        type: ActionTypes.SUBJECT_CREATE_SUCCESS,
+        userId,
+        subjectName,
+      });
+    } else {
+      Dispatcher.dispatch({
+        type: ActionTypes.SUBJECT_CREATE_FAIL,
+        userId,
+        subjectName,
+        error,
+      });
+    }
+  });
 
-    Dispatcher.dispatch({
-      type: actionTypes.SUBJECT_CREATE_INITIATED,
-      subjectName: subjectName,
-    });
-  },
-
-  updateSubjects: (subjectsMap) => {
-    Dispatcher.dispatch({
-      type: actionTypes.SUBJECTS_UPDATE,
-      subjects: subjectsMap,
-    });
-  },
+  Dispatcher.dispatch({
+    type: ActionTypes.SUBJECT_CREATE_INITIATED,
+    subjectName,
+  });
 };
 
-export default SubjectActions;
+export const updateSubjects = (subjectsMap) => {
+  Dispatcher.dispatch({
+    type: ActionTypes.SUBJECTS_UPDATE,
+    subjects: subjectsMap,
+  });
+};

@@ -1,9 +1,9 @@
 import config from '../config';
 let firebaseRoot = config.firebase.base;
 let Firebase = require('firebase');
-import LectureActions from '../actions/LectureActions.js';
-import PresentationActions from '../actions/PresentationActions.js';
-import SubjectActions from '../actions/SubjectActions.js';
+import { updateLectures } from '../actions/LectureActions.js';
+import { updateResponses } from '../actions/PresentationActions.js';
+import { updateSubjects } from '../actions/SubjectActions.js';
 let keyMirror = require('keymirror');
 
 // Map of currently active Firebase refs, and who is observing said refs.
@@ -107,7 +107,7 @@ let API = {
     // the delegate's order is: (filter, componentKey)
     subscribeToLectures: function(componentKey, courseKey) {
         this.firebaseSubscribe(APIConstants.lectures, courseKey, componentKey, function(content) {
-            LectureActions.updateLectures(courseKey, content);
+            updateLectures(courseKey, content);
         });
     },
 
@@ -160,7 +160,7 @@ let API = {
 
     subscribeToResponses: function(componentKey, lectureKey) {
         this.firebaseSubscribe(APIConstants.responses, lectureKey, componentKey, function(content) {
-            PresentationActions.updateResponses(lectureKey, content);
+            updateResponses(lectureKey, content);
         });
     },
 
@@ -176,7 +176,7 @@ let API = {
 
     subscribeToSubjects: function(componentKey, userId) {
         this.firebaseSubscribe(APIConstants.subjects, userId, componentKey, function(content) {
-            SubjectActions.updateSubjects(content);
+            updateSubjects(content);
         });
     },
 

@@ -5,8 +5,8 @@ import QuestionList from './QuestionList.jsx';
 import LectureComposer from './LectureComposer.jsx';
 import HorizontalDragScroll from '../composables/HorizontalDragScroll.js';
 
-import QuestionActions from '../actions/QuestionActions.js';
-import LectureActions from '../actions/LectureActions.js';
+import { createQuestion, deleteQuestion } from '../actions/QuestionActions.js';
+import { createLecture, deleteLecture } from '../actions/LectureActions.js';
 import LectureStore from '../stores/LectureStore.js';
 import API, {APIConstants} from '../utils/API.js';
 import ComponentKey from '../utils/ComponentKey.js';
@@ -79,22 +79,22 @@ class QuestionManager extends Component {
   }
 
   onAddLecture(title) {
-    LectureActions.create(this.props.courseId, title);
+    createLecture(this.props.courseId, title);
     this.setState({isLectureModalOpen: false});
     event.preventDefault();
   }
 
   onRemoveLecture(lectureId) {
-    LectureActions.delete(this.props.courseId, lectureId);
+    deleteLecture(this.props.courseId, lectureId);
   }
 
   onAddQuestion(lectureKey, lecture, question) {
-    QuestionActions.create(this.props.courseId, lectureKey, lecture, question);
+    createQuestion(this.props.courseId, lectureKey, lecture, question);
     event.preventDefault();
   }
 
   onRemoveQuestion(lectureKey, lecture, questionKey) {
-    QuestionActions.delete(this.props.courseId, lectureKey, lecture, questionKey);
+    deleteQuestion(this.props.courseId, lectureKey, lecture, questionKey);
     event.preventDefault();
   }
 
