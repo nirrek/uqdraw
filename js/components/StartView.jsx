@@ -61,13 +61,13 @@ export default class StartView extends Component {
   onChangeInput1(event) {
     let inputValue = event.target.value;
     if (inputValue.length > 1)   return; // max 1 char
-    if (inputValue.length === 1) React.findDOMNode(this.refs.in2).focus();
+    if (inputValue.length === 1) this.refs.in2.focus();
     this.setState({'codeInput1': inputValue});
   }
   onChangeInput2(event) {
     let inputValue = event.target.value;
     if (inputValue.length > 1)   return; // max 1 char
-    if (inputValue.length === 1) React.findDOMNode(this.refs.in3).focus();
+    if (inputValue.length === 1) this.refs.in3.focus();
     this.setState({'codeInput2': inputValue});
   }
   onChangeInput3(event) {

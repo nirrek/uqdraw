@@ -20,7 +20,7 @@ export default class Drawing extends Component {
     // prevents 'pull-to-refresh' on mobile browsers firing while drawing.
     document.body.classList.add('noScrollOnOverflow');
 
-    React.findDOMNode(this).addEventListener('webkitfullscreenchange', () => {
+    this.refs.root.addEventListener('webkitfullscreenchange', () => {
       // Need to reinit state after fullscreen, chrome is losing state all over
       // the place. No description of what they are doing.
       setTimeout(() => {
@@ -30,7 +30,7 @@ export default class Drawing extends Component {
     });
 
     // Setup the presentation canvas
-    let displayCanvas = React.findDOMNode(this.refs.displayCanvas);
+    let displayCanvas = this.refs.displayCanvas;
     let displayCtx = displayCanvas.getContext('2d');
     this.displayCanvas = displayCanvas; // need access for saving img
     this.displayCtx = displayCtx;
@@ -169,7 +169,7 @@ export default class Drawing extends Component {
   }
 
   fullscreen() {
-    React.findDOMNode(this).webkitRequestFullscreen();
+    this.refs.root.webkitRequestFullscreen();
     this.setState({ isFullscreen: true });
   }
 
@@ -191,7 +191,7 @@ export default class Drawing extends Component {
       var loadingIndicator = <Spinner spinnerName='double-bounce' noFadeIn />;
 
     return (
-      <div>
+      <div ref="root">
         <div onClick={this.fullscreen.bind(this)} className='fullscreen' style={fullscreenStyle}></div>
         <canvas key='displayCanvas' ref='displayCanvas' id='displayCanvas'></canvas>
         <canvas key='canvas' ref='canvas' id='canvas'></canvas>

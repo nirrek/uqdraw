@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { findDOMNode } from 'react-dom';
 
 export default (ComposedComponent) => class extends Component {
   constructor(props) {
@@ -54,13 +55,16 @@ export default (ComposedComponent) => class extends Component {
   }
 
   setScrollRef(component) {
-    let node = React.findDOMNode(component);
+    let node = findDOMNode(component);
     this.data.node = node;
   }
 
   render() {
     return (
-      <ComposedComponent {...this.props} scrollHandlers={this.handlers} setScrollRef={this.setScrollRef.bind(this)}/>
+      <ComposedComponent
+        {...this.props}
+        scrollHandlers={this.handlers}
+        setScrollRef={this.setScrollRef.bind(this)} />
     );
   }
 };
