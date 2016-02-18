@@ -1,7 +1,6 @@
 import Dispatcher from '../dispatcher/Dispatcher.js';
 import { EventEmitter } from 'events';
-import SubjectActions from '../constants/SubjectConstants.js';
-let actionTypes = SubjectActions.ActionTypes;
+import { ActionTypes } from '../constants/SubjectConstants.js';
 
 let CHANGE_EVENT = 'change';
 
@@ -35,28 +34,28 @@ const SubjectStore = Object.assign({}, EventEmitter.prototype, {
 
 const dispatcherCallback = (action) => {
   switch(action.type) {
-    case actionTypes.SUBJECT_CREATE_INITIATED: {
+    case ActionTypes.SUBJECT_CREATE_INITIATED: {
       let { subjectName } = action;
       _isSubmitting = true;
       SubjectStore.emitChange();
       break;
     }
 
-    case actionTypes.SUBJECT_CREATE_SUCCESS: {
+    case ActionTypes.SUBJECT_CREATE_SUCCESS: {
       let { userId, subjectName } = action;
       _isSubmitting = false;
       SubjectStore.emitChange();
       break;
     }
 
-    case actionTypes.SUBJECT_CREATE_FAIL: {
+    case ActionTypes.SUBJECT_CREATE_FAIL: {
       let { userId, subjectName, error } = action;
       _isSubmitting = false;
       SubjectStore.emitChange();
       break;
     }
 
-    case actionTypes.SUBJECTS_UPDATE: {
+    case ActionTypes.SUBJECTS_UPDATE: {
       let { subjects } = action;
       _subjects = subjects;
       SubjectStore.emitChange();

@@ -1,7 +1,6 @@
 import Dispatcher from '../dispatcher/Dispatcher.js';
 import { EventEmitter } from 'events';
-import LectureConstants from '../constants/LectureConstants.js';
-const ActionTypes = LectureConstants.ActionTypes;
+import { ActionTypes } from '../constants/LectureConstants.js';
 
 const CHANGE_EVENT = 'change';
 

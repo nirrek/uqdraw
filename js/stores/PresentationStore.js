@@ -1,7 +1,6 @@
 import Dispatcher from '../dispatcher/Dispatcher.js';
 import { EventEmitter } from 'events';
-import PresentationConstants from '../constants/PresentationConstants.js';
-let ActionTypes = PresentationConstants.ActionTypes;
+import { ActionTypes } from '../constants/PresentationConstants.js';
 
 let CHANGE_EVENT = 'change';
 
