@@ -75,15 +75,15 @@ export default class StartView extends Component {
     if (inputValue.length > 1)   return; // max 1 char
     if (inputValue.length === 1) {
       // validate that all inputs are filled.
-      this.context.router.transitionTo('drawing');
+      this.context.router.push('drawing');
     }
     this.setState({'codeInput3': inputValue});
   }
 
   onLogin(event) {
     event.preventDefault();
-    this.context.router
-      .transitionTo('welcome', {'userId': 'uqjstee8'}, {});
+    const username = 'uqjstee8'; // TODO make programmatic
+    this.context.router.push(`welcome/${username}`);
   }
 
   render() {
@@ -134,5 +134,5 @@ export default class StartView extends Component {
 // Set Router Context to allow for programatically transitioning to new routes.
 // See: https://github.com/rackt/react-router/blob/master/docs/api/RouterContext.md
 StartView.contextTypes = {
-  router: React.PropTypes.func
+  router: React.PropTypes.object,
 };

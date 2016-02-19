@@ -39,20 +39,20 @@
     "node-sass": "^3.4.2",
     "postcss-loader": "^0.8.1",
     "react-hot-loader": "^1.2.3",
-    "react-router": "^0.13.1",
     "sass-loader": "^3.1.2",
     "style-loader": "^0.13.0",
     "webpack": "1.12.13",
     "webpack-dev-server": "1.14.1"
   },
   "dependencies": {
-    "firebase": "^2.2.3",
+    "firebase": "^2.4.1",
     "flux": "^2.0.3",
     "keymirror": "^0.1.1",
     "normalize.css": "^3.0.2",
     "react": "0.14.7",
     "react-dom": "0.14.7",
     "react-modal": "0.6.1",
+    "react-router": "^2.0.0",
     "react-spinkit": "^1.0.2",
     "react-style": "^0.5.1"
   },

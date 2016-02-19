@@ -64,7 +64,9 @@ export default class QuestionList extends Component {
         <div className='CardList-header'>
           <h2>{lecture.title}</h2>
           <div className='PresenterLinkContainer'>
-            <Link to="presenter" params={{courseName: courseName, lectureId: lectureKey}}>Launch {lecture.title} Presentation</Link>
+            <Link to={`/${courseName}/${lectureKey}`}>
+              Launch {lecture.title} Presentation
+            </Link>
           </div>
           <a
             className="Button--close"

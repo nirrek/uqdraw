@@ -1,9 +1,8 @@
 import 'babel-polyfill';
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import Router from 'react-router';
-import { DefaultRoute, Route, RouteHandler } from 'react-router';
-
+import { Router, Route, IndexRoute, browserHistory } from 'react-router';
+import Firebase from 'firebase';
 import config from './config.js';
 import Welcome from './components/Welcome.jsx';
 import QuestionManager from './components/QuestionManager.jsx';
@@ -12,10 +11,8 @@ import Answer from './components/Answer.jsx';
 import StartView from './components/StartView.jsx';
 import Archive from './components/Archive.jsx';
 import Responses from './components/Responses.jsx';
-let Firebase = require('firebase');
-
-require('../css/main.css');
-require('../node_modules/normalize.css/normalize.css');
+import '../css/main.css';
+import '../node_modules/normalize.css/normalize.css';
 
 class App extends Component {
   constructor() {
@@ -38,39 +35,36 @@ class App extends Component {
         this.setState({courseId: firstKey, courseName: content[firstKey]});
       });
     } else {
-      this.setState({courseId: courseId, courseName: courseName});
+      this.setState({ courseId, courseName });
     }
   }
 
   render() {
     return (
       <div className="App">
-        <RouteHandler {...this.state} onChangeCourse={this.onChangeCourse} routeParams={this.props.routeParams}/>
+        {React.cloneElement(
+          this.props.children,
+          { // Shallow merge in this extra props object
+            ...this.state,
+            onChangeCourse: this.onChangeCourse
+          }
+        )}
       </div>
     );
   }
 }
 
-// These define the routes for the application. The particular route that
-// matches will lead to the handler component being recursivley rendered
-// and the resultant tree being mounted to where <RouteHandler/> appears in
-// the App component above (line 12 atm).
-let routes = (
-  <Route name="app" path="/" handler={App}>
-    <Route name="questionManager" handler={QuestionManager} path="/:courseName/question-manager"/>
-    <Route name="welcome" handler={Welcome} path="/welcome/:userId" />
-    <Route name="presenter" handler={Presenter} path="/:courseName/:lectureId"/>
-    <Route name="drawing" handler={Answer} path="/drawing"/>
-    <Route name="archive" handler={Archive} path="/archive" />
-    <Route name="responses" handler={Responses} path="/responses" />
-    {/* <Route name="test" handler={Test} path="/test" /> */}
-    <DefaultRoute handler={StartView}/>
-  </Route>
+render(
+  <Router history={browserHistory}>
+    <Route path="/" component={App}>
+      <Route path="/:courseName/question-manager" component={QuestionManager} />
+      <Route path="/welcome/:userId" component={Welcome} />
+      <Route path="/:courseName/:lectureId" component={Presenter} />
+      <Route path="/drawing" component={Answer} />
+      <Route path="/archive" component={Archive} />
+      <Route path="/responses" component={Responses} />
+      <IndexRoute component={StartView}/>
+    </Route>
+  </Router>,
+  document.querySelector('#react')
 );
-
-Router.run(routes, function(Handler, state) {
-  render(
-    <Handler routeParams={state.params}/>,
-    document.querySelector('#react')
-  );
-});

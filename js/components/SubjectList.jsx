@@ -16,13 +16,13 @@ class SubjectListItem extends Component {
   }
 
   render() {
+    const { to, courseId, courseName, children } = this.props;
+
     return (
       <Link
         className='ListItem'
-        to={this.props.to}
-        params={{courseName: this.props.courseName}}
-        onClick={this.onChangeCourse.bind(this, this.props.courseId,
-        this.props.courseName)}
+        to={to}
+        onClick={this.onChangeCourse.bind(this, courseId, courseName)}
       >
         {this.props.children}
       </Link>
@@ -89,16 +89,18 @@ export default class SubjectList extends Component {
       flexWrap: 'wrap',
     };
 
-    var items = Object.keys(this.props.subjects).map((key) => {
+    const { subjects, onChangeCourse } = this.props;
+
+    const items = Object.entries(subjects).map(([courseId, courseName]) => {
       return (
         <SubjectListItem
-          key={key}
-          to='questionManager'
-          courseId={key}
-          courseName={this.props.subjects[key]}
-          onChangeCourse={this.props.onChangeCourse}
+          key={courseId}
+          to={`/${courseName}/question-manager`}
+          courseId={courseId}
+          courseName={courseName}
+          onChangeCourse={onChangeCourse}
         >
-          {this.props.subjects[key]}
+          {courseName}
         </SubjectListItem>);
     });
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-require('../../css/components/Logo.scss');
+import '../../css/components/Logo.scss';
+import logoPath from '../../images/logo.svg';
 
 export default class Logo extends Component {
   shouldComponentUpdate() {
@@ -9,7 +10,7 @@ export default class Logo extends Component {
   render() {
     return (
       <div className='Logo' ref='logo'>
-        <img className='Logo-img' src={require('../../images/logo.svg')} />
+        <img className='Logo-img' src={logoPath} />
       </div>
     );
   }
