@@ -1,15 +1,22 @@
 var webpack = require('webpack');
+var path = require('path');
 var autoprefixer = require('autoprefixer');
 
 module.exports = {
-  entry: {
-    app: ['webpack/hot/dev-server', './js/app.jsx']
-  },
+  devtool: 'cheap-module-eval-source-map',
+  entry: [
+    'webpack-hot-middleware/client',
+    './js/app.jsx'
+  ],
   output: {
-    path: './build',
+    path: path.join(__dirname, 'build'),
     filename: 'bundle.js',
     publicPath: '/',
   },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin()
+  ],
   module: {
     loaders: [
       {
@@ -46,9 +53,5 @@ module.exports = {
   },
   postcss: [
     autoprefixer({ browsers: ['last 2 versions'] })
-  ],
-  plugins: [
-    new webpack.NoErrorsPlugin()
-  ],
-  devtool: 'source-map',
+  ]
 };

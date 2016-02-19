@@ -2,12 +2,26 @@ var path = require('path');
 var autoprefixer = require('autoprefixer');
 
 module.exports = {
+  devtool: 'source-map',
   entry: './js/app.jsx',
   output: {
     path: path.join(__dirname, 'build'),
     filename: 'bundle.js',
     publicPath: '/',
   },
+  plugins: [
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production')
+      }
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      compressor: {
+        warnings: false
+      }
+    })
+  ],
   module: {
     loaders: [
       {
