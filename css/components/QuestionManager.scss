@@ -162,9 +162,9 @@
   align-items: center;
 }
 
-.Stack-icon {
-  width: 21px;
-}
+.Stack-iconContainer { width: 21px; }
+
+.Stack-icon { width: 100%; }
 
 .Stack-label {
   color: rgba(255,255,255, .7);

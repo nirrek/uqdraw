@@ -120,7 +120,9 @@ class QuestionManager extends Component {
       <div className='ViewContainer'>
         <Header>
           <div className='Stack'>
-            <img className='Stack-icon' src={require('../../images/basic_picture_multiple.svg')} />
+            <div className='Stack-iconContainer'>
+              <img className='Stack-icon' src={require('../../images/basic_picture_multiple.svg')} />
+            </div>
             <Link to='archive' className='Stack-label'>Archives</Link>
           </div>
         </Header>
