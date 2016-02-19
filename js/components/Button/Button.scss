@@ -1,0 +1,35 @@
+.Button {
+  padding: .5em 1em;
+  display: inline-block;
+  font-weight: bold;
+  border-radius: 4px;
+  &:focus {
+    outline: none;
+  }
+}
+
+.Button--primary {
+  color: #EDF6FE;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border: 1px solid #523B99;
+  background-color: #5C42AB;
+  background: linear-gradient(#5C42AB, #523B99);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.Button--secondary {
+  color: #555;
+  text-shadow: none;
+  border: 1px solid #CCC;
+  border-bottom-color: #BBB;
+  background: linear-gradient(#FAFAFA, #F0F0F0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.Button--unstyled {
+  background: none;
+  border: none;
+  &:focus {
+    outline: none;
+  }
+}

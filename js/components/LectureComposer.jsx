@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 let Modal = require('react-modal');
 require('../../css/components/QuestionManager.scss');
+import Button from './Button/Button.jsx';
 
 export default class LectureComposer extends Component {
   constructor(props) {
@@ -38,7 +39,9 @@ export default class LectureComposer extends Component {
             <input placeholder='Lecture Name' className='Input' type="text" value={this.state.lecture} onChange={this.onInputChange.bind(this)} />
           </div>
           <div className='Slat'>
-            <button className='Button Button--secondary' type="submit" onClick={this.onSave.bind(this)}>Add Lecture</button>
+            <Button type='secondary' onClick={this.onSave.bind(this)}>
+              Add Lecture
+            </Button>
           </div>
 
       </Modal>

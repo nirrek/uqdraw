@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Touchy from '../touchy.js';
 let Spinner = require('react-spinkit');
+import Button from './Button/Button.jsx';
 
 require('../../css/components/Drawing.scss');
 require('../../css/components/Button.scss');
@@ -201,7 +202,9 @@ export default class Drawing extends Component {
             <div style={eraserStyle} className='Action-icon'></div>
           </div>
           <div className='Action Action--submit'>
-            <button className='Button--unstyled' onClick={this.onSubmitImage.bind(this)}>Submit Answer</button>
+            <Button type='unstyled' onClick={this.onSubmitImage.bind(this)}>
+              Submit Answer
+            </Button>
             {loadingIndicator}
           </div>
           <div onClick={this.cycleLineWidth.bind(this)} className='Action Action--strokeWidth'>

@@ -7,6 +7,7 @@ import PresentationStore from '../stores/PresentationStore.js';
 import PresentationActions from '../actions/PresentationActions.js';
 import Drawing from '../components/Drawing.jsx';
 import { subscribe, unsubscribe, APIConstants } from '../utils/API.js';
+import Button from './Button/Button.jsx';
 
 export default class Answer extends Component {
   constructor(props) {
@@ -84,7 +85,9 @@ export default class Answer extends Component {
           <div className='QuestionOverlay' style={questionStyle}>
             <div className="QuestionOverlay-content" >
               <h3>Draw the 3-way handshake TCP uses to establish a connection</h3>
-              <button className='Button' onClick={this.hideQuestion.bind(this)}>Tap To Start Drawing</button>
+              <Button onClick={this.hideQuestion.bind(this)}>
+                Tap To Start Drawing
+              </Button>
             </div>
           </div>
 

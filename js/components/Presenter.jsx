@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button } from './UI.jsx';
+import Button from './Button/Button.jsx';
 
 import QuestionSelector from './QuestionSelector.jsx';
 import PresenterQuestion from './PresenterQuestion.jsx';
