@@ -49,6 +49,7 @@
     "webpack-hot-middleware": "^2.7.1"
   },
   "dependencies": {
+    "classnames": "^2.2.3",
     "firebase": "^2.4.1",
     "flux": "^2.0.3",
     "keymirror": "^0.1.1",
