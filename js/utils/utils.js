@@ -8,3 +8,5 @@ export function hasPath(obj, path) {
   }
   return true;
 }
+
+export function noop() {}
