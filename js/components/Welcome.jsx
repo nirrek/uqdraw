@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import Header from './Header.jsx';
-import SubjectList from './SubjectList.jsx';
+import SubjectList from './SubjectList/SubjectList.jsx';
 require('../../css/components/WelcomeView.scss');
 
 import SubjectActions from '../actions/SubjectActions.js';
