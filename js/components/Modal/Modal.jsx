@@ -4,13 +4,16 @@ import { Gateway } from 'react-gateway';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import elementClass from 'element-class';
 import './Modal.scss';
+import { disableScroll, enableScroll } from '../../utils/disableScroll.js';
+
+// Re-export supporting sub-components
+export { default as ModalContent } from './ModalContent.jsx';
+export { default as ModalFooter } from './ModalFooter.jsx';
 
 export default class Modal extends Component {
   componentWillUpdate(nextProps) {
-    if (nextProps.isOpen)
-      elementClass(document.body).add('disableScroll');
-    else
-      elementClass(document.body).remove('disableScroll');
+    if (nextProps.isOpen) disableScroll();
+    else                  enableScroll();
   }
 
   render() {
@@ -51,6 +54,7 @@ Modal.propTypes = {
   closeOnBackdropClick: PropTypes.bool,
   backdropStyles: PropTypes.object,
   modalStyles: PropTypes.object,
+  hasCloseButton: PropTypes.bool,
 };
 
 Modal.defaultProps = {

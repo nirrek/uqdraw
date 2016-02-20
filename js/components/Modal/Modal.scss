@@ -1,9 +1,11 @@
 .Modal {
   background: #fff;
   border-radius: 4px;
-  padding: 1.5em;
-  box-shadow: 0 10px 70px rgba(0, 0, 0, 0.3), 0 1px 6px rgba(0,0,0, .2);
+  overflow: auto;
+  box-shadow: 0 10px 70px rgba(0, 0, 0, 0.3), 0 1px 6px rgba(0,0,0, .3);
   position: relative;
+  display: flex;
+  flex-direction: column;
   &:focus {
     outline: none;
   }
@@ -15,7 +17,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -62,11 +64,4 @@
 .Modal-leave-active {
   opacity: 0;
   transition: opacity 200ms ease-out;
-}
-
-
-// Helper class that the Modal class will put on document.body to prevent
-// scrolling while the modal is open.
-.disableScroll {
-  overflow: hidden;
 }
