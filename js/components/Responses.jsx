@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Header from './Header.jsx';
-const Firebase = require('firebase');
+import Header from './Header/Header.jsx';
+import Firebase from 'firebase';
 import config from '../config.js';
 
 export default class Responses extends Component {

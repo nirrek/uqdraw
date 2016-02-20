@@ -18,18 +18,6 @@ html, body {
   background-color: #F7FAFE;
 }
 
-header {
-  background-color: #523B99;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-
-
-
-/* From other project aboe here */
-/* -------------------------------------------------------------------------- */
-
 .App {
 }
 

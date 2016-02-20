@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
-import Header from './Header.jsx';
+import Header from './Header/Header.jsx';
 import QuestionList from './QuestionList.jsx';
 import LectureComposer from './LectureComposer.jsx';
 import HorizontalDragScroll from '../composables/HorizontalDragScroll.js';
