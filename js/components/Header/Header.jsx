@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Logo from '../Logo.jsx';
+import Logo from '../Logo/Logo.jsx';
 import './Header.scss';
 
 export default class Header extends Component {

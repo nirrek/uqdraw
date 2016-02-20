@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Logo from './Logo.jsx';
-require('../../css/components/StartView.scss');
+import Logo from './Logo/Logo.jsx';
+require('../../styles/components/StartView.scss');
 
 export default class StartView extends Component {
   constructor(props) {
