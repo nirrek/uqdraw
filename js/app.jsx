@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import Firebase from 'firebase';
+import { GatewayProvider, GatewayDest } from 'react-gateway';
+import ReactModal from 'react-modal2';
 import config from './config.js';
 import Welcome from './components/Welcome.jsx';
 import QuestionManager from './components/QuestionManager.jsx';
@@ -13,6 +15,9 @@ import Archive from './components/Archive.jsx';
 import Responses from './components/Responses.jsx';
 import '../css/main.css';
 import '../node_modules/normalize.css/normalize.css';
+
+// a11y for ReactModal: what to hide from screenreader when modal is open.
+ReactModal.getApplicationElement = () => document.querySelector('.AppContent');
 
 class App extends Component {
   constructor() {
@@ -42,29 +47,34 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        {React.cloneElement(
-          this.props.children,
-          { // Shallow merge in this extra props object
-            ...this.state,
-            onChangeCourse: this.onChangeCourse
-          }
-        )}
+        <div className="AppContent"> {/* extra div for a11y w/ modal */}
+          {React.cloneElement(
+            this.props.children,
+            { // Shallow merge in this extra props object
+              ...this.state,
+              onChangeCourse: this.onChangeCourse
+            }
+          )}
+        </div>
+        <GatewayDest name="modal" />
       </div>
     );
   }
 }
 
 render(
-  <Router history={browserHistory}>
-    <Route path="/" component={App}>
-      <Route path="/:courseName/question-manager" component={QuestionManager} />
-      <Route path="/welcome/:userId" component={Welcome} />
-      <Route path="/:courseName/:lectureId" component={Presenter} />
-      <Route path="/drawing" component={Answer} />
-      <Route path="/archive" component={Archive} />
-      <Route path="/responses" component={Responses} />
-      <IndexRoute component={StartView}/>
-    </Route>
-  </Router>,
+  <GatewayProvider>
+    <Router history={browserHistory}>
+      <Route path="/" component={App}>
+        <Route path="/:courseName/question-manager" component={QuestionManager} />
+        <Route path="/welcome/:userId" component={Welcome} />
+        <Route path="/:courseName/:lectureId" component={Presenter} />
+        <Route path="/drawing" component={Answer} />
+        <Route path="/archive" component={Archive} />
+        <Route path="/responses" component={Responses} />
+        <IndexRoute component={StartView}/>
+      </Route>
+    </Router>
+  </GatewayProvider>,
   document.querySelector('#react')
 );

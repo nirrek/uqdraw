@@ -1,55 +1,55 @@
 import React, { Component } from 'react';
+import cn from 'classnames';
 import Button from './Button/Button.jsx';
-let Modal = require('react-modal');
-require('../../css/components/QuestionManager.scss');
+import Modal from './Modal/Modal.jsx';
+import '../../css/components/QuestionManager.scss';
 
-// A component that allows a lecturer to compose a new question, or to edit
-// and existing one.
 export default class QuestionComposer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      question: ''
+      inputText: ''
     };
+    this.onTextareaChange = this.onTextareaChange.bind(this);
+    this.onSave = this.onSave.bind(this);
   }
 
   onTextareaChange(event) {
-    let inputText = event.target.value;
-    let inputHasText = true;
-    if (inputText.length === 0) { inputHasText = false; }
-    this.setState({
-      question: event.target.value,
-      inputHasText: inputHasText,
-    });
+    this.setState({ inputText: event.target.value });
   }
 
   onSave() {
-    this.props.onSave(this.state.question);
-    this.setState({question: '', inputHasText: false});
+    this.props.onSave(this.state.inputText);
+    this.setState({ inputText: '' });
   }
 
   render() {
-    let {isOpen, onClose} = this.props;
-    let labelClass = 'TransparentLabel';
-    if (this.state.inputHasText) {labelClass += ' TransparentLabel--hidden'; }
+    const { isOpen, onClose } = this.props;
+
+    const labelClass = cn('TransparentLabel', {
+      'TransparentLabel--hidden': this.state.inputText.length
+    });
 
     return (
-      <Modal className='Modal--questionComposer' isOpen={isOpen}>
-        <a onClick={onClose} href="#" className='Modal__cross'>&times;</a>
+      <Modal isOpen={isOpen} onClose={onClose} modalStyles={styles.modal}>
         <div className='QuestionInput'>
           <div className='AdvancedInput'>
             <div className={labelClass}>Enter Question Here</div>
-            <textarea onChange={this.onTextareaChange.bind(this)} value={this.state.question} />
+            <textarea onChange={this.onTextareaChange} value={this.state.inputText} />
           </div>
         </div>
         <a href="#">Insert supporting image &rarr;</a>
         <div className='Modal__footer'>
-          <Button onClick={this.onSave.bind(this)}>Save Question</Button>
+          <Button onClick={this.onSave}>Save Question</Button>
         </div>
       </Modal>
     );
   }
 }
+
+const styles = {
+  modal: { marginTop: -272 }
+};
 
 QuestionComposer.propTypes = {
     isOpen: React.PropTypes.bool,

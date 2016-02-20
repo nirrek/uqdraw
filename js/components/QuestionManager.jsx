@@ -1,24 +1,16 @@
 import React, { Component } from 'react';
-import Header from './Header.jsx';
 import { Link } from 'react-router';
+import Header from './Header.jsx';
 import QuestionList from './QuestionList.jsx';
 import LectureComposer from './LectureComposer.jsx';
 import HorizontalDragScroll from '../composables/HorizontalDragScroll.js';
-
 import { createQuestion, deleteQuestion } from '../actions/QuestionActions.js';
 import { createLecture, deleteLecture } from '../actions/LectureActions.js';
 import LectureStore from '../stores/LectureStore.js';
 import { subscribe, unsubscribe, APIConstants } from '../utils/API.js';
 import generateComponentKey from '../utils/ComponentKey.js';
-
-let Modal = require('react-modal');
-
-require('../../css/components/Colors.scss');
-require('../../css/components/QuestionManager.scss');
-
-var appElement = document.getElementById('react');
-Modal.setAppElement(appElement);
-Modal.injectCSS();
+import '../../css/components/Colors.scss';
+import '../../css/components/QuestionManager.scss';
 
 class QuestionManager extends Component {
   constructor(props) {

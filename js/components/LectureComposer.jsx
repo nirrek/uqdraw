@@ -1,56 +1,56 @@
 import React, { Component } from 'react';
-let Modal = require('react-modal');
-require('../../css/components/QuestionManager.scss');
+import Modal from './Modal/Modal.jsx';
 import Button from './Button/Button.jsx';
+import '../../css/components/QuestionManager.scss';
 
 export default class LectureComposer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      lecture: '',
-      inputHasText: false,
+      inputText: '',
     };
+
+    this.onInputChange = this.onInputChange.bind(this);
+    this.onSave = this.onSave.bind(this);
   }
 
   onInputChange(event) {
-    let inputText = event.target.value;
-    let inputHasText = true;
-    if (inputText.length === 0) {inputHasText = false;}
-    this.setState({
-      lecture: inputText,
-      inputHasText: inputHasText
-    });
+    this.setState({ inputText: event.target.value });
   }
 
   onSave() {
-    this.props.onSave(this.state.lecture);
-    this.setState({lecture: '', inputHasText: false});
+    this.props.onSave(this.state.inputText);
+    this.setState({ inputText: '' });
   }
 
   render() {
-    let {isOpen, onClose} = this.props;
-    let labelClass = 'TransparentLabel';
-    if (this.state.inputHasText) {labelClass += ' TransparentLabel--hidden'; }
+    const { isOpen, onClose } = this.props;
 
     return (
-      <Modal isOpen={isOpen} className='Modal--lectureComposer'>
-        <a onClick={onClose} href="#" className='Modal__cross'>&times;</a>
-          <div className='Slat'>
-            <input placeholder='Lecture Name' className='Input' type="text" value={this.state.lecture} onChange={this.onInputChange.bind(this)} />
-          </div>
-          <div className='Slat'>
-            <Button type='secondary' onClick={this.onSave.bind(this)}>
-              Add Lecture
-            </Button>
-          </div>
-
+      <Modal isOpen={isOpen} onClose={onClose} modalStyles={styles.modal}>
+        <div className='Slat'>
+          <input placeholder='Lecture Name'
+                 className='Input'
+                 type="text"
+                 value={this.state.inputText}
+                 onChange={this.onInputChange} />
+        </div>
+        <div className='Slat'>
+          <Button type='secondary' onClick={this.onSave}>
+            Add Lecture
+          </Button>
+        </div>
       </Modal>
     );
   }
 }
 
+const styles = {
+  modal: { height: 209 }
+};
+
 LectureComposer.propTypes = {
-    onSave: React.PropTypes.func,
-    isOpen: React.PropTypes.bool,
-    onClose: React.PropTypes.func,
+  onSave: React.PropTypes.func,
+  isOpen: React.PropTypes.bool,
+  onClose: React.PropTypes.func,
 };

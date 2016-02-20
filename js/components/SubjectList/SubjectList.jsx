@@ -1,21 +1,15 @@
 import React, { Component, PropTypes } from 'react';
-import Modal from 'react-modal';
 import '../../../css/components/WelcomeView.scss'; // TODO bad form
 import '../../../css/components/Form.scss';  // TODO bad form
 import './SubjectList.scss';
 import Button from '../Button/Button.jsx';
-
-// React Modal Setup
-let appElement = document.getElementById('react');
-Modal.setAppElement(appElement);
-Modal.injectCSS();
+import Modal from '../Modal/Modal.jsx';
 
 export default class SubjectList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showForm: false,
-      newCourse: '', // populated by the 'add course' model input
+      inputText: '',
       modalIsOpen: false,
     };
 
@@ -29,23 +23,20 @@ export default class SubjectList extends Component {
     this.setState({ modalIsOpen: true });
   }
 
-  hideAddCourseModal(event) {
-    event.preventDefault();
+  hideAddCourseModal() {
     this.setState({ modalIsOpen: false });
   }
 
   updateCourseInput(event) {
-    this.setState({ newCourse: event.target.value });
+    this.setState({ inputText: event.target.value });
   }
 
   addNewCourse(event) {
-
-
-    this.props.onAddSubject(this.state.newCourse);
+    this.props.onAddSubject(this.state.inputText);
 
     this.setState({
       modalIsOpen: false,
-      newCourse: '',
+      inputText: '',
     });
     event.preventDefault();
   }
@@ -84,16 +75,20 @@ export default class SubjectList extends Component {
             <i className='Icon--plus'></i>Add New
           </a>
         </div>
-        <Modal isOpen={this.state.modalIsOpen} className='Modal--addCourse'>
+        <Modal isOpen={this.state.modalIsOpen} onClose={this.hideAddCourseModal}>
           <div className='Slat'>
-            <input ref={this.focusInputRef} placeholder='Course Name' className='Input' type='text' value={this.state.newCourse} onChange={this.updateCourseInput} />
+            <input ref={this.focusInputRef}
+                   placeholder='Course Name'
+                   className='Input'
+                   type='text'
+                   value={this.state.inputText}
+                   onChange={this.updateCourseInput} />
           </div>
           <div className='Slat'>
             <Button type='secondary' onClick={this.addNewCourse}>
               Add Course
             </Button>
           </div>
-          <a href='' className='Modal__cross' onClick={this.hideAddCourseModal}>&times;</a>
         </Modal>
       </div>
     );
