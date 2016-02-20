@@ -1,4 +1,4 @@
-@import './components/Colors.scss';
+@import './components/Colors';
 
 /* Box sizing reset, see paul irish article for details */
 html { box-sizing: border-box; }
@@ -17,7 +17,7 @@ html, body {
   font-family: 'Source Sans Pro', 'Helvetica Neue';
   font-size: 16px; /* establish REM baseline */
   line-height: 1.5;
-  background-color: $offWhite;
+  background-color: $offwhite;
 }
 
 
