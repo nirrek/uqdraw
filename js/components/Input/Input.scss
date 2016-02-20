@@ -1,0 +1,16 @@
+.Input {
+  background-color: rgba(0, 0, 0, 0.08);
+  font-size: 1rem;
+  padding: 14px 16px;
+  text-align: left;
+  color: #555;
+}
+
+.Input:focus {
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.2);
+  background: white;
+}
+
+.Input::placeholder {
+  color: #777;
+}
