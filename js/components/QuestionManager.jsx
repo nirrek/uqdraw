@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import Header from './Header/Header.jsx';
 import QuestionList from './QuestionList.jsx';
-import LectureComposer from './LectureComposer.jsx';
+import LectureComposer from './LectureComposer/LectureComposer.jsx';
 import HorizontalDragScroll from '../composables/HorizontalDragScroll.js';
 import { createQuestion, deleteQuestion } from '../actions/QuestionActions.js';
 import { createLecture, deleteLecture } from '../actions/LectureActions.js';
