@@ -1,20 +1,18 @@
 import React, { Component } from 'react';
-import Header from './Header/Header.jsx';
-import SubjectList from './SubjectList/SubjectList.jsx';
-require('../../css/components/WelcomeView.scss');
-
-import SubjectActions from '../actions/SubjectActions.js';
-import SubjectStore from '../stores/SubjectStore.js';
-
-import generateComponentKey from '../utils/ComponentKey.js';
-import { subscribe, unsubscribe, APIConstants } from '../utils/API.js';
+import Header from '../Header/Header.jsx';
+import SubjectList from '../SubjectList/SubjectList.jsx';
+import SubjectActions from '../../actions/SubjectActions.js';
+import SubjectStore from '../../stores/SubjectStore.js';
+import generateComponentKey from '../../utils/ComponentKey.js';
+import { subscribe, unsubscribe, APIConstants } from '../../utils/API.js';
+import './SubjectManager.scss'
 
 export default class Welcome extends Component {
   constructor(props) {
     super(props);
     this.componentKey = generateComponentKey();
     this.state = {
-      subjects: [], // list of subject names
+      subjectNamesByKey: {},
     };
 
     // Ensure the receiver for the various callbacks is the current object.
@@ -48,14 +46,14 @@ export default class Welcome extends Component {
     let userId = this.props.routeParams.userId;
 
     this.setState({
-      subjects: SubjectStore.getAll(),
+      subjectNamesByKey: SubjectStore.getAll(),
       isSubmitting: SubjectStore.isSubmitting(),
     });
     subscribe(APIConstants.subjects, this.componentKey, userId);
   }
 
   onSubjectChange() {
-    this.setState({ subjects: SubjectStore.getAll() });
+    this.setState({ subjectNamesByKey: SubjectStore.getAll() });
   }
 
   onSubmitChange() {
@@ -78,7 +76,7 @@ export default class Welcome extends Component {
             <div className="Marquee-Subheading">Select the course the questions are for below, or add a new course.</div>
           </div>
           <SubjectList
-            subjects={this.state.subjects}
+            subjects={this.state.subjectNamesByKey}
             onAddSubject={this.onAddSubject}
             onChangeCourse={this.props.onChangeCourse}
           />
@@ -92,5 +90,3 @@ Welcome.propTypes = {
   onAddSubject: React.PropTypes.func,
   onChangeCourse: React.PropTypes.func,
 };
-
-export default Welcome;

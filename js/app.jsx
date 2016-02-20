@@ -6,7 +6,7 @@ import Firebase from 'firebase';
 import { GatewayProvider, GatewayDest } from 'react-gateway';
 import ReactModal from 'react-modal2';
 import config from './config.js';
-import Welcome from './components/Welcome.jsx';
+import SubjectManager from './components/SubjectManager/SubjectManager.jsx';
 import QuestionManager from './components/QuestionManager.jsx';
 import Presenter from './components/Presenter.jsx';
 import Answer from './components/Answer.jsx';
@@ -67,7 +67,7 @@ render(
     <Router history={browserHistory}>
       <Route path="/" component={App}>
         <Route path="/:courseName/question-manager" component={QuestionManager} />
-        <Route path="/welcome/:userId" component={Welcome} />
+        <Route path="/welcome/:userId" component={SubjectManager} />
         <Route path="/:courseName/:lectureId" component={Presenter} />
         <Route path="/drawing" component={Answer} />
         <Route path="/archive" component={Archive} />
