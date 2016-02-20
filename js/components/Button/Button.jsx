@@ -23,7 +23,7 @@ export default class Button extends Component {
 }
 
 Button.propTypes = {
-  type: PropTypes.oneOf(['primary', 'secondary', 'unstyled']),
+  type: PropTypes.oneOf(['', 'primary', 'secondary', 'unstyled']),
   onClick: PropTypes.func,
 };
 
