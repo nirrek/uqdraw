@@ -11,7 +11,7 @@ import QuestionManager from './components/QuestionManager.jsx';
 import Presenter from './components/Presenter.jsx';
 import Answer from './components/Answer.jsx';
 import StartView from './components/StartView.jsx';
-import Archive from './components/Archive.jsx';
+import Archive from './components/Archive/Archive.jsx';
 import Responses from './components/Responses.jsx';
 import '../css/main.css';
 import '../node_modules/normalize.css/normalize.css';
