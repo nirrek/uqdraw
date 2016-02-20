@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import generateComponentKey from '../utils/ComponentKey.js';
-import PresentationStore from '../stores/PresentationStore.js';
-import PresentationActions from '../actions/PresentationActions.js';
-import Drawing from '../components/Drawing.jsx';
-import { subscribe, unsubscribe, APIConstants } from '../utils/API.js';
-import Button from './Button/Button.jsx';
-import Modal from './Modal/Modal.jsx';
+import generateComponentKey from '../../utils/ComponentKey.js';
+import PresentationStore from '../../stores/PresentationStore.js';
+import PresentationActions from '../../actions/PresentationActions.js';
+import Drawing from '../../components/Drawing.jsx';
+import { subscribe, unsubscribe, APIConstants } from '../../utils/API.js';
+import Button from '../Button/Button.jsx';
+import Modal from '../Modal/Modal.jsx';
 
 export default class Answer extends Component {
   constructor(props) {
@@ -28,7 +28,7 @@ export default class Answer extends Component {
     PresentationStore.addChangeListener(this.onPresentationChange);
   }
 
-  componentDidUnmount() {
+  componentWillUnmount() {
     unsubscribe(APIConstants.responses, this.componentKey, this.state.lectureKey);
     PresentationStore.removeChangeListener(this.onPresentationChange);
   }
