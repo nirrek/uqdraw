@@ -5,7 +5,7 @@ html { box-sizing: border-box; }
 *, *:before, *:after { box-sizing: inherit; }
 
 /* Getting the height 100% down the chain */
-html, body, #react, .App {
+html, body, #react, .App, .AppContent {
   height: 100%;
 }
 
