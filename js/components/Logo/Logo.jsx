@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import '../../css/components/Logo.scss';
-import logoPath from '../../images/logo.svg';
+import './Logo.scss';
+import logoPath from '../../../images/logo.svg';
 
 export default class Logo extends Component {
   shouldComponentUpdate() {
