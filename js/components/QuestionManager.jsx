@@ -9,8 +9,8 @@ import { createLecture, deleteLecture } from '../actions/LectureActions.js';
 import LectureStore from '../stores/LectureStore.js';
 import { subscribe, unsubscribe, APIConstants } from '../utils/API.js';
 import generateComponentKey from '../utils/ComponentKey.js';
-import '../../css/components/Colors.scss';
-import '../../css/components/QuestionManager.scss';
+import '../../styles/components/Colors.scss';
+import '../../styles/components/QuestionManager.scss';
 
 class QuestionManager extends Component {
   constructor(props) {

@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import '../../../css/components/Form.scss';  // TODO bad form
+import '../../../styles/components/Form.scss';  // TODO bad form
 import './SubjectList.scss';
 import Button from '../Button/Button.jsx';
 import Modal from '../Modal/Modal.jsx';

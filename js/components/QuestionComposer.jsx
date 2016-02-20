@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import cn from 'classnames';
 import Button from './Button/Button.jsx';
 import Modal from './Modal/Modal.jsx';
-import '../../css/components/QuestionManager.scss';
+import '../../styles/components/QuestionManager.scss';
 
 export default class QuestionComposer extends Component {
   constructor(props) {

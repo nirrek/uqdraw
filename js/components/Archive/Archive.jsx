@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import Header from '../Header/Header.jsx';
 import LinkButton from '../LinkButton.jsx';
-import '../../../css/components/Table.scss';
+import '../../../styles/components/Table.scss';
 import './Archive.scss';
 
 export default class Archive extends Component {

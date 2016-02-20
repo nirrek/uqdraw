@@ -12,7 +12,7 @@ import PresentationStore from '../stores/PresentationStore.js';
 import generateComponentKey from '../utils/ComponentKey.js';
 import { subscribe, unsubscribe, APIConstants } from '../utils/API.js';
 
-require('../../css/components/Presenter.scss');
+require('../../styles/components/Presenter.scss');
 
 export default class Presenter extends Component {
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-require('../../css/components/QuestionManager.scss');
+require('../../styles/components/QuestionManager.scss');
 
 export default class Question extends Component {
 

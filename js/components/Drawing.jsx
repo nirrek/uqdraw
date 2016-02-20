@@ -3,8 +3,8 @@ import Touchy from '../touchy.js';
 let Spinner = require('react-spinkit');
 import Button from './Button/Button.jsx';
 
-require('../../css/components/Drawing.scss');
-require('../../css/components/Button.scss');
+require('../../styles/components/Drawing.scss');
+require('../../styles/components/Button.scss');
 
 export default class Drawing extends Component {
   constructor(props) {

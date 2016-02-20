@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Modal from './Modal/Modal.jsx';
 import Button from './Button/Button.jsx';
-import '../../css/components/QuestionManager.scss';
+import '../../styles/components/QuestionManager.scss';
 
 export default class LectureComposer extends Component {
   constructor(props) {

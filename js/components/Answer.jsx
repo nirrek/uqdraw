@@ -6,7 +6,7 @@ import Drawing from '../components/Drawing.jsx';
 import { subscribe, unsubscribe, APIConstants } from '../utils/API.js';
 import Button from './Button/Button.jsx';
 import Modal from './Modal/Modal.jsx';
-import '../../css/components/Button.scss';
+import '../../styles/components/Button.scss';
 
 export default class Answer extends Component {
   constructor(props) {

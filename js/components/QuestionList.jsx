@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import Question from './Question.jsx';
 import QuestionComposer from './QuestionComposer.jsx';
-require('../../css/components/QuestionManager.scss');
+require('../../styles/components/QuestionManager.scss');
 
 export default class QuestionList extends Component {
   constructor(props) {
