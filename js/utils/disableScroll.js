@@ -1,16 +1,15 @@
-// disableScroll :: () -> Function
-// Disables the body element from scrolling. Produces a function for re-enabling
-// scrolling.
+// Disables the ability to scroll the document body.
 export function disableScroll() {
   for (const event of ['mousewheel', 'DOMMouseScroll', 'touchmove', 'scroll'])
-    document.addEventListener(event, disableEvent);
-  document.addEventListener('keydown', disableKeys);
+    document.body.addEventListener(event, disableEvent);
+  document.body.addEventListener('keydown', disableKeys);
 }
 
+// Reenables the ability to scroll the document body.
 export function enableScroll() {
   for (const event of ['mousewheel', 'DOMMouseScroll', 'touchmove', 'scroll'])
-    document.removeEventListener(event, disableEvent);
-  document.removeEventListener('keydown', disableKeys);
+    document.body.removeEventListener(event, disableEvent);
+  document.body.removeEventListener('keydown', disableKeys);
 }
 
 function disableEvent(event) {
