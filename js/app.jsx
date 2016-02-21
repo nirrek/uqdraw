@@ -8,7 +8,7 @@ import ReactModal from 'react-modal2';
 import config from './config.js';
 import SubjectManager from './components/SubjectManager/SubjectManager.jsx';
 import QuestionManager from './components/QuestionManager.jsx';
-import Presenter from './components/Presenter.jsx';
+import Presenter from './components/Presenter/Presenter.jsx';
 import Answer from './components/Answer/Answer.jsx';
 import StartView from './components/StartView.jsx';
 import Archive from './components/Archive/Archive.jsx';
