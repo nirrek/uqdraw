@@ -1,0 +1,57 @@
+.QuestionList {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  padding: 10px;
+  background: #efefef;
+  border-radius: 3px;
+  width: 270px;
+  flex: 0 0 270px;
+  margin-right: 10px;
+}
+
+.QuestionList-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.QuestionList-heading {
+  margin: 0 0 5px 0;
+}
+
+.QuestionList-deleteList {
+  font-size: 22px;
+  margin-right: 6px;
+}
+
+.QuestionLlist-addQuestion {
+  margin-top: 12px;
+  cursor: pointer;
+  min-height: 20px;
+  color: #999;
+  line-height: 18px;
+  padding: 6px 8px 4px;
+}
+
+.QuestionList-present {
+  position: absolute;
+  bottom: -61px;
+  left: 0;
+  background-color: rgba(0,0,0,.1);
+  border-radius: 4px;
+  width: 100%;
+  text-align: center;
+}
+
+.QuestionList-presentLink {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  padding: .75em 0;
+  display: inline-block;
+  transition: color 200ms linear;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}

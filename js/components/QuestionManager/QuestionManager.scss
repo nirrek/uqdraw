@@ -1,0 +1,133 @@
+@import '../../../styles/components/Colors';
+
+// TODO: make a View components that wraps all
+// of the containers.
+.ViewContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.QuestionManager {
+  background: $purple;
+  position: relative;
+  flex-grow: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.QustionManager-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  -webkit-user-select: none;
+}
+
+.QuestionManager-boardContainer {
+  flex-grow: 1;
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.QuestionManager-board {
+  position: static;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  overflow-x: auto;
+  flex-grow: 1;
+}
+
+.QuestionManager-addLecture {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  padding: 10px;
+  background: rgba(0,0,0,.12);
+  border-radius: 3px;
+  width: 270px;
+  flex: 0 0 270px;
+  margin-right: 10px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  color: rgba(255,255,255,.7);
+}
+
+// -----------------------------------------------------------------------------
+//  Stack
+// -----------------------------------------------------------------------------
+.Stack {
+  position: absolute;
+  top: 13px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Stack-iconContainer {
+  width: 21px;
+}
+
+.Stack-icon {
+  width: 100%;
+}
+
+.Stack-label {
+  color: rgba(255,255,255, .7);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 200ms ease-out;
+  margin-top: -5px;
+
+  &:hover {
+    color: rgba(255,255,255, .9);
+  }
+}
+
+// -----------------------------------------------------------------------------
+//  Scrollbars
+// -----------------------------------------------------------------------------
+.QuestionManager-board {
+  -webkit-transform: translate3d(0,0,0);
+  -webkit-overflow-scrolling: touch;
+}
+.QuestionManager-board::-webkit-scrollbar {
+  height: 13px;
+  width: 13px;
+}
+.QuestionManager-board::-webkit-scrollbar-track-piece {
+  background: rgba(0,0,0,.15);
+}
+.QuestionManager-board::-webkit-scrollbar-button {
+  display: block;
+  height: 5px;
+  width: 5px;
+}
+.QuestionManager-board::-webkit-scrollbar-track-piece:vertical:start {
+    border-radius: 5px 5px 0 0
+}
+.QuestionManager-board::-webkit-scrollbar-track-piece:vertical:end {
+    border-radius: 0 0 5px 5px
+}
+.QuestionManager-board::-webkit-scrollbar-track-piece:horizontal:start {
+    border-radius: 5px 0 0 5px
+}
+.QuestionManager-board::-webkit-scrollbar-track-piece:horizontal:end {
+    border-radius: 0 5px 5px 0
+}
+.QuestionManager-board::-webkit-scrollbar-thumb:horizontal,.QuestionManager-board::-webkit-scrollbar-thumb:vertical {
+    background: rgba(255,255,255,.4);
+    border-radius: 5px;
+    display: block;
+    height: 50px
+}
+.QuestionManager-board::-webkit-scrollbar-button:end:increment,.QuestionManager-board::-webkit-scrollbar-button:start:decrement {
+    background: 0 0;
+    display: none
+}

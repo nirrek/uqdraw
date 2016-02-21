@@ -1,0 +1,51 @@
+.Card {
+  display: inline-block;
+  justify-content: space-between;
+  flex-grow: 1;
+  background: #fff;
+  border-radius: 3px;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 6px;
+  cursor: pointer;
+  min-height: 20px;
+  color: #4d4d4d;
+  line-height: 18px;
+  padding: 6px 8px 4px;
+  position: relative;
+  font-size: 14px;
+  z-index: 10;
+
+  &::after {
+    content: ' ';
+    box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 150ms ease-out;
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
+}
+
+.Card-close {
+  position: absolute;
+  top: 5px;
+  right: 2px;
+  font-size: 20px;
+  color: rgba(0,0,0, .4);
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  transition: color 100ms linear;
+
+  &:hover {
+    color: rgba(0,0,0, 1);
+    color: rgba(239, 61, 67, .8);
+  }
+}
