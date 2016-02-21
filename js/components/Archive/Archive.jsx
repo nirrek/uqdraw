@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import Header from '../Header/Header.jsx';
-import LinkButton from '../LinkButton.jsx';
+import LinkButton from '../LinkButton/LinkButton.jsx';
 import '../../../styles/components/Table.scss';
 import './Archive.scss';
 
