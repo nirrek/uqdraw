@@ -12,7 +12,7 @@ import Presenter from './components/Presenter/Presenter.jsx';
 import Answer from './components/Answer/Answer.jsx';
 import StartView from './components/StartView.jsx';
 import Archive from './components/Archive/Archive.jsx';
-import Responses from './components/Responses.jsx';
+import Responses from './components/Responses/Responses.jsx';
 import '../styles/main.scss';
 import '../node_modules/normalize.css/normalize.css';
 

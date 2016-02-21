@@ -1,0 +1,24 @@
+.Responses {
+  max-width: 800px;
+  display: flex;
+  align-items: flex-start;
+  margin: 0 auto;
+  flex-direction: column;
+}
+
+.Responses-heading {
+  align-self: center;
+}
+
+.Responses-thumbnail {
+  margin-right: 1em;
+  margin-bottom: 1em;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+}
+
+.Responses-thumbnailContainer {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
