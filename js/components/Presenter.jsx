@@ -4,7 +4,7 @@ import Button from './Button/Button.jsx';
 import QuestionSelector from './QuestionSelector.jsx';
 import PresenterQuestion from './PresenterQuestion.jsx';
 import PresenterResponses from './PresenterResponses.jsx';
-import Timer from './Timer.jsx';
+import Timer from './Timer/Timer.jsx';
 
 import LectureStore from '../stores/LectureStore.js';
 import PresentationStore from '../stores/PresentationStore.js';
@@ -25,15 +25,16 @@ export default class Presenter extends Component {
       responses: [],
       courseId: undefined,
       lecture: {},
+      isTakingResponses: false,
+      timeElapsed: 0,
     };
 
-    this.start = this.start.bind(this);
-    this.stop = this.stop.bind(this);
-    this.reset = this.reset.bind(this);
-
+    this.startTakingResponses = this.startTakingResponses.bind(this);
+    this.stopTakingResponses = this.stopTakingResponses.bind(this);
     this.initData = this.initData.bind(this);
     this.onLectureChange = this.onLectureChange.bind(this);
     this.onPresentationChange = this.onPresentationChange.bind(this);
+    this.handleTick = this.handleTick.bind(this);
   }
 
   componentDidMount() {
@@ -76,29 +77,26 @@ export default class Presenter extends Component {
   }
 
   onActivateQuestion(key) {
-    this.setState({activeQuestionKey: key});
-    this.reset();
+    this.setState({
+      activeQuestionKey: key,
+      timeElapsed: 0,
+    });
   }
 
   onThumbnailClick(key) {
     console.log('make a large version of submission ' + key);
   }
 
-  start() {
-    this.setState({takingQuestions: true});
-    this.refs.timer.startTimer();
+  handleTick(timeElapsed) {
+    this.setState({ timeElapsed });
   }
 
-  stop() {
-    this.setState({takingQuestions: false});
-    this.refs.timer.stopTimer();
+  startTakingResponses() {
+    this.setState({ isTakingResponses: true });
   }
 
-  reset() {
-    this.setState({takingQuestions: false});
-    if (this.refs.timer) {
-      this.refs.timer.resetTimer();
-    }
+  stopTakingResponses() {
+    this.setState({ isTakingResponses: false });
   }
 
   render() {
@@ -153,10 +151,10 @@ export default class Presenter extends Component {
     if (typeof this.state.activeQuestionKey !== 'undefined') {
       var timer = <Timer interval="1000" increment="1000" ref="timer"/>;
       var button;
-      if (this.state.takingQuestions) {
-        button = <Button key="1" onClick={this.stop}>Stop Taking Responses</Button>;
+      if (this.state.isTakingResponses) {
+        button = <Button key="1" onClick={this.stopTakingResponses}>Stop Taking Responses</Button>;
       } else {
-        button = <Button key="2" onClick={this.start}>Start Taking Responses</Button>;
+        button = <Button key="2" onClick={this.startTakingResponses}>Start Taking Responses</Button>;
       }
     }
 
@@ -190,6 +188,10 @@ export default class Presenter extends Component {
               {timer}
               {button}
             </div>
+
+            <Timer time={this.state.timeElapsed}
+                   isRunning={this.state.isTakingResponses}
+                   onTick={this.handleTick} />
           </div>
           <div className="PresentationResponses">
             <h2 className='SectionHeading'>Responses</h2>
