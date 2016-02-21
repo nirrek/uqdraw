@@ -1,21 +1,22 @@
 // Disables the ability to scroll the document body.
 export function disableScroll() {
   for (const event of ['mousewheel', 'DOMMouseScroll', 'touchmove', 'scroll'])
-    document.body.addEventListener(event, disableEvent);
-  document.body.addEventListener('keydown', disableKeys);
+    document.body.addEventListener(event, disableMovementTriggeredScroll);
+  document.body.addEventListener('keydown', disableKeyTriggeredScroll);
 }
 
 // Reenables the ability to scroll the document body.
 export function enableScroll() {
   for (const event of ['mousewheel', 'DOMMouseScroll', 'touchmove', 'scroll'])
-    document.body.removeEventListener(event, disableEvent);
-  document.body.removeEventListener('keydown', disableKeys);
+    document.body.removeEventListener(event, disableMovementTriggeredScroll);
+  document.body.removeEventListener('keydown', disableKeyTriggeredScroll);
 }
 
-function disableEvent(event) {
-  event.preventDefault();
-  event.stopPropagation();
-  return false;
+function disableMovementTriggeredScroll(event) {
+  if (event.target.className === 'Modal-backdrop') {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 }
 
 const keysToDisable = new Set([
@@ -30,7 +31,10 @@ const keysToDisable = new Set([
   40, // downArrow
 ]);
 
-function disableKeys(event) {
-  if (keysToDisable.has(event.keyCode))
-    return disableEvent(event);
+function disableKeyTriggeredScroll(event) {
+  if (keysToDisable.has(event.keyCode) &&
+      document.activeElement.nodeName === 'BODY') {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 }
