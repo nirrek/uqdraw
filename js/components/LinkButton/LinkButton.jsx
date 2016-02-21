@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import Button from './Button/Button.jsx';
+import Button from '../Button/Button.jsx';
 
 export default class LinkButton extends Component {
   render() {
