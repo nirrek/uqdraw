@@ -14,6 +14,7 @@ export default class LectureComposer extends Component {
 
     this.onInputChange = this.onInputChange.bind(this);
     this.onSave = this.onSave.bind(this);
+    this.addLectureOnEnter = this.addLectureOnEnter.bind(this);
   }
 
   onInputChange(event) {
@@ -25,6 +26,11 @@ export default class LectureComposer extends Component {
     this.setState({ inputText: '' });
   }
 
+  addLectureOnEnter(event) {
+    if (event.key === 'Enter')
+      this.onSave();
+  }
+
   render() {
     const { isOpen, onClose } = this.props;
 
@@ -34,7 +40,8 @@ export default class LectureComposer extends Component {
           <div className='LectureCompose-inputContainer'>
             <Input placeholder='Lecture Name'
                    value={this.state.inputText}
-                   onChange={this.onInputChange} />
+                   onChange={this.onInputChange}
+                   onKeyDown={this.addLectureOnEnter}/>
           </div>
         </ModalContent>
         <ModalFooter>
