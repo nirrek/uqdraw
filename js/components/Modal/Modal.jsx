@@ -60,5 +60,5 @@ Modal.propTypes = {
 Modal.defaultProps = {
   closeOnEsc: true,
   closeOnBackdropClick: true,
-  hasCloseButton: true,
+  hasCloseButton: false,
 };
