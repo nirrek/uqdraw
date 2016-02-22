@@ -2,7 +2,7 @@ import Dispatcher from '../dispatcher/Dispatcher.js';
 import { ActionTypes } from '../constants/SubjectConstants.js';
 import { addToSubjects } from '../utils/API.js';
 
-export const create = (userId, subjectName) => {
+export const createSubject = (userId, subjectName) => {
   if (!subjectName) return;
 
   addToSubjects(userId, subjectName, (error) => {
