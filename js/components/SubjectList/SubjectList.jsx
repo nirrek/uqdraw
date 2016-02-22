@@ -2,7 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import '../../../styles/components/Form.scss';  // TODO bad form
 import './SubjectList.scss';
 import Button from '../Button/Button.jsx';
-import Modal from '../Modal/Modal.jsx';
+import Modal, { ModalContent, ModalFooter } from '../Modal/Modal.jsx';
+import FlatButton from '../FlatButton/FlatButton.jsx';
+import Input from '../Input/Input.jsx';
 
 export default class SubjectList extends Component {
   constructor(props) {
@@ -16,6 +18,7 @@ export default class SubjectList extends Component {
     this.hideAddCourseModal = this.hideAddCourseModal.bind(this);
     this.addNewCourse = this.addNewCourse.bind(this);
     this.updateCourseInput = this.updateCourseInput.bind(this);
+    this.updateOnEnter = this.updateOnEnter.bind(this);
   }
 
   showAddCourseModal() {
@@ -30,21 +33,18 @@ export default class SubjectList extends Component {
     this.setState({ inputText: event.target.value });
   }
 
-  addNewCourse(event) {
+  addNewCourse() {
     this.props.onAddSubject(this.state.inputText);
 
     this.setState({
       modalIsOpen: false,
       inputText: '',
     });
-    event.preventDefault();
   }
 
-  focusInputRef(ref) {
-    if (!ref) return;
-    // Modal componentDidUpdate will focus the form, put the input focus effect
-    // on the task queue so that we focus the input after this occurs.
-    setTimeout(_ => ref.focus());
+  updateOnEnter(event) {
+    if (event.key === 'Enter')
+      this.addNewCourse();
   }
 
   render() {
@@ -75,19 +75,20 @@ export default class SubjectList extends Component {
           </a>
         </div>
         <Modal isOpen={this.state.modalIsOpen} onClose={this.hideAddCourseModal}>
-          <div className='Slat'>
-            <input ref={this.focusInputRef}
-                   placeholder='Course Name'
-                   className='Input'
-                   type='text'
+          <ModalContent>
+            <Input placeholder='Course Name'
                    value={this.state.inputText}
-                   onChange={this.updateCourseInput} />
-          </div>
-          <div className='Slat'>
-            <Button type='secondary' onClick={this.addNewCourse}>
+                   onChange={this.updateCourseInput}
+                   onKeyDown={this.updateOnEnter}/>
+          </ModalContent>
+          <ModalFooter>
+            <FlatButton type='secondary' onClick={this.hideAddCourseModal}>
+              Close
+            </FlatButton>
+            <FlatButton onClick={this.addNewCourse}>
               Add Course
-            </Button>
-          </div>
+            </FlatButton>
+          </ModalFooter>
         </Modal>
       </div>
     );
