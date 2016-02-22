@@ -10,7 +10,7 @@ import SubjectManager from './components/SubjectManager/SubjectManager.jsx';
 import QuestionManager from './components/QuestionManager/QuestionManager.jsx';
 import Presenter from './components/Presenter/Presenter.jsx';
 import Answer from './components/Answer/Answer.jsx';
-import StartView from './components/StartView.jsx';
+import Login from './components/Login/Login.jsx';
 import Archive from './components/Archive/Archive.jsx';
 import Responses from './components/Responses/Responses.jsx';
 import '../styles/main.scss';
@@ -72,7 +72,7 @@ render(
         <Route path="/drawing" component={Answer} />
         <Route path="/archive" component={Archive} />
         <Route path="/responses" component={Responses} />
-        <IndexRoute component={StartView}/>
+        <IndexRoute component={Login}/>
       </Route>
     </Router>
   </GatewayProvider>,
