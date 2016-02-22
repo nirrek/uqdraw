@@ -5,6 +5,7 @@ import Modal, { ModalContent, ModalFooter } from '../Modal/Modal.jsx';
 import FlatButton from '../FlatButton/FlatButton.jsx';
 import Header from '../Header/Header.jsx';
 import FocusableInput from '../FocusableInput/FocusableInput.jsx';
+import Input from '../Input/Input.jsx';
 import './Login.scss';
 
 const codeLength = 3;
@@ -105,8 +106,12 @@ export default class StartView extends Component {
             </FlatButton>
             <Modal isOpen={this.state.isModalOpen} onClose={this.closeLoginModal}>
               <ModalContent>
-                <input type="text" placeholder="Username" />
-                <input type="text" placeholder="Password" />
+                <div className='Login-presenterLoginSlat'>
+                  <Input placeholder="Username" />
+                </div>
+                <div className='Login-presenterLoginSlat'>
+                  <Input type='password' placeholder="Password" />
+                </div>
               </ModalContent>
               <ModalFooter>
                 <FlatButton type='secondary' onClick={this.closeLoginModal}>
