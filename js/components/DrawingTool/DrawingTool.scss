@@ -1,0 +1,20 @@
+.DrawingTool-displayCanvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #F7FAFE;
+}
+
+.DrawingTool-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+
+  &:hover {
+    cursor: crosshair;
+  }
+}

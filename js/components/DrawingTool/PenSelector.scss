@@ -1,0 +1,24 @@
+.PenSelector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  align-self: stretch;
+}
+
+.PenSelector-pens {
+  display: flex;
+  justify-content: space-between;
+  width: 30px;
+}
+
+.PenSelector-pen {
+  background-color: #B4A9D3;
+  height: 25px;
+}
+
+.PenSelector-pen--active { background-color: #fff; }
+.PenSelector-pen--small { width: 3px; }
+.PenSelector-pen--medium { width: 6px; }
+.PenSelector-pen--large { width: 12px; }
+

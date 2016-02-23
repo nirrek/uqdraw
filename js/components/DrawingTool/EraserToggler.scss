@@ -1,0 +1,12 @@
+
+.Eraser {
+  background-size: cover;
+  width: 30px;
+  height: 30px;
+  margin-left: -3px;
+  background-image: url('./eraser.svg');
+}
+
+.Eraser--active {
+  background-image: url('./eraser-active.svg');
+}
