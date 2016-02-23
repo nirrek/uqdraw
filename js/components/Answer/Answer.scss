@@ -1,0 +1,48 @@
+.QuestionOverlay {
+  position: absolute;
+  background-color: rgba(0, 0, 0, .5);
+  z-index: 11;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.QuestionOverlay-content {
+  background-color: #F7FAFE;
+  height: 80vh;
+  margin: 1.5em;
+  border-radius: 4px;
+  box-shadow: 0 1px 5px rgba(0,0,0,.3);
+  padding: 1.5em 1em;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.QuestionOverlay-content > h3 {
+  flex-grow: 1;
+  margin: 0;
+}
+
+.Answer-question {
+  font-size: 2em;
+  font-weight: 600;
+  max-width: 80vw;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .Answer-question {
+    font-size: 1.5em;
+    line-height: 1.2;
+  }
+}
+
+.Answer-button {
+  flex-grow: 1;
+  text-align: center;
+}
