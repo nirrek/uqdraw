@@ -1,36 +1,31 @@
-import Dispatcher from '../dispatcher/Dispatcher.js';
-import { ActionTypes } from '../constants/SubjectConstants.js';
-import { addToSubjects } from '../utils/API.js';
+import uuid from 'node-uuid';
 
-export const createSubject = (userId, subjectName) => {
-  if (!subjectName) return;
+export const SUBJECT_CREATE_REQUEST = 'SUBJECT_CREATE_REQUEST';
+export const SUBJECT_CREATE_PUSHED = 'SUBJECT_CREATE_PUSHED';
+export const SUBJECT_CREATE_SUCCESS = 'SUBJECT_CREATE_SUCCESS';
+export const SUBJECT_CREATE_FAILURE = 'SUBJECT_CREATE_FAILURE';
+export const SUBJECTS_UPDATED = 'SUBJECTS_UPDATED';
 
-  addToSubjects(userId, subjectName, (error) => {
-    if (error === null) {
-      Dispatcher.dispatch({
-        type: ActionTypes.SUBJECT_CREATE_SUCCESS,
-        userId,
-        subjectName,
-      });
-    } else {
-      Dispatcher.dispatch({
-        type: ActionTypes.SUBJECT_CREATE_FAIL,
-        userId,
-        subjectName,
-        error,
-      });
-    }
-  });
+export const createSubject = (userId, subjectName) => ({
+  type: SUBJECT_CREATE_REQUEST,
+  subjectKey: uuid.v4(),
+  userId,
+  subjectName,
+});
 
-  Dispatcher.dispatch({
-    type: ActionTypes.SUBJECT_CREATE_INITIATED,
-    subjectName,
-  });
-};
+export const createSubjectSuccess = (subjectKey, subjectName) => ({
+  type: SUBJECT_CREATE_SUCCESS,
+  subjectKey,
+  subjectName,
+});
 
-export const updateSubjects = (subjectsMap) => {
-  Dispatcher.dispatch({
-    type: ActionTypes.SUBJECTS_UPDATE,
-    subjects: subjectsMap,
-  });
-};
+export const createSubjectFailure = (subjectKey, error) => ({
+  type: SUBJECT_CREATE_FAILURE,
+  subjectKey,
+  error,
+});
+
+export const subjectsUpdated = (subjects) => ({
+  type: SUBJECTS_UPDATED,
+  subjects,
+});

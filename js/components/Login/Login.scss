@@ -1,3 +1,5 @@
+@import '../../../styles/components/Colors';
+
 .StartView-Container {
   display: flex;
   flex-direction: column;
@@ -43,6 +45,22 @@
   &:focus {
     background-color: #E2E5E9;
   }
+}
+
+.Login-codeInputSubmitState {
+  display: flex;
+  justify-content: center;
+}
+
+.Login-codeInputSpinner {
+  & > .double-bounce1, & > .double-bounce2 {
+    background-color: $purple--dark !important;
+  }
+}
+
+.Login-codeInputError {
+  color: rgba(243, 22, 22, 0.76);
+  font-weight: bold;
 }
 
 .Login-presenterLogin {

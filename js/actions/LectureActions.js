@@ -1,60 +1,85 @@
-import Dispatcher from '../dispatcher/Dispatcher';
-import { ActionTypes } from '../constants/LectureConstants.js'
-import { addToLectures, removeLecture } from '../utils/API.js';
+import uuid from 'node-uuid';
 
-export const updateLectures = (courseKey, lectures) => {
-  if (!courseKey || !lectures) return;
-  Dispatcher.dispatch({
-    type: ActionTypes.LECTURES_UPDATE_SUCCESS,
-    courseKey,
-    lectures,
-  });
-};
+// -----------------------------------------------------------------------------
+// Fetch
+// -----------------------------------------------------------------------------
+export const LECTURES_FETCH_REQUEST = 'LECTURES_FETCH_REQUEST';
+export const LECTURES_FETCH_SUCCESS = 'LECTURES_FETCH_SUCCESS';
+export const LECTURES_FETCH_FAILURE = 'LECTURES_FETCH_FAILURE';
 
-export const createLecture = (courseKey, lectureTitle) => {
-  let newLecture = {title: lectureTitle, questions: []};
-  let ref = addToLectures(courseKey, newLecture, (error) => {
-    if (error) {
-      Dispatcher.dispatch({
-        type: ActionTypes.LECTURE_CREATE_FAIL,
-        courseKey,
-        lecture: newLecture,
-      });
-    } else {
-      Dispatcher.dispatch({
-        type: ActionTypes.LECTURE_CREATE_SUCCESS,
-        courseKey,
-        lectureKey: ref.key(),
-        lecture: newLecture,
-      });
-    }
-  });
-  Dispatcher.dispatch({
-    type: ActionTypes.LECTURE_CREATE_INITIATED,
-    courseKey,
-    lecture: newLecture,
-  });
-};
+export const fetchLectures = (courseId) => ({
+  type: LECTURES_FETCH_REQUEST,
+  courseId,
+});
 
-export const deleteLecture = (courseKey, lectureKey) => {
-  removeLecture(courseKey, lectureKey, (error) => {
-    if (error) {
-      Dispatcher.dispatch({
-        type: ActionTypes.LECTURE_DELETE_FAIL,
-        courseKey,
-        lectureKey,
-      });
-    } else {
-      Dispatcher.dispatch({
-        type: ActionTypes.LECTURE_DELETE_SUCCESS,
-        courseKey,
-        lectureKey,
-      });
-    }
-  });
-  Dispatcher.dispatch({
-    type: ActionTypes.LECTURE_DELETE_INITIATED,
-    courseKey,
-    lectureKey,
-  });
-};
+export const fetchLecturesSuccess = (courseId, lectures) => ({
+  type: LECTURES_FETCH_SUCCESS,
+  courseId,
+  lectures,
+})
+
+export const fetchLecturesFailure = (courseId, error) => ({
+  type: LECTURES_FETCH_FAILURE,
+  courseId,
+  error,
+});
+
+// -----------------------------------------------------------------------------
+// Create
+// -----------------------------------------------------------------------------
+export const LECTURE_CREATE_REQUEST = 'LECTURE_CREATE_REQUEST';
+export const LECTURE_CREATE_SUCCESS = 'LECTURE_CREATE_SUCCESS';
+export const LECTURE_CREATE_FAILURE = 'LECTURE_CREATE_FAILURE';
+
+export const createLecture = (courseKey, lectureName) => ({
+  type: LECTURE_CREATE_REQUEST,
+  lectureKey: uuid.v4(),
+  courseKey,
+  lectureName,
+});
+
+export const createLectureSuccess = (lectureKey, lecture) => ({
+  type: LECTURE_CREATE_SUCCESS,
+  lectureKey,
+  lecture,
+});
+
+export const createLectureFailure = (lectureKey, error) => ({
+  type: LECTURE_CREATE_FAILURE,
+  lectureKey,
+  error,
+});
+
+// -----------------------------------------------------------------------------
+// Delete
+// -----------------------------------------------------------------------------
+export const LECTURE_DELETE_REQUEST = 'LECTURE_DELETE_REQUEST';
+export const LECTURE_DELETE_SUCCESS = 'LECTURE_DELETE_SUCCESS';
+export const LECTURE_DELETE_FAILURE = 'LECTURE_DELETE_FAILURE';
+
+export const deleteLecture = (lectureKey) => ({
+  type: LECTURE_DELETE_REQUEST,
+  lectureKey,
+});
+
+export const deleteLectureSuccess = (lectureKey) => ({
+  type: LECTURE_DELETE_SUCCESS,
+  lectureKey,
+});
+
+export const deleteLectureFailure = (lectureKey, lecture, error) => ({
+  type: LECTURE_DELETE_FAILURE,
+  lectureKey,
+  lecture,
+  error,
+});
+
+// -----------------------------------------------------------------------------
+// Update
+// -----------------------------------------------------------------------------
+export const LECTURES_UPDATED = 'LECTURES_UPDATED';
+
+export const lecturesUpdated = (lectures) => ({
+  type: LECTURES_UPDATED,
+  lectures,
+});

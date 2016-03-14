@@ -10,101 +10,32 @@ import PresenterQuestion from './PresenterQuestion.jsx';
 import PresenterResponses from './PresenterResponses.jsx';
 import './Presenter.scss';
 
-export default class Presenter extends Component {
+import sortBy from 'lodash/sortBy';
+import { connect } from 'react-redux';
+import * as PresentationActions from '../../actions/PresentationActions.js';
+
+class Presenter extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
-    props.onChangeCourse(null, props.params.courseName);
-    this.componentKey = generateComponentKey();
-    this.state = {
-      activeQuestionKey: '',
-      responses: [],
-      courseId: undefined,
-      lecture: {},
-      isTakingResponses: false,
-      timeElapsed: 0,
-    };
-
-    this.initData = this.initData.bind(this);
-    this.onLectureChange = this.onLectureChange.bind(this);
-    this.onPresentationChange = this.onPresentationChange.bind(this);
-  }
-
-  componentDidMount() {
-    LectureStore.addChangeListener(this.onLectureChange);
-    PresentationStore.addChangeListener(this.onPresentationChange);
-    this.initData(this.props.courseId);
-  }
-
-  componentWillReceiveProps(newProps) {
-    this.initData(newProps.courseId);
-  }
-
-  componentWillUnmount() {
-    const lectureKey = this.props.params.lectureId;
-    LectureStore.removeChangeListener(this.onLectureChange);
-    PresentationStore.removeChangeListener(this.onPresentationChange);
-    unsubscribe(APIConstants.lectures, this.componentKey, this.props.courseId);
-    unsubscribe(APIConstants.responses, this.componentKey, lectureKey);
-  }
-
-  initData(courseKey) {
-    if (!courseKey) return;
-
-    const lectureKey = this.props.params.lectureId;
-    const lecture = LectureStore.getAll(lectureKey);
-    this.setState({
-      lecture,
-      responses: PresentationStore.getResponses(lectureKey)
-    });
-    subscribe(APIConstants.lectures, this.componentKey, courseKey);
-    subscribe(APIConstants.responses, this.componentKey, lectureKey);
-  }
-
-  onLectureChange() {
-    const { courseId, params } = this.props;
-    const lecture = LectureStore.get(courseId, params.lectureId);
-    this.setState({ lecture });
-  }
-
-  onPresentationChange() {
-    const { params } = this.props;
-    this.setState({
-      'responses': PresentationStore.getResponses(params.lectureId)
-    });
-  }
-
-  onActivateQuestion(key) {
-    this.setState({
-      activeQuestionKey: key,
-      timeElapsed: 0,
-    });
-  }
-
-  onThumbnailClick(key) {
-    // TODO
-    console.log('make a large version of submission ' + key);
   }
 
   render() {
-    const { lecture, activeQuestionKey, responses } = this.state;
+    const { presentation } = this.props;
+    const questions = sortBy(presentation.questions, ['listPosition']);
+    const currentQuestion = getCurrentQuestion(presentation);
+    const currentResponses = {}; // TODO implement
 
-    let questions = [];
-    let activeQuestion;
-    if (lecture && lecture.questions && lecture.questionOrder) {
-      questions = lecture.questionOrder.map(key => ({
-        key,
-        value: lecture.questions[key],
-      }));
-      activeQuestion = questions.find(q => q.key === activeQuestionKey);
+    const activateQuestion = (questionId) => {
+      this.props.activateQuestion(presentation.id, questionId);
     }
 
-    const activeResponses = activeQuestionKey ?
-      // responses[activeQuestionKey]: // TODO restore once data model updated
-      responses['-JmhCbo1eHVVsTEA4TuZ']:
-      {};
+    const handleStartAcceptingResponses = () => {
+      this.props.startAcceptingResponses(presentation.id);
+    }
 
-    console.log(this.state);
+    const handleStopAcceptingResponses = () => {
+      this.props.stopAcceptingResponses(presentation.id);
+    }
 
     return (
       <div className='PresenterView'>
@@ -120,14 +51,21 @@ export default class Presenter extends Component {
             <div className="Step">
               <div className='Step-number'>2</div>
               <div className='Step-instructions'>
-                <span className='Step-label'>Enter code</span><span className='Step-value'>3fa</span>
+                <span className='Step-label'>Enter code</span><span className='Step-value'>{presentation.code}</span>
               </div>
             </div>
           </div>
           <div className="PresentationQuestion">
             <h2 className='SectionHeading'>Question</h2>
-            {activeQuestion ? (
-              <PresenterQuestion question={activeQuestion} />
+            {currentQuestion ? (
+              <PresenterQuestion
+                key={currentQuestion.id}
+                question={currentQuestion}
+                onStartAcceptingResponses={handleStartAcceptingResponses}
+                onStopAcceptingResponses={handleStopAcceptingResponses}
+                isAcceptingResponses={presentation.isAcceptingResponses}
+                timeElapsed={currentQuestion.timeElapsed}
+                onTimerTick={this.props.responseTimerTick} />
             ) : (
               <h3 className='PresentationQuestion-hint'>
                 Select a question on the right when you are ready to begin.
@@ -137,15 +75,43 @@ export default class Presenter extends Component {
           <div className="PresentationResponses">
             <h2 className='SectionHeading'>Responses</h2>
             <div className="ResponseThumbnails">
-              <PresenterResponses responses={activeResponses || {}} onThumbnailClick={this.onThumbnailClick}/>
+              <PresenterResponses responses={currentResponses} onThumbnailClick={() => {}}/>
             </div>
           </div>
         </div>
 
         <div className='Column--supporting'>
-          <QuestionSelector questions={questions} onActivateQuestion={this.onActivateQuestion.bind(this)} activeQuestionKey={this.state.activeQuestionKey}/>
+          <QuestionSelector
+            questions={questions}
+            currentQuestion={currentQuestion}
+            onSelect={activateQuestion} />
         </div>
       </div>
     );
   }
 }
+
+// getCurrentQuestion :: Object -> Object | null
+const getCurrentQuestion = (presentation) => {
+  if (!presentation.currentQuestion) return null;
+  return presentation.questions
+    .find(q => q.id === presentation.currentQuestion.id);
+}
+
+// Selectors
+const activePresentation = (state) => {
+  const { presentations } = state;
+  return presentations.presentations[presentations.activePresentationId];
+}
+
+export default connect(
+  (state) => ({
+    presentation: activePresentation(state),
+  }),
+  {
+    activateQuestion: PresentationActions.activateQuestion,
+    startAcceptingResponses: PresentationActions.startAcceptingResponses,
+    stopAcceptingResponses: PresentationActions.stopAcceptingResponses,
+    responseTimerTick: PresentationActions.responseTimerTick,
+  }
+)(Presenter);

@@ -4,64 +4,31 @@ import Header from '../Header/Header.jsx';
 import QuestionList from './QuestionList.jsx';
 import LectureComposer from '../LectureComposer/LectureComposer.jsx';
 import HorizontalDragScroll from '../../composables/HorizontalDragScroll.js';
-import { createQuestion, deleteQuestion } from '../../actions/QuestionActions.js';
-import { createLecture, deleteLecture } from '../../actions/LectureActions.js';
+import * as QuestionActions from '../../actions/QuestionActions.js';
+import * as LectureActions from '../../actions/LectureActions.js';
+import * as PresentationActions from '../../actions/PresentationActions.js';
 import LectureStore from '../../stores/LectureStore.js';
 import { subscribe, unsubscribe, APIConstants } from '../../utils/API.js';
 import generateComponentKey from '../../utils/ComponentKey.js';
 import Clickable from '../Clickable/Clickable.jsx';
 import './QuestionManager.scss';
 import archiveIcon from '../../../images/basic_picture_multiple.svg';
+import { connect } from 'react-redux';
 
 class QuestionManager extends Component {
   constructor(props) {
     super(props);
-    props.onChangeCourse(null, props.routeParams.courseName);
-    this.componentKey = generateComponentKey();
 
+    props.fetchLectures(props.location.state.courseId);
     this.state = {
-      curYPos: 0,
-      curXPos: 0,
-      curScrollPos: 0,
-      curDown: false,
-      curOffset: 0,
       isLectureModalOpen: false,
-      lectures: {},
     };
 
-    this.initData = this.initData.bind(this);
-    this.onLectureChange = this.onLectureChange.bind(this);
     this.onRemoveLecture = this.onRemoveLecture.bind(this);
     this.onAddQuestion = this.onAddQuestion.bind(this);
-    this.onRemoveQuestion = this.onRemoveQuestion.bind(this);
     this.showLectureModal = this.showLectureModal.bind(this);
     this.hideLectureModal = this.hideLectureModal.bind(this);
     this.onAddLecture = this.onAddLecture.bind(this);
-  }
-
-  componentDidMount() {
-    LectureStore.addChangeListener(this.onLectureChange);
-    this.initData(this.props.courseId);
-  }
-
-  componentWillReceiveProps(newProps) {
-    this.initData(newProps.courseId);
-  }
-
-  componentWillUnmount() {
-    LectureStore.removeChangeListener(this.onLectureChange);
-    unsubscribe(APIConstants.lectures, this.componentKey, this.props.courseId);
-  }
-
-  initData(courseKey) {
-    if (courseKey) {
-      this.setState({ lectures: LectureStore.getAll(courseKey) });
-      subscribe(APIConstants.lectures, this.componentKey, courseKey);
-    }
-  }
-
-  onLectureChange() {
-    this.setState({ lectures: LectureStore.getAll(this.props.courseId) });
   }
 
   showLectureModal() {
@@ -73,25 +40,23 @@ class QuestionManager extends Component {
   }
 
   onAddLecture(title) {
-    createLecture(this.props.courseId, title);
+    this.props.createLecture(this.props.location.state.courseId, title);
     this.setState({ isLectureModalOpen: false });
   }
 
   onRemoveLecture(lectureId) {
-    deleteLecture(this.props.courseId, lectureId);
+    this.props.deleteLecture(lectureId);
   }
 
-  onAddQuestion(lectureKey, lecture, question) {
-    createQuestion(this.props.courseId, lectureKey, lecture, question);
-  }
-
-  onRemoveQuestion(lectureKey, lecture, questionKey) {
-    deleteQuestion(this.props.courseId, lectureKey, lecture, questionKey);
+  onAddQuestion(lectureKey, question) {
+    const listPosition = this.props.lectures[lectureKey].questions.length;
+    this.props.createQuestion(lectureKey, question, listPosition);
   }
 
   render() {
-    const { courseName, scrollHandlers, setScrollRef } = this.props;
-    const { lectures, isLectureModalOpen } = this.state;
+    const { scrollHandlers, setScrollRef, lectures, questions } = this.props;
+    const { courseName } = this.props.params;
+    const { isLectureModalOpen } = this.state;
 
     return (
       <div className='ViewContainer'>
@@ -117,9 +82,11 @@ class QuestionManager extends Component {
                   courseName={courseName}
                   lectureKey={key}
                   lecture={lecture}
+                  questions={questions}
                   onRemoveLecture={this.onRemoveLecture}
                   onAddQuestion={this.onAddQuestion}
-                  onRemoveQuestion={this.onRemoveQuestion}
+                  onRemoveQuestion={this.props.deleteQuestion}
+                  onLaunchPresentation={this.props.presentationStarted}
                 />
               ))}
               <div className="QuestionManager-addLecture" onClick={this.showLectureModal}>
@@ -139,4 +106,17 @@ class QuestionManager extends Component {
   }
 }
 
-export default HorizontalDragScroll(QuestionManager);
+export default connect(
+  (state) => ({
+    lectures: state.lectures.lectures,
+    questions: state.questions.questions,
+  }),
+  {
+    fetchLectures: LectureActions.fetchLectures,
+    createLecture: LectureActions.createLecture,
+    deleteLecture: LectureActions.deleteLecture,
+    createQuestion: QuestionActions.createQuestion,
+    deleteQuestion: QuestionActions.deleteQuestion,
+    presentationStarted: PresentationActions.presentationStart,
+  }
+)(HorizontalDragScroll(QuestionManager));

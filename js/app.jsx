@@ -15,6 +15,12 @@ import Archive from './components/Archive/Archive.jsx';
 import Responses from './components/Responses/Responses.jsx';
 import '../styles/main.scss';
 import '../node_modules/normalize.css/normalize.css';
+import { createStore, compose, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import { Provider } from 'react-redux';
+import rootReducer from './reducers/rootReducer.js';
+import rootSaga from './sagas/rootSaga.js';
+import { setStore } from './utils/API.js';
 
 // a11y for ReactModal: what to hide from screenreader when modal is open.
 ReactModal.getApplicationElement = () => document.querySelector('.AppContent');
@@ -62,19 +68,85 @@ class App extends Component {
   }
 }
 
+const store = createStore(
+  rootReducer,
+  compose(
+    applyMiddleware(createSagaMiddleware(rootSaga)),
+    typeof window === 'object' && typeof window.devToolsExtension !== 'undefined' ? window.devToolsExtension() : f => f
+  )
+);
+
+if (module.hot) {
+  module.hot.accept('./reducers/rootReducer.js', () => {
+    const nextRootReducer = require('./reducers/rootReducer.js').default;
+    store.replaceReducer(nextRootReducer);
+  });
+}
+
+setStore(store);
+
+// TODO remove
+window.store = store;
+
+const query = `
+  query {
+    presentation(id:"28fcbaee-71a6-4f4b-99bf-58619396a59c") {
+      id,
+      startedAt,
+      currentQuestion {
+        id,
+        text,
+        lectureOwner {
+          id,
+          name,
+          courseOwner {
+            name,
+            lectures {
+              id,
+              name
+            }
+          }
+        }
+      }
+      responses {
+        id,
+        responseUri
+      }
+    }
+  }
+`;
+
+
+
+class Test extends Component {
+  componentWillMount() {
+  }
+
+  render() {
+    return (
+      <div>Test</div>
+    );
+  }
+}
+
+
 render(
-  <GatewayProvider>
-    <Router history={browserHistory}>
-      <Route path="/" component={App}>
-        <Route path="/:courseName/question-manager" component={QuestionManager} />
-        <Route path="/welcome/:userId" component={SubjectManager} />
-        <Route path="/:courseName/:lectureId" component={Presenter} />
-        <Route path="/drawing" component={Answer} />
-        <Route path="/archive" component={Archive} />
-        <Route path="/responses" component={Responses} />
-        <IndexRoute component={Login}/>
-      </Route>
-    </Router>
-  </GatewayProvider>,
+  <Provider store={store}>
+    <GatewayProvider>
+      <Router history={browserHistory}>
+        <Route path="/" component={App}>
+          <Route path="/:courseName/question-manager" component={QuestionManager} />
+          <Route path="/welcome/:userId" component={SubjectManager} />
+          <Route path="/presentation/:code" component={Answer} />
+          <Route path="/:courseName/:lectureId" component={Presenter} />
+          <Route path="/archive" component={Archive} />
+          <Route path="/responses" component={Responses} />
+          <Route path="/test" component={Test} />
+          <IndexRoute component={Login}/>
+        </Route>
+      </Router>
+    </GatewayProvider>
+  </Provider>,
   document.querySelector('#react')
 );
+

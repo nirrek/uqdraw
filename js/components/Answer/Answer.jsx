@@ -9,57 +9,33 @@ import Modal, { ModalContent, ModalFooter } from '../Modal/Modal.jsx';
 import FlatButton from '../FlatButton/FlatButton.jsx';
 import './Answer.scss';
 
-export default class Answer extends Component {
+import { connect } from 'react-redux';
+import * as PresentationViewerActions from '../../actions/PresentationViewerActions.js';
+
+class Answer extends Component {
   constructor(props) {
     super(props);
-    this.componentKey = generateComponentKey();
     this.state = {
       isQuestionOpen: true,
-      isQuestionActive: true,
-      lectureKey: '-JliFPJmDtXhEAv-YRZ4',
     };
     this.ctx = undefined; // drawing canvas context
-    this.onPresentationChange = this.onPresentationChange.bind(this);
-    this.getPresentationState = this.getPresentationState.bind(this);
     this.hideQuestion = this.hideQuestion.bind(this);
-  }
-
-  componentDidMount() {
-    this.getPresentationState();
-    subscribe(APIConstants.responses, this.componentKey, this.state.lectureKey);
-    PresentationStore.addChangeListener(this.onPresentationChange);
-  }
-
-  componentWillUnmount() {
-    unsubscribe(APIConstants.responses, this.componentKey, this.state.lectureKey);
-    PresentationStore.removeChangeListener(this.onPresentationChange);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // TODO enable once backend implemented
-    // if (this.props.activeQuestionKey !== newProps.activeQuestionKey) {
-    //   this.setState({ isQuestionOpen: Boolean(newProps.activeQuestionKey) });
-    // }
-  }
-
-  onPresentationChange() {
-    this.getPresentationState();
+    this.onSubmitImage = this.onSubmitImage.bind(this)
   }
 
   // Submit the current canvas
-  onSubmitImage(dataURL) {
-    const response = {
-      submitted: Date.now(),
-      imageURI: dataURL,
-    };
-    // TODO make programmatic
-    const lectureKey = '-JliFPJmDtXhEAv-YRZ4';
-    const questionKey = '-JmhCbo1eHVVsTEA4TuZ';
-    createResponse(lectureKey, questionKey, response);
-  }
+  onSubmitImage(imageDataUrl) {
+    const { response, presentation } = this.props;
+    response(presentation.id, presentation.currentQuestion.id, imageDataUrl);
 
-  getPresentationState() {
-    this.setState({ isSubmitting: PresentationStore.isSubmitting() });
+    // const response = {
+    //   submitted: Date.now(),
+    //   imageURI: dataURL,
+    // };
+    // // TODO make programmatic
+    // const lectureKey = '-JliFPJmDtXhEAv-YRZ4';
+    // const questionKey = '-JmhCbo1eHVVsTEA4TuZ';
+    // createResponse(lectureKey, questionKey, response);
   }
 
   hideQuestion() {
@@ -67,30 +43,31 @@ export default class Answer extends Component {
   }
 
   render() {
-    return (
+    const { presentation } = this.props;
+
+    return presentation.currentQuestion ? (
       <div className='Answer'>
-        {this.state.isQuestionActive ? (
-          <div>
-            <Modal isOpen={this.state.isQuestionOpen} onClose={this.hideQuestion} hasCloseButton={false}>
-              <ModalContent className=''>
-                <h1 className='Answer-question'>
-                  Draw the 3-way handshake TCP uses to establish a connection
-                </h1>
-              </ModalContent>
-              <ModalFooter>
-                <div className='Answer-button'>
-                  <FlatButton onClick={this.hideQuestion}>
-                    Tap To Start Drawing
-                  </FlatButton>
-                </div>
-              </ModalFooter>
-            </Modal>
-            <Drawing activeQuestionKey="1" onSubmitImage={this.onSubmitImage.bind(this)} isSubmitting={this.state.isSubmitting}/>
-          </div>
-        ) : (
-          <div>There is no currently active question. You must wait for your lecturer to start taking responses before you may draw.</div>
-        )}
+        <Modal isOpen={this.state.isQuestionOpen} onClose={this.hideQuestion} hasCloseButton={false}>
+          <ModalContent className=''>
+            <h1 className='Answer-question'>
+              {presentation.currentQuestion.text}
+            </h1>
+          </ModalContent>
+          <ModalFooter>
+            <div className='Answer-button'>
+              <FlatButton onClick={this.hideQuestion}>
+                Tap To Start Drawing
+              </FlatButton>
+            </div>
+          </ModalFooter>
+        </Modal>
+        <Drawing
+          hasSubmitted={this.props.hasResponded}
+          onSubmitImage={this.onSubmitImage}
+          isSubmitting={this.props.isSendingResponse} />
       </div>
+    ) : (
+      <div className='Answer'>There is no currently active question. You must wait for your lecturer to start taking responses before you may draw.</div>
     );
   }
 }
@@ -98,3 +75,21 @@ export default class Answer extends Component {
 Answer.propTypes = {
   activeQuestionKey: React.PropTypes.string,
 };
+
+// Selectors
+const getPresentationViewer = (state) => state.presentationViewer;
+
+export default connect(
+  (state) => {
+    const presentationViewer = getPresentationViewer(state)
+    return {
+      presentation: presentationViewer.presentation,
+      isSendingResponse: presentationViewer.isSendingResponse,
+      sendResponseError: presentationViewer.sendResponseError,
+      hasResponded: presentationViewer.hasResponded,
+    };
+  },
+  {
+    response: PresentationViewerActions.response,
+  }
+)(Answer);

@@ -1,11 +1,19 @@
 import config from '../config';
 import Firebase from 'firebase';
-import { updateLectures } from '../actions/LectureActions.js';
+import { lecturesUpdated } from '../actions/LectureActions.js';
 import { updateResponses } from '../actions/PresentationActions.js';
-import { updateSubjects } from '../actions/SubjectActions.js';
+import { subjectsUpdated } from '../actions/SubjectActions.js';
+import { questionsUpdated } from '../actions/QuestionActions.js';
 import keyMirror from 'keymirror';
 import { hasPath } from '../utils/utils.js';
 let firebaseRoot = config.firebase.base;
+
+// Redux store handle. Once API state is refactored to exist in redux
+// this singleton setter pattern (gross) will be removed.
+let store = { dispatch: () => {} };
+export function setStore(newStore) {
+  store = newStore;
+}
 
 // Tracks currently active Firebase refs, along with the components that are
 // currently interested in receiving updates from the ref.
@@ -126,8 +134,9 @@ function firebaseUnsubscribe(refType, filter, componentKey) {
 // the order here is:       (componentKey, filter)
 // the delegate's order is: (filter, componentKey)
 function subscribeToLectures(componentKey, courseKey) {
-  firebaseSubscribe(APIConstants.lectures, courseKey, componentKey, function(content) {
-    updateLectures(courseKey, content);
+  firebaseSubscribe(APIConstants.lectures, courseKey, componentKey,
+    (lectures) => {
+    store.dispatch(lecturesUpdated(lectures));
   });
 };
 
@@ -140,30 +149,41 @@ export function addToLectures(courseKey, lecture, callback) {
 };
 
 export function removeLecture(courseKey, lectureId, callback) {
-  refs[APIConstants.lectures][courseKey].ref.child(lectureId).remove(callback);
+  return refs[APIConstants.lectures][courseKey].ref.child(lectureId).remove(callback);
 };
 
 export function updateLecture(courseKey, lectureKey, lecture, callback) {
-  refs[APIConstants.lectures][courseKey].ref.child(lectureKey).update(lecture, callback);
+  return refs[APIConstants.lectures][courseKey].ref.child(lectureKey).update(lecture, callback);
 };
 
-export function addToQuestions(courseKey, lectureKey, lecture, question, callback) {
-  let count = 0;
-  const cb = (error) => {
-    count++;
-    if (error) callback(error);
-    if (count >= 2) {
-      callback(null);
-    }
-  };
-  const lectureRef = refs[APIConstants.lectures][courseKey].ref.child(lectureKey);
-  const questionRef = lectureRef.child('questions').push(question, cb);
-  const questionKey = questionRef.key();
-  const questionOrder = lecture.questionOrder || [];
-  questionOrder.push(questionKey);
-  lectureRef.child('questionOrder').update(questionOrder, cb);
-  return questionKey;
-};
+export function addToQuestions(question, listPosition) {
+  const fireRef = refs[APIConstants.questions].ref.push(question);
+
+  // Adds the question FK to the lecture to which it belongs.
+  refs[APIConstants.lectures][question.lectureOwner].ref
+    .child(`questions/${fireRef.key()}`)
+    .set({ listPosition });
+
+  return fireRef;
+}
+
+// export function addToQuestions(courseKey, lectureKey, lecture, question, callback) {
+//   let count = 0;
+//   const cb = (error) => {
+//     count++;
+//     if (error) callback(error);
+//     if (count >= 2) {
+//       callback(null);
+//     }
+//   };
+//   const lectureRef = refs[APIConstants.lectures][courseKey].ref.child(lectureKey);
+//   const questionRef = lectureRef.child('questions').push(question, cb);
+//   const questionKey = questionRef.key();
+//   const questionOrder = lecture.questionOrder || [];
+//   questionOrder.push(questionKey);
+//   lectureRef.child('questionOrder').update(questionOrder, cb);
+//   return questionKey;
+// };
 
 export function removeQuestion(courseKey, lectureKey, lecture, questionKey, callback) {
   // Remove question from lecture object
@@ -203,8 +223,8 @@ export function addToResponses(lectureKey, questionKey, response, callback) {
 //  Subjects
 // -----------------------------------------------------------------------------
 function subscribeToSubjects(componentKey, userId) {
-  firebaseSubscribe(APIConstants.subjects, userId, componentKey, function(content) {
-    updateSubjects(content);
+  firebaseSubscribe(APIConstants.subjects, userId, componentKey, subjects => {
+    store.dispatch(subjectsUpdated(subjects));
   });
 };
 

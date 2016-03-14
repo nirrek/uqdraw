@@ -1,69 +1,27 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { createSubject } from '../../actions/SubjectActions.js';
+import { fetchUser } from '../../actions/UserActions.js';
 import Header from '../Header/Header.jsx';
 import SubjectList from '../SubjectList/SubjectList.jsx';
-import SubjectActions from '../../actions/SubjectActions.js';
-import SubjectStore from '../../stores/SubjectStore.js';
-import generateComponentKey from '../../utils/ComponentKey.js';
-import { subscribe, unsubscribe, APIConstants } from '../../utils/API.js';
 import './SubjectManager.scss'
 
-export default class Welcome extends Component {
+class SubjectManager extends Component {
   constructor(props) {
     super(props);
-    this.componentKey = generateComponentKey();
-    this.state = {
-      subjectNamesByKey: {},
-    };
 
-    // Ensure the receiver for the various callbacks is the current object.
-    this.onSubjectChange = this.onSubjectChange.bind(this);
-    this.onSubmitChange = this.onSubmitChange.bind(this);
+    // Fetch our data.
+    // TODO should be fired on login action as part of login.
+    this.userId = '8c0287c9-af07-45e4-a844-dd19254860b5'; // temp
+    props.fetchUser(this.userId);
+
     this.onAddSubject = this.onAddSubject.bind(this);
-    this.initData = this.initData.bind(this);
   }
 
-  componentDidMount() {
-    // Populate local state from store & setup Firebase observation.
-    this.initData();
-
-    // Listen for store changes
-    SubjectStore.addChangeListener(this.onSubjectChange);
-    SubjectStore.addChangeListener(this.onSubmitChange);
-  }
-
-  componentWillReceiveProps(newProps) {
-    this.initData(newProps.courseId);
-  }
-
-  componentWillUnmount() {
-    let userId = this.props.routeParams.userId;
-    SubjectStore.removeChangeListener(this.onSubjectChange);
-    SubjectStore.removeChangeListener(this.onSubmitChange);
-    unsubscribe(APIConstants.subjects, this.componentKey, userId);
-  }
-
-  initData() {
-    let userId = this.props.routeParams.userId;
-
-    this.setState({
-      subjectNamesByKey: SubjectStore.getAll(),
-      isSubmitting: SubjectStore.isSubmitting(),
-    });
-    subscribe(APIConstants.subjects, this.componentKey, userId);
-  }
-
-  onSubjectChange() {
-    this.setState({ subjectNamesByKey: SubjectStore.getAll() });
-  }
-
-  onSubmitChange() {
-    this.setState({ isSubmitting: SubjectStore.isSubmitting() });
-  }
-
-  // Callback to be passed to SubjectList child
   onAddSubject(subjectName) {
-    let userId = this.props.routeParams.userId;
-    SubjectActions.create(userId, subjectName);
+    if (subjectName === '') return; // TODO trigger validation notification
+    const { routeParams, createSubject } = this.props;
+    createSubject(this.userId, subjectName);
   }
 
   render() {
@@ -76,7 +34,7 @@ export default class Welcome extends Component {
             <div className="Marquee-Subheading">Select the course the questions are for below, or add a new course.</div>
           </div>
           <SubjectList
-            subjects={this.state.subjectNamesByKey}
+            subjects={this.props.subjects}
             onAddSubject={this.onAddSubject}
             onChangeCourse={this.props.onChangeCourse}
           />
@@ -86,7 +44,18 @@ export default class Welcome extends Component {
   }
 }
 
-Welcome.propTypes = {
-  onAddSubject: React.PropTypes.func,
-  onChangeCourse: React.PropTypes.func,
+SubjectManager.propTypes = {
+  subjects: PropTypes.object,
+  createSubject: PropTypes.func,
+  fetchUser: PropTypes.func,
 };
+
+export default connect(
+  (state) => ({
+    subjects: state.subjects.subjects
+  }),
+  {
+    createSubject,
+    fetchUser
+  }
+)(SubjectManager);

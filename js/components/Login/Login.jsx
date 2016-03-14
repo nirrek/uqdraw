@@ -8,9 +8,13 @@ import FocusableInput from '../FocusableInput/FocusableInput.jsx';
 import Input from '../Input/Input.jsx';
 import './Login.scss';
 
+import { connect } from 'react-redux';
+import * as PresentationViewerActions from '../../actions/PresentationViewerActions.js';
+import Spinner from 'react-spinkit';
+
 const codeLength = 3;
 
-export default class StartView extends Component {
+class Login extends Component {
   constructor(props) {
     super(props);
 
@@ -27,9 +31,31 @@ export default class StartView extends Component {
     this.onLogin = this.onLogin.bind(this);
   }
 
+  // TODO remove once we move to using redux-simple-router
+  componentWillReceiveProps(nextProps) {
+    const { presentation } = nextProps;
+    if (presentation) {
+      this.context.router.push(`/presentation/${presentation.code}`);
+    }
+  }
+
+  // TODO
+  // - tab out after fixing a code needs to submit code
+  // - backspace show jump between inputs
   handleInputChange(inputIndex, event) {
     const value = event.target.value;
     if (value.length > 1) return; // block entering more chars.
+
+    // Update input values, and focused input.
+    const newInputValues = this.state.inputValues.slice();
+    newInputValues[inputIndex] = value;
+    const newFocusedInputIndex = (value.length === 1) ?
+      (inputIndex + 1) :
+      this.state.focusedInputIndex;
+    this.setState({
+      inputValues: newInputValues,
+      focusedInputIndex: newFocusedInputIndex
+    });
 
     // Check if the full code has been entered.
     if (inputIndex === codeLength - 1 && value.length === 1) {
@@ -37,21 +63,10 @@ export default class StartView extends Component {
 
       // TODO validate the code is active; navigate to relevant page.
       if (code.length === codeLength) {
-        this.context.router.push('drawing');
+        this.props.presentationRequest(code);
         return;
       }
     }
-
-    const newInputValues = this.state.inputValues.slice();
-    newInputValues[inputIndex] = value;
-    const newFocusedInputIndex = (value.length === 1) ?
-      Math.min(inputIndex + 1, 2) :
-      this.state.focusedInputIndex;
-
-    this.setState({
-      inputValues: newInputValues,
-      focusedInputIndex: newFocusedInputIndex
-    });
   }
 
   onLogin(event) {
@@ -68,12 +83,15 @@ export default class StartView extends Component {
     this.setState({ isModalOpen: false });
   }
 
-  handleInputFocus(event, index) {
+  handleInputFocus(index, event) {
+    event.preventDefault();
+    this.props.codeInputFocused();
     this.setState({ focusedInputIndex: index });
   }
 
   render() {
     const { inputValues } = this.state;
+    const { isFetchingPresentation, fetchPresentationError } = this.props;
 
     return (
       <div className='StartView-Container' style={this.startViewContainerStyle}>
@@ -97,6 +115,18 @@ export default class StartView extends Component {
                     onChange={this.handleInputChange.bind(this, idx)} />
                 );
               })}
+            </div>
+            <div className="Login-codeInputSubmitState">
+              {isFetchingPresentation &&
+                <div>
+                  <Spinner className="Login-codeInputSpinner" spinnerName='double-bounce' />
+                </div>
+              }
+              {fetchPresentationError &&
+                <div className="Login-codeInputError">
+                  {fetchPresentationError.message}
+                </div>
+              }
             </div>
           </div>
 
@@ -129,6 +159,25 @@ export default class StartView extends Component {
   }
 }
 
-StartView.contextTypes = {
+Login.contextTypes = {
   router: React.PropTypes.object,
 };
+
+// Selectors
+const getPresentationViewer = (state) => state.presentationViewer;
+
+export default connect(
+  (state) => {
+    const presentationViewer = getPresentationViewer(state);
+    return {
+      // TODO: remove this once we move to redux-simple-router
+      presentation: presentationViewer.presentation,
+      isFetchingPresentation: presentationViewer.isFetchingPresentation,
+      fetchPresentationError: presentationViewer.fetchPresentationError,
+    }
+  },
+  {
+    presentationRequest: PresentationViewerActions.presentationRequest,
+    codeInputFocused: PresentationViewerActions.codeInputFocused,
+  }
+)(Login);

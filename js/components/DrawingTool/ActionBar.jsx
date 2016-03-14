@@ -15,24 +15,28 @@ export default class ActionBar extends Component {
       isEraserActive,
       onEraserToggle,
       onPenSelect,
+      hasSubmitted,
       onSubmit,
       isSubmitting
     } = this.props;
+
+    let submitButton;
+    if (hasSubmitted) {
+      submitButton = <div>Answer Submitted</div>;
+    } else if (isSubmitting) {
+      submitButton = <Spinner spinnerName='double-bounce' noFadeIn />;
+    } else {
+      submitButton = <SubmitButton onClick={onSubmit} />;
+    }
 
     return (
       <div className='ActionBar'>
         <div className='ActionBar-item'>
           <EraserToggler isActive={isEraserActive} onClick={onEraserToggle} />
         </div>
-
         <div className='ActionBar-item ActionBar-item--main'>
-          {isSubmitting ? (
-            <Spinner spinnerName='double-bounce' noFadeIn />
-          ) : (
-            <SubmitButton onClick={onSubmit} />
-          )}
+          {submitButton}
         </div>
-
         <div className='ActionBar-item'>
           <PenSelector pen={currentPen} onPenSelect={onPenSelect} />
         </div>
@@ -46,6 +50,7 @@ ActionBar.propTypes = {
   isEraserActive: PropTypes.bool,
   onEraserToggle: PropTypes.func,
   onPenSelect: PropTypes.func,
+  hasSubmitted: PropTypes.bool,
   onSubmit: PropTypes.func,
   isSubmitting: PropTypes.bool,
 };

@@ -6,45 +6,32 @@ import './PresenterQuestion.scss';
 export default class PresenterQuestion extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isTakingResponses: false,
-      timeElapsed: 0,
-    }
-
     this.toggleTakingResponses = this.toggleTakingResponses.bind(this);
     this.handleTick = this.handleTick.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.question.key !== nextProps.question.key)
-      this.setState({
-        isTakingResponses: false,
-        timeElapsed: 0,
-      });
-  }
-
   handleTick(timeElapsed) {
-    this.setState({ timeElapsed });
+    this.props.onTimerTick(timeElapsed);
   }
 
   toggleTakingResponses() {
-    this.setState(state => ({ isTakingResponses: !state.isTakingResponses }));
+    if (this.props.isAcceptingResponses) this.props.onStopAcceptingResponses();
+    else                                 this.props.onStartAcceptingResponses();
   }
 
   render() {
-    const { question } = this.props;
-    const { isTakingResponses, timeElapsed } = this.state;
+    const { question, timeElapsed, isAcceptingResponses } = this.props;
 
     return (
       <div>
-        <h1 className="PresenterQuestion">{question.value}</h1>
+        <h1 className="PresenterQuestion">{question.text}</h1>
 
         <Timer time={timeElapsed}
-               isRunning={isTakingResponses}
+               isRunning={isAcceptingResponses}
                onTick={this.handleTick} />
 
         <FlatButton onClick={this.toggleTakingResponses}>
-          {`${isTakingResponses ? 'Stop' : 'Start'} Taking Responses`}
+          {`${isAcceptingResponses ? 'Stop' : 'Start'} Taking Responses`}
         </FlatButton>
       </div>
     );
@@ -53,7 +40,12 @@ export default class PresenterQuestion extends Component {
 
 PresenterQuestion.propTypes = {
   question: PropTypes.shape({
-    key: PropTypes.string,
-    value: PropTypes.string,
+    id: PropTypes.string,
+    text: PropTypes.string,
   }).isRequired,
+  onStartAcceptingResponses: PropTypes.func,
+  onStopAcceptingResponses: PropTypes.func,
+  isAcceptingResponses: PropTypes.bool,
+  timeElapsed: PropTypes.number,
+  onTimerTick: PropTypes.func,
 };

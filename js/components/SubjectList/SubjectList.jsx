@@ -51,8 +51,11 @@ export default class SubjectList extends Component {
     const { subjects, onChangeCourse } = this.props;
 
     const handleSubjectItemClick = (courseId, courseName) => {
-      this.context.router.push(`/${courseName}/question-manager`);
-      onChangeCourse(courseId, courseName);
+      this.context.router.push({
+        pathname: `/${courseName}/question-manager`,
+        state: { courseId },
+      });
+      // onChangeCourse(courseId, courseName);
     }
 
     const renderedSubjects = Object.entries(subjects)

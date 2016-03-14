@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Touchy from './touchy.js';
 import ActionBar from './ActionBar.jsx';
 import { pens } from './PenSelector.jsx';
@@ -73,7 +73,7 @@ export default class DrawingTool extends Component {
   initializeCanvases() {
     // Once initial layout has been computed, we need to hard set the canvas
     // dimensions as DOM attributes to prevent canvas distortion on resizing.
-    const canvasDimensions = dimensions(this.displayCanvas);
+    const canvasDimensions = dimensions(this.refs.canvasContainer);
     setDimensionDOMAttributes(this.displayCanvas, canvasDimensions);
     setDimensionDOMAttributes(this.canvas, canvasDimensions);
 
@@ -149,25 +149,26 @@ export default class DrawingTool extends Component {
 
   // Submit the current canvas
   submitImage() {
-    const dataURL = this.displayCanvas.toDataURL(); // canvas encoded as dataURI
-    this.props.onSubmitImage(dataURL);
+    this.props.onSubmitImage(this.displayCanvas.toDataURL());
   }
 
   render() {
     return (
-      <div ref="root">
-        <canvas key='displayCanvas'
-                ref='displayCanvas'
-                className='DrawingTool-displayCanvas' />
-        <canvas key='canvas'
-                ref='canvas'
-                className='DrawingTool-canvas' />
-
+      <div className='DrawingTool' ref="root">
+        <div ref='canvasContainer' className='DrawingTool-canvasContainer'>
+          <canvas key='displayCanvas'
+                  ref='displayCanvas'
+                  className='DrawingTool-displayCanvas' />
+          <canvas key='canvas'
+                  ref='canvas'
+                  className='DrawingTool-canvas' />
+        </div>
         <ActionBar
           currentPen={this.state.pen}
           isEraserActive={this.state.isEraserActive}
           onEraserToggle={this.handleEraserToggle}
           onPenSelect={this.handlePenSelect}
+          hasSubmitted={this.props.hasSubmitted}
           onSubmit={this.submitImage}
           isSubmitting={this.props.isSubmitting} />
       </div>
@@ -176,6 +177,7 @@ export default class DrawingTool extends Component {
 }
 
 DrawingTool.propTypes = {
-  onSubmitImage: React.PropTypes.func,
-  isSubmitting: React.PropTypes.bool,
+  hasSubmitted: PropTypes.bool,
+  onSubmitImage: PropTypes.func,
+  isSubmitting: PropTypes.bool,
 };

@@ -3,7 +3,8 @@ var path = require('path');
 var autoprefixer = require('autoprefixer');
 
 module.exports = {
-  devtool: 'cheap-module-eval-source-map',
+  // devtool: 'cheap-module-eval-source-map',
+  devtool: 'cheap-module-source-map',
   entry: [
     'webpack-hot-middleware/client',
     './js/app.jsx'
@@ -48,7 +49,7 @@ module.exports = {
           'file?hash=sha512&digest=hex&name=[hash].[ext]',
           'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false'
         ]
-      }
+      },
     ]
   },
   postcss: [

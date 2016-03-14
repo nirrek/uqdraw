@@ -25,27 +25,26 @@ export default class QuestionList extends Component {
     this.setState({ modalIsOpen: false });
   }
 
-  addQuestion(lectureKey, lecture, question) {
-    this.props.onAddQuestion(lectureKey, lecture, question);
+  addQuestion(lectureKey, question) {
+    this.props.onAddQuestion(lectureKey, question);
     this.setState({ modalIsOpen: false });
   }
 
-  removeQuestion(lectureKey, lecture) {
-    return (questionKey) => {
-      this.props.onRemoveQuestion(lectureKey, lecture, questionKey);
-    }
-  }
-
   render() {
-    let { courseName, lectureKey, lecture, ...delegateProps } = this.props;
+    let {
+      courseName,
+      lectureKey,
+      lecture,
+      questions,
+      onLaunchPresentation,
+      ...delegateProps
+    } = this.props;
 
     let renderedQuestions;
-    if (lecture.questions && lecture.questionOrder) {
-      const removeQuestion = this.removeQuestion(lectureKey, lecture);
-
-      renderedQuestions = lecture.questionOrder.map(questionKey => (
-        <Card key={questionKey} onClose={() => removeQuestion(questionKey)}>
-          {lecture.questions[questionKey]}
+    if (lecture.questions) {
+      renderedQuestions = lecture.questions.map(questionId => (
+        <Card key={questionId} onClose={() => this.props.onRemoveQuestion(questionId)}>
+          {questions[questionId].text}
         </Card>
       ));
     }
@@ -53,7 +52,8 @@ export default class QuestionList extends Component {
     return (
       <div className='QuestionList' draggable="true">
         <div className='QuestionList-header'>
-          <h2 className='QuestionList-heading'>{lecture.title}</h2>
+
+          <h2 className='QuestionList-heading'>{lecture.name}</h2>
           <Clickable className='QuestionList-deleteList'
             onClick={this.props.onRemoveLecture.bind(null, lectureKey)}>
             &times;
@@ -70,10 +70,16 @@ export default class QuestionList extends Component {
         <QuestionComposer
           isOpen={this.state.modalIsOpen}
           onClose={this.hideQuestionModal}
-          onSave={this.addQuestion.bind(this, lectureKey, lecture)} />
+          onSave={this.addQuestion.bind(this, lectureKey)} />
 
         <div className='QuestionList-present'>
-          <Link to={`/${courseName}/${lectureKey}`}
+          <Link
+            to={`/${courseName}/${lectureKey}`}
+            onClick={() => {
+              console.log(onLaunchPresentation);
+              console.log(lectureKey);
+              onLaunchPresentation(lectureKey)
+            }}
             className='QuestionList-presentLink'>
             Launch {lecture.title} Presentation
           </Link>
@@ -87,7 +93,9 @@ QuestionList.propTypes = {
   courseName: PropTypes.string,
   lectureKey: PropTypes.string,
   lecture: PropTypes.object,
+  questions: PropTypes.object,
   onAddQuestion: PropTypes.func,
   onRemoveLecture: PropTypes.func,
   onRemoveQuestion: PropTypes.func,
+  onLaunchPresentation: PropTypes.func,
 };
