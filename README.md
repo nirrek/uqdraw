@@ -1,5 +1,7 @@
 # UQDraw
-UQDraw is an active learning tool for increasing engagement during lectures. It allows lecturers to pose free-form questions to the audience, and gather real-time, hand-drawn responses from students. The app is built using React and Firebase.
+UQDraw is an active learning tool for increasing engagement during lectures. It allows lecturers to pose free-form questions to the audience, and gather real-time, hand-drawn responses from students.
+
+The frontend is built with React + Redux + redux-saga. The backend is a GraphQL server using SQLite for persistence.
 
 ### Setup
 ```bash
