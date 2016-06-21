@@ -5,7 +5,16 @@ UQDraw is an active learning tool for increasing engagement during lectures. It 
 ```bash
 git clone https://github.com/nirrek/uqdraw && cd uqdraw
 npm install
+```
+
+```bash
+# Run the client server
 npm run start
+```
+
+```bash
+# Run the backend server
+npm run serverDev
 ```
 
 ![UQDraw Screenshots](https://infinit.io/_/LxU8nGB.png)
